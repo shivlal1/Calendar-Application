@@ -17,6 +17,7 @@ public abstract class AEvent {
     /*
     Adding to the calendar
      */
+
     CalendarEvent event = new CalendarEvent(info, start, segmentEnd);
     calendar.createEvent(year, month, day, event);
   }
