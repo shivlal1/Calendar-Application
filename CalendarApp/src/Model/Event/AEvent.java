@@ -14,9 +14,10 @@ public abstract class AEvent {
     int year = start.getYear();
     int month = start.getMonthValue();
     int day = start.getDayOfMonth();
-
+    /*
+    Adding to the calendar
+     */
     CalendarEvent event = new CalendarEvent(info, start, segmentEnd);
     calendar.createEvent(year, month, day, event);
-
   }
 }
