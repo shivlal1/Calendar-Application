@@ -23,6 +23,9 @@ public class CreateCommand implements ICommand {
   private String weekdays;
   private String forTimes;
   private String finalUntilDateTime;
+  LocalDateTime localStartDateTime;
+  LocalDateTime localEndDateTime = null;
+  EventMetaDetails.EventMetaDetailsBuilder metaDeta;
 
   private static final String regex = "^event\\s+(--autoDecline\\s+)?\"(.*?)\"\\s+(?=from\\s+|on\\s+)(?:" +
           "(?:from\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})\\s+to\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}))" +
@@ -37,7 +40,7 @@ public class CreateCommand implements ICommand {
 
   void commandParser(String commandArgs, ACalendar calendar) {
 
-    EventMetaDetails.EventMetaDetailsBuilder metaDeta = new EventMetaDetails.EventMetaDetailsBuilder();
+     metaDeta = new EventMetaDetails.EventMetaDetailsBuilder();
 
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(commandArgs);
@@ -110,9 +113,8 @@ public class CreateCommand implements ICommand {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     DateUtils forFinalStartDate = new DateUtils(finalStartDate);
-    LocalDateTime localStartDateTime = forFinalStartDate.stringToLocalDateTime();
+    localStartDateTime = forFinalStartDate.stringToLocalDateTime();
 
-    LocalDateTime localEndDateTime = null;
     if (finalEndDate != null) {
       localEndDateTime = LocalDateTime.parse(finalEndDate, formatter);
     }
@@ -123,16 +125,19 @@ public class CreateCommand implements ICommand {
       localEndDateTime = currentDay.atTime(23, 59);
     }
 
+
+    createEventUtil(calendar);
+  }
+
+  private void createEventUtil(ACalendar calendar){
     EventDetails eventDetails = new EventDetails(subject, localStartDateTime,
             "", "", localEndDateTime, false);
 
     EventMetaDetails allMetaDeta = metaDeta.build();
-
     EventFactory factory = new EventFactory();
 
     AEvent event = factory.getEvent(eventDetails, allMetaDeta);
     event.pushEventToCalendar(eventDetails, calendar, allMetaDeta);
-
 
   }
 
