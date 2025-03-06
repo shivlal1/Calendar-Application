@@ -2,7 +2,6 @@ package Controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +14,7 @@ public class EditCommand implements ICommand {
   public EditCommand() {
   }
 
-  void commandParser(String commandArgs,ACalendar calendar) {
+  void commandParser(String commandArgs, ACalendar calendar) {
     String eventName = null;
     String start = null;
     String end = null;
@@ -71,7 +70,7 @@ public class EditCommand implements ICommand {
       int year = localStart.getYear();
       int month = localStart.getMonthValue();
       int day = localStart.getDayOfMonth();
-      calendar.editEvent(year, month, day, localStart,eventName,newValue,property);
+      calendar.editEvent(year, month, day, localStart, eventName, newValue, property);
 
 
     }
@@ -79,8 +78,8 @@ public class EditCommand implements ICommand {
   }
 
   @Override
-  public void execute(String commandArgs,ACalendar calendar) {
-    commandParser(commandArgs,calendar);
+  public void execute(String commandArgs, ACalendar calendar) {
+    commandParser(commandArgs, calendar);
     System.out.println("Executing edit event command");
   }
 }

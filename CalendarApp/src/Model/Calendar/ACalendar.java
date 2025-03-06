@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import Model.Event.EventToBeAdded;
+import Model.Event.CalendarEvent;
 
 public abstract class ACalendar implements ICalendar, CalendarCreate, CalendarEdit {
 
-  Map<Integer, Map<Integer, Map<Integer, List<EventToBeAdded>>>> yearMonthDayData = new HashMap<>();
+  Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> yearMonthDayData = new HashMap<>();
 
 }

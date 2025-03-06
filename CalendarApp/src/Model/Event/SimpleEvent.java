@@ -3,16 +3,17 @@ package Model.Event;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+
 import Model.Calendar.ACalendar;
 
 public class SimpleEvent extends AEvent {
 
-  public void addEvent(EventInformation info, ACalendar calendar,boolean isAllDayEvent) {
+  public void addEvent(EventDetails info, ACalendar calendar, EventMetaDetails allMetaData) {
 
-    LocalDateTime start = info.startDate;
-    LocalDateTime end = info.info.endDate;
+    LocalDateTime start = info.getStartDate();
+    LocalDateTime end = info.getEndDate();
 
-    if(!isAllDayEvent){
+    if (!allMetaData.getIsAllDay()) {
       System.out.println("In if:");
 
       long daysBetween = ChronoUnit.DAYS.between(start, end) + 1;
@@ -33,7 +34,7 @@ public class SimpleEvent extends AEvent {
           segmentEnd = currentDay.atTime(23, 59);
         }
 
-        EventToBeAdded event = new EventToBeAdded(info, segmentStart, segmentEnd);
+        CalendarEvent event = new CalendarEvent(info, segmentStart, segmentEnd);
 
         int year = segmentStart.getYear();
         int month = segmentStart.getMonthValue();
@@ -41,8 +42,7 @@ public class SimpleEvent extends AEvent {
 
         calendar.createEvent(year, month, day, event);
       }
-    }
-    else{
+    } else {
 
 
       int year = start.getYear();
@@ -50,12 +50,11 @@ public class SimpleEvent extends AEvent {
       int day = start.getDayOfMonth();
 
       LocalDate currentDay = start.toLocalDate();
-      LocalDateTime segmentEnd = currentDay.atTime(23, 59,59);
-      info.info.endDate = segmentEnd;
-      EventToBeAdded event = new EventToBeAdded(info, start, segmentEnd);
+      LocalDateTime segmentEnd = currentDay.atTime(23, 59, 59);
+      info.setEndDate(segmentEnd);
+      CalendarEvent event = new CalendarEvent(info, start, segmentEnd);
       calendar.createEvent(year, month, day, event);
     }
-
 
 
   }

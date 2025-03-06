@@ -38,13 +38,13 @@ public class CalendarApp {
 //            "edit event name \"International Conference\" from \"2025-03-01T09:00:00\" to \"2025-03-03T17:00:00\" with \"NewConferenceName\""
     };
 
-    for(int i=0;i<commands.length;i++){
+    for (int i = 0; i < commands.length; i++) {
       System.out.println("Command being processed: " + commands[i]);
       String[] result = splitString(commands[i]);
 //      System.out.println("result " + result[0]);
       ICommand command = commandMap.get(result[0]);
       if (command != null) {
-        command.execute(result[1],calendar);  // Pass the remaining command as an argument
+        command.execute(result[1], calendar);  // Pass the remaining command as an argument
       } else {
         System.out.println("Invalid command: " + result[0]);
       }

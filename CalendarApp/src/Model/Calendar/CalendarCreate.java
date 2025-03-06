@@ -1,7 +1,7 @@
 package Model.Calendar;
 
-import Model.Event.EventToBeAdded;
+import Model.Event.CalendarEvent;
 
 public interface CalendarCreate {
-  void createEvent(int year, int month, int day, EventToBeAdded event);
+  void createEvent(int year, int month, int day, CalendarEvent event);
 }
