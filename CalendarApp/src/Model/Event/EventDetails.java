@@ -21,51 +21,66 @@ public class EventDetails {
     this.isPublic = isPublic;
   }
 
-  public String  getSubject(){
+  public String getSubject() {
     return subject;
   }
-  public LocalDateTime  getStartDate(){
+
+  public LocalDateTime getStartDate() {
     return startDate;
   }
-  public String  getDescription(){
+
+  public String getDescription() {
     return description;
   }
-  public String  getLocation(){
+
+  public String getLocation() {
     return location;
   }
-  public LocalDateTime  getEndDate(){
+
+  public LocalDateTime getEndDate() {
     return endDate;
   }
-  public boolean getIsPublic(){
+
+  public boolean getIsPublic() {
     return isPublic;
   }
-  public void  setSubject(String subject){
+
+  public void setSubject(String subject) {
     this.subject = subject;
   }
-  public void  setStartDate(LocalDateTime startDate){
-     this.startDate = startDate;
+
+  public void setStartDate(LocalDateTime startDate) {
+    this.startDate = startDate;
   }
-  public void setDescription(String description){
-     this.description = description;
+
+  public void setDescription(String description) {
+    this.description = description;
   }
-  public void  setLocation(String location){
-     this.location = location;
+
+  public void setLocation(String location) {
+    this.location = location;
   }
-  public void  setEndDate(LocalDateTime endDate){
-     this.endDate = endDate;
+
+  public void setEndDate(LocalDateTime endDate) {
+    this.endDate = endDate;
   }
-  public void setIsPublic(boolean isPublic){
-     this.isPublic=isPublic;
+
+  public void setIsPublic(boolean isPublic) {
+    this.isPublic = isPublic;
   }
 
   @Override
   public String toString() {
-    System.out.println("subject 1 " + subject);
-    System.out.println("startDate 2 " + startDate);
-    System.out.println("description " + description);
-    System.out.println("location " + location);
-    System.out.println("endDate " + endDate);
-    System.out.println("isPublic " + isPublic);
-    return null;
+
+    StringBuilder details = new StringBuilder();
+
+    details.append("Subject " + subject);
+    details.append("Start Date " + startDate);
+    details.append("Description " + description);
+    details.append("Location " + location);
+    details.append("End Date " + endDate);
+    details.append("isPublic " + isPublic);
+
+    return details.toString();
   }
 }

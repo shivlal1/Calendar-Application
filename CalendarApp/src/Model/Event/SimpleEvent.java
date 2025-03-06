@@ -8,59 +8,50 @@ import Model.Calendar.ACalendar;
 
 public class SimpleEvent extends AEvent {
 
-  public void addEvent(EventDetails info, ACalendar calendar, EventMetaDetails allMetaData) {
+
+  private void pushAllDayEvent(ACalendar calendar, LocalDateTime start, EventDetails info) {
+    LocalDate currentDay = start.toLocalDate();
+    LocalDateTime segmentEnd = currentDay.atTime(23, 59, 59);
+    info.setEndDate(segmentEnd);
+    pushCreatedSegmentEvent(calendar, start, info, segmentEnd);
+  }
+
+  private void pushMultiDayEvent(ACalendar calendar, LocalDateTime start, LocalDateTime end, EventDetails info) {
+
+    long daysBetween = ChronoUnit.DAYS.between(start, end) + 1;
+
+    for (int i = 0; i < daysBetween; i++) {
+      LocalDate currentDay = start.toLocalDate().plusDays(i);
+      LocalDateTime segmentStart;
+      LocalDateTime segmentEnd;
+
+      if (i == 0) {
+        segmentStart = start;
+        segmentEnd = currentDay.atTime(23, 59);
+      } else if (i == daysBetween - 1) {
+        segmentStart = currentDay.atStartOfDay();
+        segmentEnd = end;
+      } else {
+        segmentStart = currentDay.atStartOfDay();
+        segmentEnd = currentDay.atTime(23, 59);
+      }
+
+      pushCreatedSegmentEvent(calendar, segmentStart, info, segmentEnd);
+
+    }
+  }
+
+  public void pushEventToCalendar(EventDetails info, ACalendar calendar, EventMetaDetails allMetaData) {
 
     LocalDateTime start = info.getStartDate();
     LocalDateTime end = info.getEndDate();
 
-    if (!allMetaData.getIsAllDay()) {
-      System.out.println("In if:");
-
-      long daysBetween = ChronoUnit.DAYS.between(start, end) + 1;
-
-      for (int i = 0; i < daysBetween; i++) {
-        LocalDate currentDay = start.toLocalDate().plusDays(i);
-        LocalDateTime segmentStart;
-        LocalDateTime segmentEnd;
-
-        if (i == 0) {
-          segmentStart = start;
-          segmentEnd = currentDay.atTime(23, 59);
-        } else if (i == daysBetween - 1) {
-          segmentStart = currentDay.atStartOfDay();
-          segmentEnd = end;
-        } else {
-          segmentStart = currentDay.atStartOfDay();
-          segmentEnd = currentDay.atTime(23, 59);
-        }
-
-        CalendarEvent event = new CalendarEvent(info, segmentStart, segmentEnd);
-
-        int year = segmentStart.getYear();
-        int month = segmentStart.getMonthValue();
-        int day = segmentStart.getDayOfMonth();
-
-        calendar.createEvent(year, month, day, event);
-      }
+    if (allMetaData.getIsAllDay()) {
+      pushAllDayEvent(calendar, start, info);
     } else {
-
-
-      int year = start.getYear();
-      int month = start.getMonthValue();
-      int day = start.getDayOfMonth();
-
-      LocalDate currentDay = start.toLocalDate();
-      LocalDateTime segmentEnd = currentDay.atTime(23, 59, 59);
-      info.setEndDate(segmentEnd);
-      CalendarEvent event = new CalendarEvent(info, start, segmentEnd);
-      calendar.createEvent(year, month, day, event);
+      pushMultiDayEvent(calendar, start, end, info);
     }
 
-
   }
 
-  @Override
-  public void breakEvents() {
-
-  }
 }

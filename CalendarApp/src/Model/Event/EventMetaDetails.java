@@ -6,7 +6,7 @@ public class EventMetaDetails {
   private String forTimes;
   private boolean isRecurring;
   private boolean isAllDay;
-  private  String addUntilDateTime;
+  private String addUntilDateTime;
 
   private EventMetaDetails(EventMetaDetailsBuilder builder) {
     this.weekdays = builder.weekdays;
@@ -16,22 +16,23 @@ public class EventMetaDetails {
     this.addUntilDateTime = builder.addUntilDateTime;
   }
 
-  public String getWeekdays(){
+  public String getWeekdays() {
     return weekdays;
   }
-  public boolean getIsAllDay(){
+
+  public boolean getIsAllDay() {
     return isAllDay;
   }
 
-  public boolean getIsRecurring(){
+  public boolean getIsRecurring() {
     return isRecurring;
   }
 
-  public String  getForTimes(){
+  public String getForTimes() {
     return forTimes;
   }
 
-  public String getAddUntilDateTime(){
+  public String getAddUntilDateTime() {
     return addUntilDateTime;
   }
 

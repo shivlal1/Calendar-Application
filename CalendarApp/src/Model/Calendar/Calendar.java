@@ -28,11 +28,6 @@ public class Calendar extends ACalendar {
   }
 
   @Override
-  public void printEvents() {
-
-  }
-
-  @Override
   public void createEvent(int year, int month, int day, CalendarEvent event) {
 
     addData(year, month, day, event);
@@ -42,19 +37,19 @@ public class Calendar extends ACalendar {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     if (property.equals("name")) {
-      e.event.setSubject(newValue);
+      e.getEvent().setSubject(newValue);
     } else if (property.equals("location")) {
-      e.event.setLocation(newValue);
+      e.getEvent().setLocation(newValue);
     } else if (property.contains("start")) {
-      e.event.setStartDate( LocalDateTime.parse(newValue, formatter) );
+      e.getEvent().setStartDate(LocalDateTime.parse(newValue, formatter));
     } else if (property.contains("end")) {
-      e.event.setEndDate(LocalDateTime.parse(newValue, formatter));
+      e.getEvent().setEndDate(LocalDateTime.parse(newValue, formatter));
     } else if (property.contains("date")) {
-      e.event.setStartDate( LocalDateTime.parse(newValue, formatter) );
+      e.getEvent().setStartDate(LocalDateTime.parse(newValue, formatter));
     } else if (property.contains("public")) {
-      e.event.setIsPublic( Boolean.parseBoolean(newValue) );
+      e.getEvent().setIsPublic(Boolean.parseBoolean(newValue));
     } else if (property.contains("description")) {
-      e.event.setDescription(newValue);
+      e.getEvent().setDescription(newValue);
     } else {
       System.out.println("No such property!");
     }
@@ -68,25 +63,21 @@ public class Calendar extends ACalendar {
       return;
     }
 
-    // Check if the month exists
     Map<Integer, Map<Integer, List<CalendarEvent>>> monthMap = yearMonthDayData.get(year);
     if (!monthMap.containsKey(month)) {
       System.out.println("Month not found: " + month);
       return;
     }
 
-    // Check if the day exists
     Map<Integer, List<CalendarEvent>> dayMap = monthMap.get(month);
     if (!dayMap.containsKey(day)) {
       System.out.println("Day not found: " + day);
       return;
     }
 
-    // Get the list of events for the given day
     List<CalendarEvent> events = dayMap.get(day);
     boolean found = false;
 
-    // Iterate through events and update the matching event
     for (CalendarEvent event : events) {
 
       System.out.println("_______________");
@@ -94,7 +85,7 @@ public class Calendar extends ACalendar {
 
       //System.out.println("_______________" + event.event.get + " " + name);
 
-      if (event.event.getSubject().equals(name)) {
+      if (event.getEvent().getSubject().equals(name)) {
 
         setPropertyValue(property, newValue, event);
 
@@ -108,7 +99,6 @@ public class Calendar extends ACalendar {
       System.out.println("Event not found: " + name);
     }
 
-    printAllData(yearMonthDayData);
 
   }
 
@@ -124,11 +114,9 @@ public class Calendar extends ACalendar {
       return;
     }
 
-    // Add the value to the corresponding day list
     dayMap.get(day).add(value);
-//    System.out.println("ADDED");
-    printAllData(yearMonthDayData);
 
+    printEvents();
   }
 
 
@@ -168,14 +156,16 @@ public class Calendar extends ACalendar {
   }
 
 
-  public void printAllData(Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> dataMap) {
+  @Override
+  public void printEvents() {
+    Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> dataMap = yearMonthDayData;
     for (int year : dataMap.keySet()) {
       for (int month : dataMap.get(year).keySet()) {
         for (int day : dataMap.get(year).get(month).keySet()) {
           List<CalendarEvent> events = dataMap.get(year).get(month).get(day);
           if (!events.isEmpty()) {
             for (CalendarEvent event : events) {
-              System.out.println("----------Printing---------- " + event);
+              System.out.println(event);
             }
           }
         }

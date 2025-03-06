@@ -1,9 +1,9 @@
 package Model.Calendar;
 
 public interface ICalendar {
-  void showStatus();
+  public void showStatus();
 
-  void export();
+  public void export();
 
-  void printEvents();
+  public void printEvents();
 }

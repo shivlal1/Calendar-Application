@@ -7,21 +7,30 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import Model.Calendar.ACalendar;
+import Model.Event.AEvent;
 import Model.Event.EventDetails;
+import Model.Event.EventFactory;
 import Model.Event.EventMetaDetails;
-import Model.Event.RecurringEvent;
-import Model.Event.SimpleEvent;
+import Model.Utils.DateUtils;
 
 public class CreateCommand implements ICommand {
 
-  String subject;
-  String finalStartDate;
-  String finalEndDate;
-  boolean isAllDayEvent;
-  boolean isRecurring;
-  String weekdays;
-  String forTimes;
-  String finalUntilDateTime;
+  private String subject;
+  private String finalStartDate;
+  private String finalEndDate;
+  private boolean isAllDayEvent;
+  private boolean isRecurring;
+  private String weekdays;
+  private String forTimes;
+  private String finalUntilDateTime;
+
+  private static final String regex = "^event\\s+(--autoDecline\\s+)?\"(.*?)\"\\s+(?=from\\s+|on\\s+)(?:" +
+          "(?:from\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})\\s+to\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}))" +
+          "|" +
+          "(?:on\\s+(\\d{4}-\\d{2}-\\d{2})(?:T(\\d{2}:\\d{2}:\\d{2}))?)" +
+          ")" +
+          "(?:\\s+repeats\\s+([MTWRFSU]+)\\s+(?:(?:for\\s+(\\d+)\\s+times)|(?:until\\s+(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2}:\\d{2})?))))?$";
+
 
   public CreateCommand() {
   }
@@ -29,13 +38,6 @@ public class CreateCommand implements ICommand {
   void commandParser(String commandArgs, ACalendar calendar) {
 
     EventMetaDetails.EventMetaDetailsBuilder metaDeta = new EventMetaDetails.EventMetaDetailsBuilder();
-
-    String regex = "^event\\s+(--autoDecline\\s+)?\"(.*?)\"\\s+(?=from\\s+|on\\s+)(?:" +
-            "(?:from\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})\\s+to\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}))" +
-            "|" +
-            "(?:on\\s+(\\d{4}-\\d{2}-\\d{2})(?:T(\\d{2}:\\d{2}:\\d{2}))?)" +
-            ")" +
-            "(?:\\s+repeats\\s+([MTWRFSU]+)\\s+(?:(?:for\\s+(\\d+)\\s+times)|(?:until\\s+(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2}:\\d{2})?))))?$";
 
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(commandArgs);
@@ -97,24 +99,20 @@ public class CreateCommand implements ICommand {
           }
           metaDeta.addUntilDateTime(finalUntilDateTime);
 
-
         }
       }
 
     } else {
       System.out.println("  Command did not match the pattern.");
     }
-//    System.out.println("----------");
 
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    DateUtils forFinalStartDate = new DateUtils(finalStartDate);
+    LocalDateTime localStartDateTime = forFinalStartDate.stringToLocalDateTime();
 
-//    System.out.println("Formatted  " + finalStartDate + " " + finalEndDate);
-    System.out.println("Final start date: " + finalStartDate);
-    LocalDateTime localStartDateTime = LocalDateTime.parse(finalStartDate, formatter);
     LocalDateTime localEndDateTime = null;
-
     if (finalEndDate != null) {
       localEndDateTime = LocalDateTime.parse(finalEndDate, formatter);
     }
@@ -130,22 +128,16 @@ public class CreateCommand implements ICommand {
 
     EventMetaDetails allMetaDeta = metaDeta.build();
 
-    if (!isRecurring) {
-      SimpleEvent event = new SimpleEvent();
-    //  event.addEvent(eventDetails, calendar, isAllDayEvent);
-      event.addEvent(eventDetails, calendar, allMetaDeta);
+    EventFactory factory = new EventFactory();
 
-    } else {
-      RecurringEvent event = new RecurringEvent();
+    AEvent event = factory.getEvent(eventDetails, allMetaDeta);
+    event.pushEventToCalendar(eventDetails, calendar, allMetaDeta);
 
-      event.addEvent(eventDetails, calendar, allMetaDeta);
-     // event.addEvent(eventDetails, calendar, weekdays, forTimes, finalUntilDateTime);
-    }
+
   }
 
   @Override
   public void execute(String commandArgs, ACalendar calendar) {
-
     commandParser(commandArgs, calendar);
   }
 }
