@@ -53,9 +53,7 @@ public class CalendarApp {
       } else {
         System.out.println("Invalid command: " + result[0]);
       }
-
     }
-
   }
 
   public static String[] splitString(String s) {

@@ -3,7 +3,7 @@ package Controller;
 import Model.Calendar.ACalendar;
 
 // Concrete command for showing event status
-public class ShowStatusCommand implements ICommand {
+public class ShowStatusCommand extends AbstractCommand {
   //private ICalendar calendar;
 
   public ShowStatusCommand() {

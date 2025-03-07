@@ -6,7 +6,7 @@ import java.time.temporal.ChronoUnit;
 
 import Model.Calendar.ACalendar;
 
-public class SimpleEvent extends AEvent {
+public class SingleEvent extends AEvent {
 
 
   private void pushAllDayEvent(ACalendar calendar, LocalDateTime start, EventDetails info) {
@@ -19,7 +19,7 @@ public class SimpleEvent extends AEvent {
   private void pushMultiDayEvent(ACalendar calendar, LocalDateTime start, LocalDateTime end, EventDetails info) {
 
     long daysBetween = ChronoUnit.DAYS.between(start, end) + 1;
-
+    System.out.println("days in between " + daysBetween);
     for (int i = 0; i < daysBetween; i++) {
       LocalDate currentDay = start.toLocalDate().plusDays(i);
       LocalDateTime segmentStart;
@@ -37,7 +37,6 @@ public class SimpleEvent extends AEvent {
       }
 
       pushCreatedSegmentEvent(calendar, segmentStart, info, segmentEnd);
-
     }
   }
 

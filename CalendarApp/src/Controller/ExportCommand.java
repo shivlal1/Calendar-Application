@@ -3,7 +3,7 @@ package Controller;
 import Model.Calendar.ACalendar;
 
 // Concrete command for exporting the calendar
-public class ExportCommand implements ICommand {
+public class ExportCommand extends AbstractCommand {
   //private ICalendar calendar;
 
   public ExportCommand() {

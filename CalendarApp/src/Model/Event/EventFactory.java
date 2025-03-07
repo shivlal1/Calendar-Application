@@ -9,7 +9,7 @@ public class EventFactory {
     if (allMetaDeta.getIsRecurring()) {
       event = new RecurringEvent();
     } else {
-      event = new SimpleEvent();
+      event = new SingleEvent();
     }
     return event;
   }

@@ -2,12 +2,10 @@ package Controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import Model.Calendar.ACalendar;
 
-public class EditCommand implements ICommand {
+public class EditCommand extends AbstractCommand {
 
 
   public EditCommand() {
@@ -32,9 +30,10 @@ public class EditCommand implements ICommand {
             "\"(?<newValue2>.*?)\"" +
             ")$";
 
-    Pattern pattern = Pattern.compile(regex);
-    System.out.println("Processing command: " + regex);
-    Matcher matcher = pattern.matcher(commandArgs);
+
+    initRegexPatter(regex, commandArgs);
+
+
     if (matcher.matches()) {
       property = matcher.group("property");
       eventName = matcher.group("eventName").trim();
@@ -68,11 +67,11 @@ public class EditCommand implements ICommand {
     LocalDateTime localEnd = LocalDateTime.parse(end, formatter);
 
     if (eventName != null && start != null && end == null) {
-      calendar.editEvent( localStart, eventName, newValue, property);
+      calendar.editEvent(localStart, eventName, newValue, property);
     } else if (eventName != null && start == null && end == null) {
       calendar.editEvent(eventName, newValue, property);
     } else if (eventName != null && start != null && end != null) {
-      calendar.editEvent( eventName, localStart, localEnd, newValue, property);
+      calendar.editEvent(eventName, localStart, localEnd, newValue, property);
     }
   }
 

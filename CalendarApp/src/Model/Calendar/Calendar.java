@@ -26,11 +26,13 @@ public class Calendar extends ACalendar {
 
   }
 
-  /** CREATE EVENT function **/
+  /**
+   * CREATE EVENT function
+   **/
 
   @Override
   public void createEvent(int year, int month, int day, CalendarEvent event) {
-   // addData(year, month, day, event);
+    // addData(year, month, day, event);
     yearMonthDayData.computeIfAbsent(year, y -> initializeYear(year));
 
     Map<Integer, Map<Integer, List<CalendarEvent>>> monthMap = yearMonthDayData.get(year);
@@ -44,7 +46,7 @@ public class Calendar extends ACalendar {
 
     dayMap.get(day).add(event);
 
-    printEvents();
+    //printEvents();
   }
 
 
@@ -69,7 +71,7 @@ public class Calendar extends ACalendar {
 
   }
 
-  public void editEvent( String eventName, LocalDateTime start, LocalDateTime end, String newValue, String property) {
+  public void editEvent(String eventName, LocalDateTime start, LocalDateTime end, String newValue, String property) {
 
     List<CalendarEvent> events = getEventsForDate(start);
     boolean found = false;
@@ -91,7 +93,7 @@ public class Calendar extends ACalendar {
     if (!found) {
       System.out.println("Event not found: " + eventName);
     }
-    printEvents();
+    //printEvents();
   }
 
 
@@ -112,7 +114,7 @@ public class Calendar extends ACalendar {
         }
       }
     }
-    printEvents();
+    //printEvents();
   }
 
   public void editEvent(LocalDateTime start, String name, String newValue, String property) {
@@ -136,7 +138,6 @@ public class Calendar extends ACalendar {
 
 
   }
-
 
 
   private Map<Integer, Map<Integer, List<CalendarEvent>>> initializeYear(int year) {

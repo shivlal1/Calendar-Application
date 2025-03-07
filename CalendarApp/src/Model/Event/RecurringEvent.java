@@ -15,8 +15,7 @@ public class RecurringEvent extends AEvent {
     LocalDateTime until;
 
     if (finalUntilDateTime != null) {
-      DateUtils finalUtil = new DateUtils(finalUntilDateTime);
-      until = finalUtil.stringToLocalDateTime();
+      until = DateUtils.stringToLocalDateTime(finalUntilDateTime);
     } else {
       int num = Integer.valueOf(allMetaDeta.getForTimes()) * 7;
       until = start.plusDays(num);
@@ -41,17 +40,11 @@ public class RecurringEvent extends AEvent {
       if (allMetaDeta.getWeekdays().indexOf(d) != -1) {
         event.setStartDate(currDate);
         event.setEndDate(end);
-
-
         pushCreatedSegmentEvent(calendar, currDate, event, end);
       }
-
       currDate = currDate.plusDays(1);
       end = end.plusDays(1);
     }
-
-    //RecurringEventStorage newRecurringEvent = new RecurringEventStorage();
-
 
   }
 

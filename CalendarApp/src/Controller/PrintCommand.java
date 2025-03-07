@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 import Model.Calendar.ACalendar;
 
-public class PrintCommand implements ICommand {
+public class PrintCommand extends AbstractCommand {
 
   public PrintCommand() {
 //    this.calendar = calendar;
