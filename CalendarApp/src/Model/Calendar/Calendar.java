@@ -11,7 +11,6 @@ import Model.Event.CalendarEvent;
 
 public class Calendar extends ACalendar {
 
-  int year, month, day;
   CalendarEvent event;
 
   public Calendar() {
@@ -55,9 +54,78 @@ public class Calendar extends ACalendar {
     }
   }
 
-  public void editEvent(int year, int month, int day, LocalDateTime start, String name, String newValue, String property) {
+
+  public void printOnTimeEvents(LocalDateTime from) {
+
+    int year = from.getYear();
+    int month = from.getMonthValue();
+    int day = from.getDayOfMonth();
+
+    if (!yearMonthDayData.containsKey(year)) {
+      System.out.println("Year not found: " + year);
+      return;
+    }
+
+    Map<Integer, Map<Integer, List<CalendarEvent>>> monthMap = yearMonthDayData.get(year);
+    if (!monthMap.containsKey(month)) {
+      System.out.println("Month not found: " + month);
+      return;
+    }
+
+    Map<Integer, List<CalendarEvent>> dayMap = monthMap.get(month);
+    if (!dayMap.containsKey(day)) {
+      System.out.println("Day not found: " + day);
+      return;
+    }
+
+    List<CalendarEvent> events = dayMap.get(day);
+
+    for (CalendarEvent event : events) {
+              System.out.println("Event updated: " + event);
+    }
 
 
+  }
+
+  public void printFromToEvents(LocalDateTime from, LocalDateTime to) {
+
+    int year = from.getYear();
+    int month = from.getMonthValue();
+    int day = from.getDayOfMonth();
+
+    if (!yearMonthDayData.containsKey(year)) {
+      System.out.println("Year not found: " + year);
+      return;
+    }
+
+    Map<Integer, Map<Integer, List<CalendarEvent>>> monthMap = yearMonthDayData.get(year);
+    if (!monthMap.containsKey(month)) {
+      System.out.println("Month not found: " + month);
+      return;
+    }
+
+    Map<Integer, List<CalendarEvent>> dayMap = monthMap.get(month);
+    if (!dayMap.containsKey(day)) {
+      System.out.println("Day not found: " + day);
+      return;
+    }
+
+    List<CalendarEvent> events = dayMap.get(day);
+
+    for (CalendarEvent event : events) {
+     // System.out.println("Event updated: " + event);
+      //System.out.println("ater: " + event.getEvent().getStartDate().isAfter(from));
+
+      if ( (event.getEvent().getStartDate().isAfter(from) || event.getEvent().getStartDate().equals(from))
+              && ( event.getEvent().getEndDate().isBefore(to) || event.getEvent().getEndDate().equals(to))) {
+        System.out.println("Event updated: " + event);
+      }
+    }
+
+
+  }
+
+  public void editFromToEvents(int year, int month, int day, String eventName, LocalDateTime start, LocalDateTime end, String newValue, String property) {
     if (!yearMonthDayData.containsKey(year)) {
       System.out.println("Year not found: " + year);
       return;
@@ -85,13 +153,81 @@ public class Calendar extends ACalendar {
 
       //System.out.println("_______________" + event.event.get + " " + name);
 
-      if (event.getEvent().getSubject().equals(name)) {
+      if (event.getEvent().getSubject().equals(eventName) && event.getEvent().getStartDate().equals(start)
+      && event.getEvent().getEndDate().equals(end)) {
 
         setPropertyValue(property, newValue, event);
 
         //event.startTime = start;
         found = true;
-        //System.out.println("Event updated: " + event);
+//        System.out.println("z");
+        System.out.println("Event updated: " + event);
+        // Stop searching once found
+      }
+    }
+    if (!found) {
+      System.out.println("Event not found: " + eventName);
+    }
+    printEvents();
+  }
+
+
+  public void editAllEvents(String eventName, String newValue, String property) {
+    Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> dataMap = yearMonthDayData;
+    for (int year : dataMap.keySet()) {
+      for (int month : dataMap.get(year).keySet()) {
+        for (int day : dataMap.get(year).get(month).keySet()) {
+          List<CalendarEvent> events = dataMap.get(year).get(month).get(day);
+          if (!events.isEmpty()) {
+            for (CalendarEvent event : events) {
+              if (event.getEvent().getSubject().equals(eventName)) {
+                setPropertyValue(property,newValue,event);
+                System.out.println("Event edited successfully!");
+              }
+            }
+          }
+        }
+      }
+    }
+    printEvents();
+  }
+
+  public void editEvent(int year, int month, int day, LocalDateTime start, String name, String newValue, String property) {
+    if (!yearMonthDayData.containsKey(year)) {
+      System.out.println("Year not found: " + year);
+      return;
+    }
+
+    Map<Integer, Map<Integer, List<CalendarEvent>>> monthMap = yearMonthDayData.get(year);
+    if (!monthMap.containsKey(month)) {
+      System.out.println("Month not found: " + month);
+      return;
+    }
+
+    Map<Integer, List<CalendarEvent>> dayMap = monthMap.get(month);
+    if (!dayMap.containsKey(day)) {
+      System.out.println("Day not found: " + day);
+      return;
+    }
+
+    List<CalendarEvent> events = dayMap.get(day);
+    boolean found = false;
+
+    for (CalendarEvent event : events) {
+
+      System.out.println("_______________");
+      System.out.println(event);
+
+      //System.out.println("_______________" + event.event.get + " " + name);
+
+      if (event.getEvent().getSubject().equals(name) && event.getEvent().getStartDate().equals(start)) {
+
+        setPropertyValue(property, newValue, event);
+
+        //event.startTime = start;
+        found = true;
+//        System.out.println("z");
+        System.out.println("Event updated: " + event);
         // Stop searching once found
       }
     }
