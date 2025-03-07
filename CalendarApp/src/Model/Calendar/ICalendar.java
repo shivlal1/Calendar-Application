@@ -8,6 +8,8 @@ public interface ICalendar {
   public void export();
 
   public void printEvents();
+
   public void printOnTimeEvents(LocalDateTime from);
+
   public void printFromToEvents(LocalDateTime from, LocalDateTime to);
 }

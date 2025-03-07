@@ -38,7 +38,7 @@ public class CalendarApp {
 //            "edit event name \"Annual Meeting\" from 2025-03-01T09:00:00 to 2025-03-01T10:00:00 with \"Weekly Meeting\"",
 //            "edit events public \"Annual Meeting\" from 2025-03-01T09:00:00 with \"true\""
 //            "edit events name \"Annual Meeting\" \"Weekly Meeting\""
-//            "edit event name \"International Conference\" from 2025-03-01T09:00:00 to 2025-03-03T13:00:00 with \"Sasta Conference\""
+            "edit event name \"International Conference\" from 2025-03-01T09:00:00 to 2025-03-03T13:00:00 with \"Sasta Conference\"",
             "print events from \"2025-03-01T09:00\" to \"2025-03-03T13:00\"",
 //            "print events on \"2025-03-06\""
     };

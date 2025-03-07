@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import Model.Calendar.ACalendar;
 
-// Concrete command for printing events
 public class PrintCommand implements ICommand {
 
   public PrintCommand() {
@@ -40,11 +39,7 @@ public class PrintCommand implements ICommand {
     endDate = endDate.replace("T", " ");
     LocalDateTime localEnd = LocalDateTime.parse(endDate, formatter);
 
-    int year = localStart.getYear();
-    int month = localStart.getMonthValue();
-    int day = localStart.getDayOfMonth();
-
-    calendar.printFromToEvents(localStart,localEnd);
+    calendar.printFromToEvents(localStart, localEnd);
 
   }
 
