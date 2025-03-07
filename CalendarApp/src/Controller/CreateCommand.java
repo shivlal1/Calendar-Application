@@ -38,9 +38,25 @@ public class CreateCommand implements ICommand {
   public CreateCommand() {
   }
 
+  private String removeTinDateTime(String date) {
+    if (date != null) {
+      date = date.replace("T", " ");
+    }
+    return date;
+  }
+
+  private String getFinalStartDateFromOndate(String onDate, String onTime) {
+    if (onTime != null) {
+      finalStartDate = onDate + " " + onTime;
+    } else {
+      finalStartDate = onDate + " " + "00:00:00";
+    }
+    return finalStartDate;
+  }
+
   void commandParser(String commandArgs, ACalendar calendar) {
 
-     metaDeta = new EventMetaDetails.EventMetaDetailsBuilder();
+    metaDeta = new EventMetaDetails.EventMetaDetailsBuilder();
 
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(commandArgs);
@@ -51,21 +67,15 @@ public class CreateCommand implements ICommand {
 
       subject = matcher.group(2).trim();
 
-      String startDateTime = matcher.group(3);
-      String endDateTime = matcher.group(4);
-
-      if (startDateTime != null) {
-        startDateTime = startDateTime.replace("T", " ");
-      }
-      if (endDateTime != null) {
-        endDateTime = endDateTime.replace("T", " ");
-      }
+      String startDateTime = removeTinDateTime(matcher.group(3));
+      String endDateTime = removeTinDateTime(matcher.group(4));
 
       String onDate = matcher.group(5);
       String onTime = matcher.group(6);
 
       weekdays = matcher.group(7);
       metaDeta.addWeekdays(weekdays);
+
       forTimes = matcher.group(8);
       metaDeta.addForTimes(forTimes);
 
@@ -81,34 +91,16 @@ public class CreateCommand implements ICommand {
         finalStartDate = startDateTime;
         finalEndDate = endDateTime;
       } else if (onDate != null) {
-        if (onTime != null) {
-          finalStartDate = onDate + " " + onTime;
-        } else {
-          finalStartDate = onDate + " " + "00:00:00";
-        }
-        System.out.println("  All Day Event: " + isAllDayEvent);
+        finalStartDate = getFinalStartDateFromOndate(onDate, onTime);
       }
 
       if (isRecurring) {
-
-        if (untilDateTime != null) {
-          finalUntilDateTime = untilDateTime;
-          if (finalUntilDateTime != null) {
-            if (finalUntilDateTime.indexOf('T') != -1) {
-              finalUntilDateTime = finalUntilDateTime.replace("T", " ");
-            } else {
-              finalUntilDateTime = finalUntilDateTime + " " + "00:00:00";
-            }
-          }
-          metaDeta.addUntilDateTime(finalUntilDateTime);
-
-        }
+        processUntilTime(untilDateTime);
       }
 
     } else {
       System.out.println("  Command did not match the pattern.");
     }
-
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -119,17 +111,29 @@ public class CreateCommand implements ICommand {
       localEndDateTime = LocalDateTime.parse(finalEndDate, formatter);
     }
 
-
     if (isAllDayEvent) {
       LocalDate currentDay = localStartDateTime.toLocalDate();
       localEndDateTime = currentDay.atTime(23, 59);
     }
 
-
     createEventUtil(calendar);
   }
 
-  private void createEventUtil(ACalendar calendar){
+  private void processUntilTime(String untilDateTime) {
+    if (untilDateTime != null) {
+      finalUntilDateTime = untilDateTime;
+      if (finalUntilDateTime != null) {
+        if (finalUntilDateTime.indexOf('T') != -1) {
+          finalUntilDateTime = finalUntilDateTime.replace("T", " ");
+        } else {
+          finalUntilDateTime = finalUntilDateTime + " " + "00:00:00";
+        }
+      }
+      metaDeta.addUntilDateTime(finalUntilDateTime);
+    }
+  }
+
+  private void createEventUtil(ACalendar calendar) {
     EventDetails eventDetails = new EventDetails(subject, localStartDateTime,
             "", "", localEndDateTime, false);
 
@@ -138,7 +142,6 @@ public class CreateCommand implements ICommand {
 
     AEvent event = factory.getEvent(eventDetails, allMetaDeta);
     event.pushEventToCalendar(eventDetails, calendar, allMetaDeta);
-
   }
 
   @Override

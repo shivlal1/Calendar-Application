@@ -2,6 +2,8 @@ package Model.Event;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
@@ -30,6 +32,8 @@ public class RecurringEvent extends AEvent {
 
     LocalDateTime until = getRecurringEventEndDate(start, allMetaDeta);
 
+    List<EventDetails> list = new ArrayList<>();
+
     while (!currDate.isAfter(until)) {
       DayOfWeek day = currDate.getDayOfWeek();
       char d = getDayAbbreviation(day.name());
@@ -37,12 +41,18 @@ public class RecurringEvent extends AEvent {
       if (allMetaDeta.getWeekdays().indexOf(d) != -1) {
         event.setStartDate(currDate);
         event.setEndDate(end);
+
+
         pushCreatedSegmentEvent(calendar, currDate, event, end);
       }
 
       currDate = currDate.plusDays(1);
       end = end.plusDays(1);
     }
+
+    //RecurringEventStorage newRecurringEvent = new RecurringEventStorage();
+
+
   }
 
 

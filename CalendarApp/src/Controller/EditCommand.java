@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import Model.Calendar.ACalendar;
 
-// Concrete command for editing an event
 public class EditCommand implements ICommand {
 
 
@@ -62,19 +61,19 @@ public class EditCommand implements ICommand {
     }
     System.out.println("----------");
 
+    start = start.replace("T", " ");
+    LocalDateTime localStart = LocalDateTime.parse(start, formatter);
+
+    end = end.replace("T", " ");
+    LocalDateTime localEnd = LocalDateTime.parse(end, formatter);
+
     if (eventName != null && start != null && end == null) {
-      start = start.replace("T", " ");
-
-      LocalDateTime localStart = LocalDateTime.parse(start, formatter);
-
-      int year = localStart.getYear();
-      int month = localStart.getMonthValue();
-      int day = localStart.getDayOfMonth();
-      calendar.editEvent(year, month, day, localStart, eventName, newValue, property);
-
-
+      calendar.editEvent( localStart, eventName, newValue, property);
+    } else if (eventName != null && start == null && end == null) {
+      calendar.editEvent(eventName, newValue, property);
+    } else if (eventName != null && start != null && end != null) {
+      calendar.editEvent( eventName, localStart, localEnd, newValue, property);
     }
-
   }
 
   @Override
