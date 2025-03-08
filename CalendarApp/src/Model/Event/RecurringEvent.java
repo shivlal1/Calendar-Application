@@ -10,41 +10,92 @@ import Model.Utils.DateUtils;
 
 public class RecurringEvent extends AEvent {
 
-  private LocalDateTime getRecurringEventEndDate(LocalDateTime start, EventMetaDetails allMetaDeta) {
-    String finalUntilDateTime = allMetaDeta.getAddUntilDateTime();
-    LocalDateTime until;
+  private EventDetails eventDetails;
+  private EventMetaDetails allMetaDetails;
 
-    if (finalUntilDateTime != null) {
-      until = DateUtils.stringToLocalDateTime(finalUntilDateTime);
-    } else {
-      int num = Integer.valueOf(allMetaDeta.getForTimes()) * 7;
-      until = start.plusDays(num);
-    }
-    return until;
+  RecurringEvent(EventDetails eventDetails, EventMetaDetails allMetaDetails) {
+    this.eventDetails = eventDetails;
+    this.allMetaDetails = allMetaDetails;
   }
 
-  public void pushEventToCalendar(EventDetails event, ACalendar calendar, EventMetaDetails allMetaDeta) {
+  private LocalDateTime getRecurringEventEndDate() {
+    String finalUntilDateTime = allMetaDetails.getAddUntilDateTime();
+    return DateUtils.stringToLocalDateTime(finalUntilDateTime);
+  }
 
-    LocalDateTime start = event.getStartDate();
-    LocalDateTime end = event.getEndDate();
+  private boolean isWeekDayIncluded(LocalDateTime date) {
+
+    DayOfWeek day = date.getDayOfWeek();
+    char dayNameAsChar = getDayAbbreviation(day.name());
+
+    if (allMetaDetails.getWeekdays().indexOf(dayNameAsChar) != -1) {
+      return true;
+    }
+    return false;
+  }
+
+  private List<CalendarEvent> getForTimeRecurringEvent(ACalendar calendar, LocalDateTime start,
+                                                       LocalDateTime end, List<CalendarEvent> eventsList) {
+
     LocalDateTime currDate = start;
 
-    LocalDateTime until = getRecurringEventEndDate(start, allMetaDeta);
+    int requriredRecurringEvents = Integer.valueOf(allMetaDetails.getForTimes());
+    int eventsEncountered = 0;
 
-    List<EventDetails> list = new ArrayList<>();
+    while (eventsEncountered < requriredRecurringEvents) {
 
-    while (!currDate.isAfter(until)) {
-      DayOfWeek day = currDate.getDayOfWeek();
-      char d = getDayAbbreviation(day.name());
+      if (isWeekDayIncluded(currDate)) {
+        EventDetails e = new EventDetails(eventDetails, currDate, end);
+        eventsList.add(getCreatedSegmentEvent(calendar, currDate, e, end));
+        eventsEncountered++;
+      }
 
-      if (allMetaDeta.getWeekdays().indexOf(d) != -1) {
-        event.setStartDate(currDate);
-        event.setEndDate(end);
-        pushCreatedSegmentEvent(calendar, currDate, event, end);
+      if (eventsEncountered == requriredRecurringEvents) {
+        break;
       }
       currDate = currDate.plusDays(1);
       end = end.plusDays(1);
     }
+    return eventsList;
+  }
+
+  private List<CalendarEvent> getUntilTimeRecurringEvent(ACalendar calendar, LocalDateTime start,
+                                                         LocalDateTime end, List<CalendarEvent> eventsList) {
+
+    LocalDateTime currDate = start;
+    LocalDateTime until = getRecurringEventEndDate();
+
+    while (!currDate.isAfter(until)) {
+      if (isWeekDayIncluded(currDate)) {
+        EventDetails e = new EventDetails(eventDetails, currDate, end);
+        eventsList.add(getCreatedSegmentEvent(calendar, currDate, e, end));
+      }
+      currDate = currDate.plusDays(1);
+      end = end.plusDays(1);
+    }
+    return eventsList;
+  }
+
+  public void pushEventToCalendar(ACalendar calendar) {
+
+    LocalDateTime start = eventDetails.getStartDate();
+    LocalDateTime end = eventDetails.getEndDate();
+    List<CalendarEvent> newEventsList = new ArrayList<>();
+
+    if (allMetaDetails.getAddUntilDateTime() != null) {
+      newEventsList = getUntilTimeRecurringEvent(calendar, start, end, newEventsList);
+
+    } else if (allMetaDetails.getForTimes() != null) {
+      newEventsList = getForTimeRecurringEvent(calendar, start, end, newEventsList);
+    }
+
+//    System.out.println("printing all generated recurring event");
+//    for (CalendarEvent e : newEventsList) {
+//      System.out.println(e);
+//    }
+//    System.out.println("finished printing all generated recurring event");
+
+    calendar.createEvent(newEventsList, true);
 
   }
 

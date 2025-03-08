@@ -17,6 +17,15 @@ public class CalendarEvent {
     return event;
   }
 
+  public LocalDateTime getStartDate() {
+    return startTime;
+  }
+
+  public LocalDateTime getEndDate() {
+    return endTime;
+  }
+
+
   @Override
   public String toString() {
     return event.toString();

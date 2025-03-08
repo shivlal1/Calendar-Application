@@ -96,6 +96,7 @@ public class CreateCommand extends AbstractCommand {
 
   private void setDatesForAllDayEvent() {
     LocalDate currentDay = localStartDateTime.toLocalDate();
+    localStartDateTime = currentDay.atStartOfDay();
     localEndDateTime = currentDay.atTime(23, 59);
   }
 
@@ -122,7 +123,7 @@ public class CreateCommand extends AbstractCommand {
     EventFactory factory = new EventFactory();
 
     AEvent event = factory.getEvent(eventDetails, allMetaDeta);
-    event.pushEventToCalendar(eventDetails, calendar, allMetaDeta);
+    event.pushEventToCalendar(calendar);
   }
 
   private void createCommandProcess(String commandArgs, ACalendar calendar) {

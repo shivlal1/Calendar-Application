@@ -6,17 +6,12 @@ import Model.Calendar.ACalendar;
 
 public abstract class AEvent {
 
-  public abstract void pushEventToCalendar(EventDetails event, ACalendar calendar, EventMetaDetails allMetaDeta);
+  public abstract void pushEventToCalendar(ACalendar calendar);
 
 
-  protected void pushCreatedSegmentEvent(ACalendar calendar, LocalDateTime start, EventDetails info,
-                                         LocalDateTime segmentEnd) {
-    int year = start.getYear();
-    int month = start.getMonthValue();
-    int day = start.getDayOfMonth();
-
+  CalendarEvent getCreatedSegmentEvent(ACalendar calendar, LocalDateTime start, EventDetails info,
+                                       LocalDateTime segmentEnd) {
     CalendarEvent event = new CalendarEvent(info, start, segmentEnd);
-    System.out.println("pushed");
-    calendar.createEvent(year, month, day, event);
+    return event;
   }
 }

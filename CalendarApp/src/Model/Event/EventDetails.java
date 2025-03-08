@@ -21,6 +21,16 @@ public class EventDetails {
     this.isPublic = isPublic;
   }
 
+  public EventDetails(EventDetails other, LocalDateTime newStartTime, LocalDateTime newEndTime) {
+
+    this.subject = other.subject;
+    this.description = other.description;
+    this.location = other.location;
+    this.isPublic = other.isPublic;
+    this.startDate = newStartTime;
+    this.endDate = newEndTime;
+  }
+
   public String getSubject() {
     return subject;
   }

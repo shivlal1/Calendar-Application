@@ -16,6 +16,69 @@ public class Calendar extends ACalendar {
   public Calendar() {
   }
 
+  boolean isOverlap(CalendarEvent newEvent, CalendarEvent existingEvent) {
+
+    LocalDateTime newStartTime = newEvent.getStartDate();
+    LocalDateTime newEndTime = newEvent.getEndDate();
+
+    LocalDateTime existingStartTime = existingEvent.getStartDate();
+    LocalDateTime existingEndTime = existingEvent.getEndDate();
+
+    boolean isConflictExists = false;
+
+    if (newStartTime.isBefore(existingEndTime) &&
+            newEndTime.equals(existingStartTime)) {
+      isConflictExists = false;
+    }
+    if (existingStartTime.isBefore(newEndTime) &&
+            existingEndTime.equals(newStartTime)) {
+      isConflictExists = false;
+    }
+
+    if (newStartTime.isBefore(existingEndTime) && existingStartTime.isBefore(newEndTime)) {
+      isConflictExists = true;
+    }
+
+    if (existingStartTime.isBefore(newEndTime) && newStartTime.isBefore(existingEndTime)) {
+      isConflictExists = true;
+    }
+
+    if (existingStartTime.equals(newStartTime)) {
+      isConflictExists = true;
+    }
+
+    if (existingEndTime.equals(newEndTime)) {
+      isConflictExists = true;
+    }
+    return isConflictExists;
+  }
+
+  boolean hasConflicts(List<CalendarEvent> newEvents) {
+
+    Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> dataMap = yearMonthDayData;
+
+    for (CalendarEvent newEvent : newEvents) {
+
+      for (int year : dataMap.keySet()) {
+        for (int month : dataMap.get(year).keySet()) {
+          for (int day : dataMap.get(year).get(month).keySet()) {
+            List<CalendarEvent> events = dataMap.get(year).get(month).get(day);
+            if (!events.isEmpty()) {
+              for (CalendarEvent existingEvent : events) {
+                if (isOverlap(newEvent, existingEvent)) {
+                  return true;
+                }
+              }
+            }
+          }
+        }
+      }
+
+    }
+
+    return false;
+  }
+
   @Override
   public void showStatus() {
 
@@ -30,7 +93,6 @@ public class Calendar extends ACalendar {
    * CREATE EVENT function
    **/
 
-  @Override
   public void createEvent(int year, int month, int day, CalendarEvent event) {
     // addData(year, month, day, event);
     yearMonthDayData.computeIfAbsent(year, y -> initializeYear(year));
@@ -47,6 +109,32 @@ public class Calendar extends ACalendar {
     dayMap.get(day).add(event);
 
     //printEvents();
+  }
+
+  public void createEvent(List<CalendarEvent> events, boolean autoDecline) {
+
+    if (autoDecline && hasConflicts(events)) {
+      System.out.println("HAS CONFLICTS");
+      return;
+    }
+
+    for (CalendarEvent event : events) {
+      LocalDateTime date = event.getStartDate();
+      int year = date.getYear();
+      int month = date.getMonthValue();
+      int day = date.getDayOfMonth();
+      yearMonthDayData.computeIfAbsent(year, y -> initializeYear(year));
+      Map<Integer, Map<Integer, List<CalendarEvent>>> monthMap = yearMonthDayData.get(year);
+      Map<Integer, List<CalendarEvent>> dayMap = monthMap.get(month);
+
+      /* check if this can be uncommented lateer
+      if (!dayMap.containsKey(day)) {
+        System.out.println("Invalid day: " + day + " for " + year + "-" + month);
+        return;
+      }*/
+      dayMap.get(day).add(event);
+    }
+
   }
 
 
@@ -185,7 +273,7 @@ public class Calendar extends ACalendar {
           List<CalendarEvent> events = dataMap.get(year).get(month).get(day);
           if (!events.isEmpty()) {
             for (CalendarEvent event : events) {
-              System.out.println(event);
+              System.out.println("year :" + year + " month " + month + " date " + day + " " + event);
             }
           }
         }
