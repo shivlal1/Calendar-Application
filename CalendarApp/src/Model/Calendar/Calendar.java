@@ -1,5 +1,7 @@
 package Model.Calendar;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -87,10 +89,6 @@ public class Calendar extends ACalendar {
 
   }
 
-  @Override
-  public void export() {
-
-  }
 
   /**
    * CREATE EVENT function
@@ -199,7 +197,71 @@ public class Calendar extends ACalendar {
   }
 
 
+  private List<EventDetails> getEventsToExport(){
+
+    List<EventDetails> details = new ArrayList<>();
+
+    Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> dataMap = yearMonthDayData;
+    for (int year : dataMap.keySet()) {
+      for (int month : dataMap.get(year).keySet()) {
+        for (int day : dataMap.get(year).get(month).keySet()) {
+          List<CalendarEvent> events = dataMap.get(year).get(month).get(day);
+          if (!events.isEmpty()) {
+            for (CalendarEvent event : events) {
+              details.add(event.getEvent());
+              //System.out.println("year :" + year + " month " + month + " date " + day + " " + event);
+            }
+          }
+        }
+      }
+    }
+    return details;
+
+  }
+
+
   @Override
+  public void export() {
+
+    String[][] data = {
+            {"ID", "Name", "Age"},
+            {"1", "Alice", "25"},
+            {"2", "Bob", "30"},
+            {"3", "Charlie", "28"}
+    };
+
+    String filePath = "output.csv"; // Define CSV file name
+
+
+    try (FileWriter writer = new FileWriter(filePath)) {
+      for (String[] row : data) {
+        writer.append(String.join(",", row));
+        writer.append("\n");
+      }
+      System.out.println("CSV file created: " + filePath);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void makeCsvFile( List<EventDetails> events){
+
+      for(EventDetails e : events){
+         StringBuilder csvString;
+
+         if(e.getSubject()!=null) {
+           e.getSubject();
+         }
+      }
+  }
+  public String exportCalendarAndGetFilePath(){
+    String filePath = "output.csv";
+    List<EventDetails> events = getEventsToExport();
+    makeCsvFile(events);
+    return filePath;
+  }
+
+ /* @Override
   public void printEvents() {
     Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> dataMap = yearMonthDayData;
     for (int year : dataMap.keySet()) {
@@ -214,7 +276,7 @@ public class Calendar extends ACalendar {
         }
       }
     }
-  }
+  } */
 
 
   private List<CalendarEvent> getEventsForDate(LocalDateTime start) {
@@ -475,4 +537,6 @@ public class Calendar extends ACalendar {
     }
     return false;
   }
+
+
 }

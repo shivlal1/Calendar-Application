@@ -28,7 +28,7 @@ public class EditCommand extends AbstractCommand {
   public EditCommand() {
   }
 
-  protected void commandParser(String commandArgs) {
+  public void commandParser(String commandArgs) {
 
 
     initRegexPatter(regex, commandArgs);

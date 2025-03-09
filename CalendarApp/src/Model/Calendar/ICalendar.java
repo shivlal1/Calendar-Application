@@ -11,11 +11,9 @@ public interface ICalendar {
 
   public void export();
 
-  public void printEvents();
-
   public List<EventDetails> getMatchingEvents(PrintEventMetaDetails allMetaData);
 
-  public void printOnTimeEvents(LocalDateTime from);
+  public String  exportCalendarAndGetFilePath();
 
   public List<EventDetails> printFromToEvents(LocalDateTime from, LocalDateTime to);
 
