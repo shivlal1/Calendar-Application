@@ -1,5 +1,7 @@
 package Model.Event;
 
+import Controller.MetaData.EventMetaDetails;
+
 public class EventFactory {
 
   private AEvent event;

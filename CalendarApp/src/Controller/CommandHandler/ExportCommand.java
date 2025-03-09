@@ -1,4 +1,4 @@
-package Controller;
+package Controller.CommandHandler;
 
 import Model.Calendar.ACalendar;
 

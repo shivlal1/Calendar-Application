@@ -6,10 +6,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import Controller.MetaData.EventMetaDetails;
 import Model.Calendar.ACalendar;
 
 public class SingleEvent extends AEvent {
-
 
   private EventDetails eventDetails;
   private EventMetaDetails allMetaDetails;

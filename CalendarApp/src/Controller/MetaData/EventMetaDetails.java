@@ -1,4 +1,4 @@
-package Model.Event;
+package Controller.MetaData;
 
 
 public class EventMetaDetails {

@@ -1,4 +1,4 @@
-package Controller;
+package Controller.CommandHandler;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

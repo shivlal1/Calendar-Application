@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import Controller.MetaData.EventMetaDetails;
 import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 
