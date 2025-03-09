@@ -5,16 +5,32 @@ import java.time.format.DateTimeFormatter;
 
 public class DateUtils {
 
-  private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-  private LocalDateTime localDate;
-  private String date;
+  private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-  public DateUtils(String date) {
-    this.date = date;
+  public static LocalDateTime stringToLocalDateTime(String date) {
+    return LocalDateTime.parse(date, formatter);
   }
 
-  public LocalDateTime stringToLocalDateTime() {
-    return LocalDateTime.parse(date, formatter);
+  public static String getFinalStartDateFromOndate(String onDate, String onTime) {
+    String date;
+    if (onTime != null) {
+      date = onDate + " " + onTime;
+    } else {
+      date = onDate + " " + "00:00:00";
+    }
+    return date;
+  }
+
+  public static String removeTinDateTime(String date) {
+    if (date != null) {
+      date = date.replace("T", " ");
+    }
+    return date;
+  }
+
+  public static String changeDateToDateTime(String date) {
+    date = date + " " + "00:00";
+    return date;
   }
 
 }

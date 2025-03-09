@@ -1,4 +1,4 @@
-package Model.Event;
+package Controller.MetaData;
 
 
 public class EventMetaDetails {
@@ -7,6 +7,7 @@ public class EventMetaDetails {
   private boolean isRecurring;
   private boolean isAllDay;
   private String addUntilDateTime;
+  private boolean autoDecline;
 
   private EventMetaDetails(EventMetaDetailsBuilder builder) {
     this.weekdays = builder.weekdays;
@@ -14,6 +15,7 @@ public class EventMetaDetails {
     this.isRecurring = builder.isRecurring;
     this.isAllDay = builder.isAllDay;
     this.addUntilDateTime = builder.addUntilDateTime;
+    this.autoDecline = builder.autoDecline;
   }
 
   public String getWeekdays() {
@@ -36,6 +38,10 @@ public class EventMetaDetails {
     return addUntilDateTime;
   }
 
+  public boolean getAutoDecline() {
+    return autoDecline;
+  }
+
   public static class EventMetaDetailsBuilder {
 
     private String weekdays;
@@ -43,6 +49,7 @@ public class EventMetaDetails {
     private boolean isRecurring;
     private boolean isAllDay;
     private String addUntilDateTime;
+    private boolean autoDecline;
 
     public EventMetaDetailsBuilder addWeekdays(String weekdays) {
       this.weekdays = weekdays;
@@ -53,6 +60,12 @@ public class EventMetaDetails {
       this.forTimes = forTimes;
       return this;
     }
+
+    public EventMetaDetailsBuilder addAutoDecline(boolean autoDecline) {
+      this.autoDecline = autoDecline;
+      return this;
+    }
+
 
     public EventMetaDetailsBuilder addIsRecurring(boolean isRecurring) {
       this.isRecurring = isRecurring;
@@ -68,6 +81,7 @@ public class EventMetaDetails {
       this.addUntilDateTime = addUntilDateTime;
       return this;
     }
+
 
     public EventMetaDetails build() {
       return new EventMetaDetails(this);

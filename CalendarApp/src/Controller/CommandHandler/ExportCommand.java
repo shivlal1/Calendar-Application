@@ -1,9 +1,9 @@
-package Controller;
+package Controller.CommandHandler;
 
 import Model.Calendar.ACalendar;
 
 // Concrete command for exporting the calendar
-public class ExportCommand implements ICommand {
+public class ExportCommand extends AbstractCommand {
   //private ICalendar calendar;
 
   public ExportCommand() {
@@ -14,5 +14,10 @@ public class ExportCommand implements ICommand {
   public void execute(String commandArgs, ACalendar calendar) {
     // Export the calendar data (e.g., to CSV)
     System.out.println("Executing export calendar command");
+  }
+
+  @Override
+  protected void commandParser(String commandArgs) {
+
   }
 }

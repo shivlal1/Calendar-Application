@@ -1,5 +1,7 @@
 package Model.Event;
 
+import Controller.MetaData.EventMetaDetails;
+
 public class EventFactory {
 
   private AEvent event;
@@ -7,9 +9,9 @@ public class EventFactory {
   public AEvent getEvent(EventDetails eventDetails, EventMetaDetails allMetaDeta) {
 
     if (allMetaDeta.getIsRecurring()) {
-      event = new RecurringEvent();
+      event = new RecurringEvent(eventDetails, allMetaDeta);
     } else {
-      event = new SimpleEvent();
+      event = new SingleEvent(eventDetails, allMetaDeta);
     }
     return event;
   }
