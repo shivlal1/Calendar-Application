@@ -3,11 +3,11 @@ package Controller.CommandHandler;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import Controller.MetaData.EventMetaDetails;
 import Model.Calendar.ACalendar;
 import Model.Event.AEvent;
 import Model.Event.EventDetails;
 import Model.Event.EventFactory;
-import Controller.MetaData.EventMetaDetails;
 import Model.Utils.DateUtils;
 
 public class CreateCommand extends AbstractCommand {
@@ -37,7 +37,8 @@ public class CreateCommand extends AbstractCommand {
           ")" +
           "(?:\\s+repeats\\s+([MTWRFSU]+)\\s+(?:(?:for\\s+(\\d+)\\s+times)|(?:until\\s+(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?))))?$";
 
-  private void commandParser(String commandArgs) {
+
+   protected void commandParser(String commandArgs) {
     initRegexPatter(regex, commandArgs);
     metaDeta = new EventMetaDetails.EventMetaDetailsBuilder();
 

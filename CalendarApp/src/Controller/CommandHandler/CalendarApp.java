@@ -16,7 +16,7 @@ public class CalendarApp {
     commandMap.put("create", new CreateCommand());
     commandMap.put("edit", new EditCommand());
     commandMap.put("print", new PrintCommand());
-    commandMap.put("showStatus", new ShowStatusCommand());
+    commandMap.put("show", new ShowStatusCommand());
     commandMap.put("export", new ExportCommand());
 
     String fromDate = "2025-03-03T00:00:00";
@@ -24,8 +24,8 @@ public class CalendarApp {
     String userCommand = "create event \"Today Meeting\" from " + fromDate + " to " + toDate;
 
     String[] commands = {
-            "create event --autoDecline \"International Conference\" from 2025-03-01T09:00 to 2025-03-03T13:00",
-//            "create event --autoDecline \"Annual Meeting\" on 2025-03-01T09:00:00",
+            "create event  \"International Conference\" from 2025-03-01T09:00 to 2025-03-03T13:00",
+            "create event  \"Annual Meeting\" on 2025-03-01T10:00",
 //            "create event --autoDecline \"Annual Meeting\" on 2025-03-05T09:00:00",
 //            "create event --autoDecline \"hjhgkjgk\" on 2025-03-05T09:00:00",
 
@@ -35,12 +35,12 @@ public class CalendarApp {
 //            "create event --autoDecline \"Annual Meeting\" on 2025-04-15 repeats MR for 5 times"
 //            "create event --autoDecline \"Annual Meeting\" on 2025-04-15 repeats M until 2025-06-01"
 
-         //  "edit event name \"Annual Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 with \"Weekly Meeting\""
+            //  "edit event name \"Annual Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 with \"Weekly Meeting\""
 //            "edit events public \"Annual Meeting\" from 2025-03-01T09:00:00 with \"true\""
 //            "edit events name \"Annual Meeting\" \"Weekly Meeting\""
-             "edit event name \"International Conference\" from 2025-03-01T09:00 to 2025-03-03T13:00 with \"Sasta Conference\"",
-            //"print events from \"2025-03-01T09:00:00\" to \"2025-03-03T13:00:00\"",
-            //"print events on \"2025-03-01\""
+            // "edit event name \"International Conference\" from 2025-03-01T09:00 to 2025-03-03T13:00 with \"Sasta Conference\"",
+            "print events from \"2025-03-01T09:00\" to \"2025-03-03T13:00\"",
+            "show status on 2025-03-07T10:00"
     };
 
     for (int i = 0; i < commands.length; i++) {

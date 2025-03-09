@@ -29,7 +29,7 @@ public class DateUtils {
   }
 
   public static String changeDateToDateTime(String date) {
-    date = date + " " + "00:00:00";
+    date = date + " " + "00:00";
     return date;
   }
 

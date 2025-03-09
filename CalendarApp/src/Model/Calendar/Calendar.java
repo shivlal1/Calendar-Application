@@ -7,9 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import Model.Event.CalendarEvent;
 import Controller.MetaData.EditEventMetaDetails;
 import Controller.MetaData.PrintEventMetaDetails;
+import Model.Event.CalendarEvent;
+import Model.Event.EventDetails;
 
 public class Calendar extends ACalendar {
 
@@ -147,17 +148,19 @@ public class Calendar extends ACalendar {
     }
   }
 
-  public void printFromToEvents(LocalDateTime from, LocalDateTime to) {
+  public List<EventDetails> printFromToEvents(LocalDateTime from, LocalDateTime to) {
 
     List<CalendarEvent> events = getEventsForDate(from);
-
+    List<EventDetails> matchingDetails = new ArrayList<>();
     for (CalendarEvent event : events) {
 
       if ((event.getEvent().getStartDate().isAfter(from) || event.getEvent().getStartDate().equals(from))
               && (event.getEvent().getEndDate().isBefore(to) || event.getEvent().getEndDate().equals(to))) {
+        matchingDetails.add(event.getEvent());
         System.out.println("Matched event: " + event);
       }
     }
+    return matchingDetails;
   }
 
   private Map<Integer, Map<Integer, List<CalendarEvent>>> initializeYear(int year) {
@@ -397,13 +400,17 @@ public class Calendar extends ACalendar {
     }
   }
 
-  public void getMatchingEvents(PrintEventMetaDetails allMetaDeta) {
+  public List<EventDetails> getMatchingEvents(PrintEventMetaDetails allMetaDeta) {
 
+    List<EventDetails> eventDetailsList = new ArrayList<>();
     LocalDateTime startDateTime = allMetaDeta.getLocalStartDate();
     if (isStartToEndDatePrintCommand(allMetaDeta)) {
-      printFromToEvents(startDateTime, allMetaDeta.getLocalEndDate());
+      eventDetailsList = printFromToEvents(startDateTime, allMetaDeta.getLocalEndDate());
     } else if (isOnDatePrintCommand(allMetaDeta)) {
+      eventDetailsList = getEventsOnDateToPrint(startDateTime);
     }
+
+    return eventDetailsList;
 
   }
 
@@ -417,4 +424,55 @@ public class Calendar extends ACalendar {
   }
 
 
+  private List<EventDetails> getEventsOnDateToPrint(LocalDateTime start) {
+
+    int year = start.getYear();
+    int month = start.getMonthValue();
+    int day = start.getDayOfMonth();
+
+    if (!yearMonthDayData.containsKey(year)) {
+      System.out.println("Year not found: " + year);
+      return null;
+    }
+
+    Map<Integer, Map<Integer, List<CalendarEvent>>> monthMap = yearMonthDayData.get(year);
+
+    if (!monthMap.containsKey(month)) {
+      System.out.println("Month not found: " + month);
+      return null;
+    }
+
+    Map<Integer, List<CalendarEvent>> dayMap = monthMap.get(month);
+
+    if (!dayMap.containsKey(day)) {
+      System.out.println("Day not found: " + day);
+      return null;
+    }
+
+    List<EventDetails> details = new ArrayList<>();
+    for (CalendarEvent e : dayMap.get(day)) {
+      details.add(e.getEvent());
+    }
+
+    return details;
+  }
+
+  private boolean isBetween(LocalDateTime start, LocalDateTime middle, LocalDateTime end) {
+    return ((middle.isAfter(start) || middle.isEqual(start))
+            && (middle.isBefore(end) || middle.isEqual(end)));
+  }
+
+  public boolean isBusyOnDay(LocalDateTime date) {
+
+    List<EventDetails> eventDetails = getEventsOnDateToPrint(date);
+
+    for (EventDetails event : eventDetails) {
+      LocalDateTime startTime = event.getStartDate();
+      LocalDateTime endTime = event.getEndDate();
+      if (isBetween(startTime, date, endTime)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

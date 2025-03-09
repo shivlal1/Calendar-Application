@@ -11,4 +11,6 @@ public abstract class AbstractCommand implements ICommand {
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);
   }
+  protected abstract void commandParser(String commandArgs);
+
 }

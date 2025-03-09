@@ -2,8 +2,8 @@ package Controller.CommandHandler;
 
 import java.time.LocalDateTime;
 
-import Model.Calendar.ACalendar;
 import Controller.MetaData.EditEventMetaDetails;
+import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 
 public class EditCommand extends AbstractCommand {
@@ -14,22 +14,22 @@ public class EditCommand extends AbstractCommand {
   private LocalDateTime localStartTime, localEndTime;
   private EditEventMetaDetails.EditEventMetaDetailsBuilder metaData;
   private EditEventMetaDetails allMetaDeta;
+  private static final String regex = "^event(?:s)?\\s+" +
+          "(?<property>\\S+)\\s+" +
+          "\"(?<eventName>.*?)\"\\s+" +
+          "(?:" +
+          "from\\s+(?<start>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2})?)\\s+" +
+          "(?:to\\s+(?<end>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2})?)\\s+)?" +
+          "with\\s+\"(?<newValue>.*?)\"" +
+          "|" +
+          "\"(?<newValue2>.*?)\"" +
+          ")$";
 
   public EditCommand() {
   }
 
-  void commandParser(String commandArgs, ACalendar calendar) {
+  protected void commandParser(String commandArgs) {
 
-     String regex = "^event(?:s)?\\s+" +
-            "(?<property>\\S+)\\s+" +
-            "\"(?<eventName>.*?)\"\\s+" +
-            "(?:" +
-            "from\\s+(?<start>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2})?)\\s+" +
-            "(?:to\\s+(?<end>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2})?)\\s+)?" +
-            "with\\s+\"(?<newValue>.*?)\"" +
-            "|" +
-            "\"(?<newValue2>.*?)\"" +
-            ")$";
 
     initRegexPatter(regex, commandArgs);
     metaData = new EditEventMetaDetails.EditEventMetaDetailsBuilder();
@@ -76,7 +76,7 @@ public class EditCommand extends AbstractCommand {
   }
 
   private void editCommandProcess(String commandArgs, ACalendar calendar) {
-    commandParser(commandArgs, calendar);
+    commandParser(commandArgs);
     editCommandUtil(calendar);
   }
 

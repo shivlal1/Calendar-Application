@@ -2,10 +2,13 @@ package Controller.CommandHandler;
 
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import Model.Calendar.ACalendar;
 import Controller.MetaData.PrintEventMetaDetails;
+import Model.Calendar.ACalendar;
+import Model.Event.EventDetails;
 import Model.Utils.DateUtils;
+import view.ConsoleView;
 
 public class PrintCommand extends AbstractCommand {
 
@@ -15,13 +18,13 @@ public class PrintCommand extends AbstractCommand {
   private PrintEventMetaDetails allMetaDeta;
 
   private static final String regex = "^events (?:from \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\" to \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\"|on \"(\\d{4}-\\d{2}-\\d{2})\")$";
+  // private static final String regex = "^events (?:from \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\" to \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\"|on \"(\\d{4}-\\d{2}-\\d{2})\")$
 
   public PrintCommand() {
 //    this.calendar = calendar;
   }
 
-  void commandParser(String commandArgs) {
-
+  public void commandParser(String commandArgs) {
     initRegexPatter(regex, commandArgs);
 
     if (!matcher.matches()) {
@@ -34,6 +37,10 @@ public class PrintCommand extends AbstractCommand {
     startDate = DateUtils.removeTinDateTime(startDate);
     endDate = DateUtils.removeTinDateTime(endDate);
 
+    if (startDate.indexOf(":") == -1) {
+      startDate = DateUtils.changeDateToDateTime(startDate);
+    }
+    System.out.println("startDate " + startDate);
 
     localStart = DateUtils.stringToLocalDateTime(startDate);
     if (endDate != null) {
@@ -44,17 +51,20 @@ public class PrintCommand extends AbstractCommand {
   }
 
   public void addValuesInMetaDataObject() {
+    System.out.println(localEnd + " " + localEnd);
+    metaData = new PrintEventMetaDetails.PrintEventMetaDetailsBuilder();
+
     metaData.addLocalStartTime(localStart);
     metaData.addLocalEndTime(localEnd);
   }
 
   private void printCommandUtil(ACalendar calendar) {
-
     allMetaDeta = metaData.build();
+    List<EventDetails> eventDetails = calendar.getMatchingEvents(allMetaDeta);
 
-    calendar.getMatchingEvents(allMetaDeta);
+    ConsoleView v = new ConsoleView();
+    v.printInConsole(eventDetails);
 
-    //.....
   }
 
   private void printCommandProcess(String commandArgs, ACalendar calendar) {
