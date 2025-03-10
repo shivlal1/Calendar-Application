@@ -3,14 +3,14 @@ package Controller.MetaData;
 
 import java.time.LocalDateTime;
 
-public class EditEventMetaDetails {
+public class EditCommandMetaDetails {
   private LocalDateTime localStartTime, localEndTime;
   private String startTime, endTime;
   private String eventName;
   private String newValue;
   private String property;
 
-  private EditEventMetaDetails(EditEventMetaDetailsBuilder builder) {
+  private EditCommandMetaDetails(EditEventMetaDetailsBuilder builder) {
     this.eventName = builder.eventName;
     this.newValue = builder.newValue;
     this.property = builder.property;
@@ -93,8 +93,8 @@ public class EditEventMetaDetails {
       return this;
     }
 
-    public EditEventMetaDetails build() {
-      return new EditEventMetaDetails(this);
+    public EditCommandMetaDetails build() {
+      return new EditCommandMetaDetails(this);
     }
   }
 }

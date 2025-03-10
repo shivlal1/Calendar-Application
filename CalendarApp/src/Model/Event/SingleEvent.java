@@ -6,16 +6,18 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-import Controller.MetaData.EventMetaDetails;
+import Controller.MetaData.CreateCommandMetaDetails;
 import Model.Calendar.ACalendar;
 
-public class SingleEvent extends AEvent {
+public class SingleEvent extends Event {
 
-  private EventDetails eventDetails;
-  private EventMetaDetails allMetaDetails;
+  private CreateCommandMetaDetails allMetaDetails;
 
-  SingleEvent(EventDetails eventDetails, EventMetaDetails allMetaDetails) {
-    this.eventDetails = eventDetails;
+  SingleEvent(String subject, LocalDateTime startDate, LocalDateTime endDate,
+              CreateCommandMetaDetails allMetaDetails) {
+
+    super(subject, startDate, endDate);
+
     this.allMetaDetails = allMetaDetails;
   }
 
@@ -24,9 +26,9 @@ public class SingleEvent extends AEvent {
 
     LocalDate currentDay = start.toLocalDate();
     LocalDateTime segmentEnd = currentDay.atTime(23, 59, 59);
-    eventDetails.setEndDate(segmentEnd);
+    endDate = segmentEnd;
 
-    list.add(getCreatedSegmentEvent(calendar, start, eventDetails, segmentEnd));
+    list.add(getCreatedSegmentEvent(calendar, start, this, segmentEnd));
 
     return list;
   }
@@ -54,7 +56,7 @@ public class SingleEvent extends AEvent {
         segmentEnd = currentDay.atTime(23, 59);
       }
 
-      list.add(getCreatedSegmentEvent(calendar, segmentStart, eventDetails, segmentEnd));
+      list.add(getCreatedSegmentEvent(calendar, segmentStart, this, segmentEnd));
     }
 
     return list;
@@ -62,12 +64,13 @@ public class SingleEvent extends AEvent {
 
   public void pushEventToCalendar(ACalendar calendar) {
 
-    LocalDateTime start = eventDetails.getStartDate();
-    LocalDateTime end = eventDetails.getEndDate();
+    LocalDateTime start = this.startDate;
+    LocalDateTime end = this.endDate;
 
-    if (!isValidSingleEvent(start, end)) {
+    if (!isStartBeforeEnd(start, end)) {
       return;
     }
+    System.out.println("valid");
 
     List<CalendarEvent> newEventsList;
     if (allMetaDetails.getIsAllDay()) {
@@ -75,24 +78,10 @@ public class SingleEvent extends AEvent {
     } else {
       newEventsList = getMultiDayEventList(calendar, start, end);
     }
-//
-//    System.out.println("printing all generated events");
-//    for (CalendarEvent e : newEventsList) {
-//      System.out.println(e);
-//    }
-//    System.out.println("printed all generated events");
 
     calendar.createEvent(newEventsList, allMetaDetails.getAutoDecline());
-
   }
 
-  private boolean isValidSingleEvent(LocalDateTime start, LocalDateTime end) {
-
-    if (end.isAfter(start)) {
-      return true;
-    }
-    return false;
-  }
 
 }
 

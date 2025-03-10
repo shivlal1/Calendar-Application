@@ -2,12 +2,12 @@ package Controller.MetaData;
 
 import java.time.LocalDateTime;
 
-public class PrintEventMetaDetails {
+public class PrintCommandMetaDetails {
 
   private LocalDateTime localStartDate;
   private LocalDateTime localEndDate;
 
-  private PrintEventMetaDetails(PrintEventMetaDetailsBuilder builder) {
+  private PrintCommandMetaDetails(PrintEventMetaDetailsBuilder builder) {
     this.localStartDate = builder.localStartDate;
     this.localEndDate = builder.localEndDate;
   }
@@ -35,8 +35,8 @@ public class PrintEventMetaDetails {
       return this;
     }
 
-    public PrintEventMetaDetails build() {
-      return new PrintEventMetaDetails(this);
+    public PrintCommandMetaDetails build() {
+      return new PrintCommandMetaDetails(this);
     }
   }
 }

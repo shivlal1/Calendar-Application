@@ -2,7 +2,7 @@ package Controller.CommandHandler;
 
 import java.time.LocalDateTime;
 
-import Controller.MetaData.EditEventMetaDetails;
+import Controller.MetaData.EditCommandMetaDetails;
 import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 
@@ -12,8 +12,9 @@ public class EditCommand extends AbstractCommand {
   private String start, end;
   private String property, newValue;
   private LocalDateTime localStartTime, localEndTime;
-  private EditEventMetaDetails.EditEventMetaDetailsBuilder metaData;
-  private EditEventMetaDetails allMetaDeta;
+  private EditCommandMetaDetails.EditEventMetaDetailsBuilder metaData;
+  private EditCommandMetaDetails allMetaDeta;
+
   private static final String regex = "^event(?:s)?\\s+" +
           "(?<property>\\S+)\\s+" +
           "\"(?<eventName>.*?)\"\\s+" +
@@ -28,11 +29,11 @@ public class EditCommand extends AbstractCommand {
   public EditCommand() {
   }
 
-  protected void commandParser(String commandArgs) {
+  public void commandParser(String commandArgs) {
 
 
     initRegexPatter(regex, commandArgs);
-    metaData = new EditEventMetaDetails.EditEventMetaDetailsBuilder();
+    metaData = new EditCommandMetaDetails.EditEventMetaDetailsBuilder();
 
     if (!matcher.matches()) {
       System.out.println("  Command did not match the pattern.");

@@ -17,7 +17,7 @@ public class ShowStatusCommand extends AbstractCommand {
     // this.calendar = calendar;
   }
 
-  public void commandParser(String commandArgs, ACalendar calendar) {
+  public void commandParser(String commandArgs) {
 
     initRegexPatter(regex, commandArgs);
 
@@ -39,7 +39,7 @@ public class ShowStatusCommand extends AbstractCommand {
   }
 
   private void showCommandProcess(String commandArgs, ACalendar calendar) {
-    commandParser(commandArgs, calendar);
+    commandParser(commandArgs);
     printCommandUtil(calendar);
   }
 

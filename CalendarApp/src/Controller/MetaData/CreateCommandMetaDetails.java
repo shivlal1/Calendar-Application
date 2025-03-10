@@ -1,21 +1,20 @@
 package Controller.MetaData;
 
 
-public class EventMetaDetails {
-  private String weekdays;
-  private String forTimes;
-  private boolean isRecurring;
-  private boolean isAllDay;
-  private String addUntilDateTime;
-  private boolean autoDecline;
+public class CreateCommandMetaDetails {
 
-  private EventMetaDetails(EventMetaDetailsBuilder builder) {
+  private String addUntilDateTime;
+  private String forTimes, weekdays;
+  private boolean isRecurring, autoDecline, isAllDay;
+
+  private CreateCommandMetaDetails(EventMetaDetailsBuilder builder) {
     this.weekdays = builder.weekdays;
     this.forTimes = builder.forTimes;
     this.isRecurring = builder.isRecurring;
     this.isAllDay = builder.isAllDay;
     this.addUntilDateTime = builder.addUntilDateTime;
     this.autoDecline = builder.autoDecline;
+
   }
 
   public String getWeekdays() {
@@ -42,14 +41,12 @@ public class EventMetaDetails {
     return autoDecline;
   }
 
+
   public static class EventMetaDetailsBuilder {
 
-    private String weekdays;
-    private String forTimes;
-    private boolean isRecurring;
-    private boolean isAllDay;
     private String addUntilDateTime;
-    private boolean autoDecline;
+    private String forTimes, weekdays;
+    private boolean isRecurring, autoDecline, isAllDay;
 
     public EventMetaDetailsBuilder addWeekdays(String weekdays) {
       this.weekdays = weekdays;
@@ -83,8 +80,8 @@ public class EventMetaDetails {
     }
 
 
-    public EventMetaDetails build() {
-      return new EventMetaDetails(this);
+    public CreateCommandMetaDetails build() {
+      return new CreateCommandMetaDetails(this);
     }
   }
 }

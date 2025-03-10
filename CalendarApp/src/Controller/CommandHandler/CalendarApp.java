@@ -8,7 +8,7 @@ import Model.Calendar.Calendar;
 
 
 public class CalendarApp {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
 
     ACalendar calendar = new Calendar();
 
@@ -40,7 +40,9 @@ public class CalendarApp {
 //            "edit events name \"Annual Meeting\" \"Weekly Meeting\""
             // "edit event name \"International Conference\" from 2025-03-01T09:00 to 2025-03-03T13:00 with \"Sasta Conference\"",
             "print events from \"2025-03-01T09:00\" to \"2025-03-03T13:00\"",
-            "show status on 2025-03-07T10:00"
+            "show status on 2025-03-07T10:00",
+            "export cal fileName.csv"
+
     };
 
     for (int i = 0; i < commands.length; i++) {
