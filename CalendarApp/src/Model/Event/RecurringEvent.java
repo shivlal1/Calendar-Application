@@ -5,18 +5,28 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import Controller.MetaData.EventMetaDetails;
+import Controller.MetaData.CreateCommandMetaDetails;
 import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 
-public class RecurringEvent extends AEvent {
+public class RecurringEvent extends Event {
 
-  private EventDetails eventDetails;
-  private EventMetaDetails allMetaDetails;
+  private CreateCommandMetaDetails allMetaDetails;
 
-  RecurringEvent(EventDetails eventDetails, EventMetaDetails allMetaDetails) {
-    this.eventDetails = eventDetails;
+  RecurringEvent(String subject, LocalDateTime startDate, LocalDateTime endDate,
+                 CreateCommandMetaDetails allMetaDetails) {
+
+    super(subject, startDate, endDate);
     this.allMetaDetails = allMetaDetails;
+  }
+
+  public RecurringEvent(Event other, LocalDateTime newStartTime, LocalDateTime newEndTime) {
+    super(other.subject, other.startDate, other.endDate);
+    this.isPublic = other.isPublic;
+    this.description = other.description;
+    this.location = other.location;
+    this.startDate = newStartTime;
+    this.endDate = newEndTime;
   }
 
   private LocalDateTime getRecurringEventEndDate() {
@@ -46,7 +56,8 @@ public class RecurringEvent extends AEvent {
     while (eventsEncountered < requriredRecurringEvents) {
 
       if (isWeekDayIncluded(currDate)) {
-        EventDetails e = new EventDetails(eventDetails, currDate, end);
+        Event e = new RecurringEvent(this, currDate, end);
+
         eventsList.add(getCreatedSegmentEvent(calendar, currDate, e, end));
         eventsEncountered++;
       }
@@ -68,7 +79,8 @@ public class RecurringEvent extends AEvent {
 
     while (!currDate.isAfter(until)) {
       if (isWeekDayIncluded(currDate)) {
-        EventDetails e = new EventDetails(eventDetails, currDate, end);
+        Event e = new RecurringEvent(this, currDate, end);
+
         eventsList.add(getCreatedSegmentEvent(calendar, currDate, e, end));
       }
       currDate = currDate.plusDays(1);
@@ -79,8 +91,13 @@ public class RecurringEvent extends AEvent {
 
   public void pushEventToCalendar(ACalendar calendar) {
 
-    LocalDateTime start = eventDetails.getStartDate();
-    LocalDateTime end = eventDetails.getEndDate();
+    LocalDateTime start = this.startDate;
+    LocalDateTime end = this.endDate;
+
+    if (!isStartBeforeEnd(start, end)) {
+      return;
+    }
+
     List<CalendarEvent> newEventsList = new ArrayList<>();
 
     if (allMetaDetails.getAddUntilDateTime() != null) {
@@ -90,14 +107,7 @@ public class RecurringEvent extends AEvent {
       newEventsList = getForTimeRecurringEvent(calendar, start, end, newEventsList);
     }
 
-//    System.out.println("printing all generated recurring event");
-//    for (CalendarEvent e : newEventsList) {
-//      System.out.println(e);
-//    }
-//    System.out.println("finished printing all generated recurring event");
-
     calendar.createEvent(newEventsList, true);
-
   }
 
 

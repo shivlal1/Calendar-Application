@@ -8,7 +8,7 @@ import Model.Calendar.Calendar;
 
 
 public class CalendarApp {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
 
     ACalendar calendar = new Calendar();
 

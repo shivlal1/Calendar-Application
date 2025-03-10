@@ -3,20 +3,37 @@ package Model.Calendar;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import Controller.MetaData.PrintEventMetaDetails;
-import Model.Event.EventDetails;
+import Controller.MetaData.CreateCommandMetaDetails;
+import Controller.MetaData.EditCommandMetaDetails;
+import Controller.MetaData.PrintCommandMetaDetails;
+import Model.Event.CalendarEvent;
+import Model.Event.Event;
 
 public interface ICalendar {
-  public void showStatus();
 
-  public void export();
 
-  public List<EventDetails> getMatchingEvents(PrintEventMetaDetails allMetaData);
+  //
+  public void printEvents();
+  //
 
-  public String  exportCalendarAndGetFilePath();
+  // CREATE
+  void createEvent(List<CalendarEvent> event, boolean autoDecline);
 
-  public List<EventDetails> printFromToEvents(LocalDateTime from, LocalDateTime to);
+  // EDIT
+  public void editEvent(EditCommandMetaDetails allMetaDeta);
 
+  // PRINT
+  public List<Event> getMatchingEvents(PrintCommandMetaDetails allMetaData);
+
+
+  // STATUS
   public boolean isBusyOnDay(LocalDateTime date);
+
+  // EXPORT
+  public String exportCalendarAndGetFilePath();
+
+  public void createEvent(String subject, LocalDateTime localStartDateTime,
+                          LocalDateTime localEndDateTime,
+                          CreateCommandMetaDetails allMetaDeta);
 
 }

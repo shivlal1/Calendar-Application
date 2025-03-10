@@ -1,17 +1,20 @@
 package Model.Event;
 
-import Controller.MetaData.EventMetaDetails;
+import java.time.LocalDateTime;
+
+import Controller.MetaData.CreateCommandMetaDetails;
 
 public class EventFactory {
 
-  private AEvent event;
+  private Event event;
 
-  public AEvent getEvent(EventDetails eventDetails, EventMetaDetails allMetaDeta) {
+  public Event getEvent(String subject, LocalDateTime localStartDateTime, LocalDateTime localEndDateTime,
+                        CreateCommandMetaDetails allMetaDeta) {
 
     if (allMetaDeta.getIsRecurring()) {
-      event = new RecurringEvent(eventDetails, allMetaDeta);
+      event = new RecurringEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
     } else {
-      event = new SingleEvent(eventDetails, allMetaDeta);
+      event = new SingleEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
     }
     return event;
   }

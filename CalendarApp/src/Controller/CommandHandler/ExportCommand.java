@@ -1,9 +1,6 @@
 package Controller.CommandHandler;
 
-import java.util.List;
-
 import Model.Calendar.ACalendar;
-import Model.Event.EventDetails;
 
 public class ExportCommand extends AbstractCommand {
   private String fileName;
@@ -22,11 +19,11 @@ public class ExportCommand extends AbstractCommand {
       System.out.println("  Command did not match the pattern.");
     }
     String fileName = matcher.group(1);
-    System.out.println("filename "+fileName);
+    System.out.println("filename " + fileName);
   }
 
-  public void exportCommandUtil(ACalendar calendar){
-    String filePath =  calendar.exportCalendarAndGetFilePath();
+  public void exportCommandUtil(ACalendar calendar) {
+    String filePath = calendar.exportCalendarAndGetFilePath();
   }
 
   @Override

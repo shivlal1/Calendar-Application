@@ -1,7 +1,5 @@
 package Model.Calendar;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -9,10 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import Controller.MetaData.EditEventMetaDetails;
-import Controller.MetaData.PrintEventMetaDetails;
+import Controller.MetaData.CreateCommandMetaDetails;
+import Controller.MetaData.EditCommandMetaDetails;
+import Controller.MetaData.PrintCommandMetaDetails;
 import Model.Event.CalendarEvent;
-import Model.Event.EventDetails;
+import Model.Event.Event;
+import Model.Event.EventFactory;
 
 public class Calendar extends ACalendar {
 
@@ -84,11 +84,6 @@ public class Calendar extends ACalendar {
     return false;
   }
 
-  @Override
-  public void showStatus() {
-
-  }
-
 
   /**
    * CREATE EVENT function
@@ -119,6 +114,7 @@ public class Calendar extends ACalendar {
       return;
     }
 
+    System.out.println("trying to create");
     for (CalendarEvent event : events) {
       LocalDateTime date = event.getStartDate();
       int year = date.getYear();
@@ -146,16 +142,16 @@ public class Calendar extends ACalendar {
     }
   }
 
-  public List<EventDetails> printFromToEvents(LocalDateTime from, LocalDateTime to) {
+  public List<Event> printFromToEvents(LocalDateTime from, LocalDateTime to) {
 
     List<CalendarEvent> events = getEventsForDate(from);
-    List<EventDetails> matchingDetails = new ArrayList<>();
+    List<Event> matchingDetails = new ArrayList<>();
     for (CalendarEvent event : events) {
 
       if ((event.getEvent().getStartDate().isAfter(from) || event.getEvent().getStartDate().equals(from))
               && (event.getEvent().getEndDate().isBefore(to) || event.getEvent().getEndDate().equals(to))) {
         matchingDetails.add(event.getEvent());
-        System.out.println("Matched event: " + event);
+        // System.out.println("Matched event: " + event);
       }
     }
     return matchingDetails;
@@ -197,9 +193,9 @@ public class Calendar extends ACalendar {
   }
 
 
-  private List<EventDetails> getEventsToExport(){
+  private List<Event> getEventsToExport() {
 
-    List<EventDetails> details = new ArrayList<>();
+    List<Event> details = new ArrayList<>();
 
     Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> dataMap = yearMonthDayData;
     for (int year : dataMap.keySet()) {
@@ -220,48 +216,24 @@ public class Calendar extends ACalendar {
   }
 
 
-  @Override
-  public void export() {
+  private void makeCsvFile(List<Event> events) {
 
-    String[][] data = {
-            {"ID", "Name", "Age"},
-            {"1", "Alice", "25"},
-            {"2", "Bob", "30"},
-            {"3", "Charlie", "28"}
-    };
+    for (Event e : events) {
+      StringBuilder csvString;
 
-    String filePath = "output.csv"; // Define CSV file name
-
-
-    try (FileWriter writer = new FileWriter(filePath)) {
-      for (String[] row : data) {
-        writer.append(String.join(",", row));
-        writer.append("\n");
+      if (e.getSubject() != null) {
+        e.getSubject();
       }
-      System.out.println("CSV file created: " + filePath);
-    } catch (IOException e) {
-      e.printStackTrace();
     }
   }
 
-  private void makeCsvFile( List<EventDetails> events){
-
-      for(EventDetails e : events){
-         StringBuilder csvString;
-
-         if(e.getSubject()!=null) {
-           e.getSubject();
-         }
-      }
-  }
-  public String exportCalendarAndGetFilePath(){
+  public String exportCalendarAndGetFilePath() {
     String filePath = "output.csv";
-    List<EventDetails> events = getEventsToExport();
+    List<Event> events = getEventsToExport();
     makeCsvFile(events);
     return filePath;
   }
 
- /* @Override
   public void printEvents() {
     Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> dataMap = yearMonthDayData;
     for (int year : dataMap.keySet()) {
@@ -276,7 +248,7 @@ public class Calendar extends ACalendar {
         }
       }
     }
-  } */
+  }
 
 
   private List<CalendarEvent> getEventsForDate(LocalDateTime start) {
@@ -334,20 +306,20 @@ public class Calendar extends ACalendar {
     }
   }
 
-  private boolean isEditByEventNameAndStartTime(EditEventMetaDetails data) {
+  private boolean isEditByEventNameAndStartTime(EditCommandMetaDetails data) {
     return (data.getEventName() != null && data.getStartTime() != null && data.getEndTime() == null);
   }
 
-  private boolean isEditByEventName(EditEventMetaDetails data) {
+  private boolean isEditByEventName(EditCommandMetaDetails data) {
     return (data.getEventName() != null && data.getStartTime() == null && data.getEndTime() == null);
   }
 
-  private boolean isEditByEventNameAndTime(EditEventMetaDetails data) {
+  private boolean isEditByEventNameAndTime(EditCommandMetaDetails data) {
     return (data.getEventName() != null && data.getStartTime() != null && data.getEndTime() != null);
   }
 
 
-  public void editEvent(EditEventMetaDetails data) {
+  public void editEvent(EditCommandMetaDetails data) {
 
     String newValue = data.getNewValue();
     String property = data.getProperty();
@@ -462,9 +434,9 @@ public class Calendar extends ACalendar {
     }
   }
 
-  public List<EventDetails> getMatchingEvents(PrintEventMetaDetails allMetaDeta) {
+  public List<Event> getMatchingEvents(PrintCommandMetaDetails allMetaDeta) {
 
-    List<EventDetails> eventDetailsList = new ArrayList<>();
+    List<Event> eventDetailsList = new ArrayList<>();
     LocalDateTime startDateTime = allMetaDeta.getLocalStartDate();
     if (isStartToEndDatePrintCommand(allMetaDeta)) {
       eventDetailsList = printFromToEvents(startDateTime, allMetaDeta.getLocalEndDate());
@@ -477,16 +449,16 @@ public class Calendar extends ACalendar {
   }
 
 
-  private boolean isStartToEndDatePrintCommand(PrintEventMetaDetails allMetaDeta) {
+  private boolean isStartToEndDatePrintCommand(PrintCommandMetaDetails allMetaDeta) {
     return (allMetaDeta.getLocalStartDate() != null && allMetaDeta.getLocalEndDate() != null);
   }
 
-  private boolean isOnDatePrintCommand(PrintEventMetaDetails allMetaDeta) {
+  private boolean isOnDatePrintCommand(PrintCommandMetaDetails allMetaDeta) {
     return (allMetaDeta.getLocalStartDate() != null);
   }
 
 
-  private List<EventDetails> getEventsOnDateToPrint(LocalDateTime start) {
+  private List<Event> getEventsOnDateToPrint(LocalDateTime start) {
 
     int year = start.getYear();
     int month = start.getMonthValue();
@@ -511,7 +483,7 @@ public class Calendar extends ACalendar {
       return null;
     }
 
-    List<EventDetails> details = new ArrayList<>();
+    List<Event> details = new ArrayList<>();
     for (CalendarEvent e : dayMap.get(day)) {
       details.add(e.getEvent());
     }
@@ -526,9 +498,9 @@ public class Calendar extends ACalendar {
 
   public boolean isBusyOnDay(LocalDateTime date) {
 
-    List<EventDetails> eventDetails = getEventsOnDateToPrint(date);
+    List<Event> eventDetails = getEventsOnDateToPrint(date);
 
-    for (EventDetails event : eventDetails) {
+    for (Event event : eventDetails) {
       LocalDateTime startTime = event.getStartDate();
       LocalDateTime endTime = event.getEndDate();
       if (isBetween(startTime, date, endTime)) {
@@ -536,6 +508,20 @@ public class Calendar extends ACalendar {
       }
     }
     return false;
+  }
+
+
+  ///
+
+  public void createEvent(String subject, LocalDateTime localStartDateTime, LocalDateTime localEndDateTime,
+                          CreateCommandMetaDetails allMetaDeta) {
+
+    EventFactory factory = new EventFactory();
+
+    Event event = factory.getEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
+
+    event.pushEventToCalendar(this);
+
   }
 
 

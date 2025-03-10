@@ -3,22 +3,19 @@ package Controller.CommandHandler;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import Controller.MetaData.EventMetaDetails;
+import Controller.MetaData.CreateCommandMetaDetails;
 import Model.Calendar.ACalendar;
-import Model.Event.AEvent;
-import Model.Event.EventDetails;
-import Model.Event.EventFactory;
 import Model.Utils.DateUtils;
 
 public class CreateCommand extends AbstractCommand {
 
   private String subject, weekdays, forTimes;
-  private EventMetaDetails.EventMetaDetailsBuilder metaDeta;
+  private CreateCommandMetaDetails.EventMetaDetailsBuilder metaDeta;
   private String startDateTime, endDateTime, untilDateTime;
   private String finalStartDate, finalEndDate, finalUntilDateTime;
   private LocalDateTime localStartDateTime, localEndDateTime;
   private String onDate, onTime;
-  private EventMetaDetails allMetaDeta;
+  private CreateCommandMetaDetails allMetaDeta;
   private boolean isAllDayEvent;
   private boolean isRecurring;
   private boolean autoDecline;
@@ -31,12 +28,12 @@ public class CreateCommand extends AbstractCommand {
           "(?:\\s+repeats\\s+([MTWRFSU]+)\\s+(?:(?:for\\s+(\\d+)\\s+times)|(?:until\\s+(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?))))?$";
 
 
-   public void commandParser(String commandArgs) {
+  public void commandParser(String commandArgs) throws Exception {
     initRegexPatter(regex, commandArgs);
-    metaDeta = new EventMetaDetails.EventMetaDetailsBuilder();
+    metaDeta = new CreateCommandMetaDetails.EventMetaDetailsBuilder();
 
     if (!matcher.matches()) {
-      System.out.println("  Command did not match the pattern.");
+      throw new Exception("Create command not a match");
     }
 
     String autoDeclineStr = matcher.group(1);
@@ -51,15 +48,15 @@ public class CreateCommand extends AbstractCommand {
     forTimes = matcher.group(8);
     untilDateTime = matcher.group(9);
 
+    isRecurring = (weekdays != null);
+    isAllDayEvent = (onDate != null);
+
     addValuesInMetaDataObject();
     processDateValues();
     setEndTime();
   }
 
   private void addValuesInMetaDataObject() {
-    isRecurring = (weekdays != null);
-    isAllDayEvent = (onDate != null);
-
     metaDeta.addWeekdays(weekdays);
     metaDeta.addForTimes(forTimes);
     metaDeta.addIsRecurring(isRecurring);
@@ -116,23 +113,28 @@ public class CreateCommand extends AbstractCommand {
   }
 
   private void createEventUtil(ACalendar calendar) {
-    EventDetails eventDetails = new EventDetails(subject, localStartDateTime,
-            "", "", localEndDateTime, false);
-
     allMetaDeta = metaDeta.build();
+    calendar.createEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
+
+/*     EventDetails eventDetails = new EventDetails(subject, localStartDateTime,
+            null, null, localEndDateTime, false);
+
+
     EventFactory factory = new EventFactory();
 
-    AEvent event = factory.getEvent(eventDetails, allMetaDeta);
-    event.pushEventToCalendar(calendar);
+    AEvent event = factory.getEvent(subject,localStartDateTime, null,
+            null,  localEndDateTime, false, allMetaDeta);
+    event.pushEventToCalendar(calendar); */
+
   }
 
-  private void createCommandProcess(String commandArgs, ACalendar calendar) {
+  private void createCommandProcess(String commandArgs, ACalendar calendar) throws Exception {
     commandParser(commandArgs);
     createEventUtil(calendar);
   }
 
   @Override
-  public void execute(String commandArgs, ACalendar calendar) {
+  public void execute(String commandArgs, ACalendar calendar) throws Exception {
     createCommandProcess(commandArgs, calendar);
   }
 }

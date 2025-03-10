@@ -2,13 +2,13 @@ package view;
 
 import java.util.List;
 
-import Model.Event.EventDetails;
+import Model.Event.Event;
 
 public class ConsoleView {
 
-  public void printInConsole(List<EventDetails> events) {
+  public void printInConsole(List<Event> events) {
     System.out.println("CONSOLE VIEW");
-    for (EventDetails event : events) {
+    for (Event event : events) {
       System.out.println(event);
     }
   }

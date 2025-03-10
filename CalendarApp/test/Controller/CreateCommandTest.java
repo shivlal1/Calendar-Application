@@ -1,137 +1,124 @@
 package Controller;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import Controller.CommandHandler.CreateCommand;
+import Controller.CommandHandler.EditCommand;
 import Controller.CommandHandler.ICommand;
+import Controller.CommandHandler.PrintCommand;
+import Controller.CommandHandler.ShowStatusCommand;
+import Controller.MetaData.PrintCommandMetaDetails;
 import Model.Calendar.ACalendar;
 import Model.Calendar.Calendar;
+import Model.Event.Event;
+import Model.Utils.DateUtils;
+
+import static org.junit.Assert.assertEquals;
 
 public class CreateCommandTest {
+  ICommand createCommand;
+  ICommand editCommand;
+  ICommand printCommand;
+  ICommand showStatusCommand;
+
+  @Before
+  public void init() {
+    createCommand = new CreateCommand();
+    editCommand = new EditCommand();
+    printCommand = new PrintCommand();
+    showStatusCommand = new ShowStatusCommand();
+  }
 
   @Test
-  public void testSimpleCommand() {
+  public void testSimpleCommand() throws Exception {
+
+    ACalendar cal = new Calendar();
+
     String command = "event \"International Conference\" from 2025-03-01T09:00 to 2025-03-03T13:00";
-    ACalendar cal = new Calendar();
-    ICommand createCommand = new CreateCommand();
     createCommand.execute(command, cal);
+
+    LocalDateTime start = DateUtils.stringToLocalDateTime("2025-03-01 09:00");
+    LocalDateTime end = DateUtils.stringToLocalDateTime("2025-03-03 13:00");
+
+    PrintCommandMetaDetails print = new PrintCommandMetaDetails.PrintEventMetaDetailsBuilder()
+            .addLocalEndTime(end)
+            .addLocalStartTime(start)
+            .build();
+
+    List<Event> list = cal.getMatchingEvents(print);
+    assertEquals(list.get(0).getSubject(), "International Conference");
+    assertEquals(list.get(0).getStartDate(), start);
+    assertEquals(list.get(0).getEndDate(), end);
+    assertEquals(list.size(), 1);
+
+
+    start = DateUtils.stringToLocalDateTime("2025-03-01 09:00");
+
+    PrintCommandMetaDetails print2 = new PrintCommandMetaDetails.PrintEventMetaDetailsBuilder()
+            .addLocalStartTime(start)
+            .build();
+
+    list = cal.getMatchingEvents(print2);
+
+    assertEquals(list.get(0).getSubject(), "International Conference");
+    assertEquals(list.get(0).getStartDate(), start);
+    assertEquals(list.size(), 1);
     cal.printEvents();
   }
 
   @Test
-  public void commandWithAutoDecline() {
-    String command = "event \"International Conference\" from 2025-03-01T09:00 to 2025-03-05T13:00";
+  public void testSimpleCommand2() throws Exception {
     ACalendar cal = new Calendar();
-    ICommand createCommand = new CreateCommand();
+    String command = "event  \"RE\" from 2025-03-01T09:00  to " +
+            "2025-03-01T10:00  repeats MTW for 5 times";
     createCommand.execute(command, cal);
-    cal.printEvents();
-    System.out.println("done");
 
-    command = "event \"International\" from 2025-03-01T09:00 to 2025-03-03T13:00";
-    createCommand.execute(command, cal);
-    System.out.println("PRINTING EVENTS");
-    cal.printEvents();
+    LocalDateTime start = DateUtils.stringToLocalDateTime("2025-03-03 09:00");
+    LocalDateTime end = DateUtils.stringToLocalDateTime("2025-03-03 10:00");
+
+    PrintCommandMetaDetails print = new PrintCommandMetaDetails.PrintEventMetaDetailsBuilder()
+            .addLocalEndTime(end)
+            .addLocalStartTime(start)
+            .build();
+
+    List<Event> list = cal.getMatchingEvents(print);
+    assertEquals(list.get(0).getSubject(), "RE");
+    assertEquals(list.get(0).getStartDate(), start);
+    assertEquals(list.size(), 1);
   }
 
   @Test
-  public void commandWithOn() {
-    String command = "event --autoDecline \"International Conference\" on 2025-03-01T09:00";
+  public void testSimpleCommand3() throws Exception {
     ACalendar cal = new Calendar();
-    ICommand createCommand = new CreateCommand();
+    String command = "event  \"RE\" from 2025-03-01T09:00  to " +
+            "2025-03-01T10:00  repeats MTW for 5 times";
     createCommand.execute(command, cal);
+
+    command = "event \"International Conference\" from 2025-03-01T09:00 to 2025-03-03T13:00";
+    createCommand.execute(command, cal);
+
     cal.printEvents();
+    /* LocalDateTime start = DateUtils.stringToLocalDateTime("2025-03-03 09:00");
+    LocalDateTime end = DateUtils.stringToLocalDateTime("2025-03-03 10:00");
+
+    PrintEventMetaDetails print = new PrintEventMetaDetails.PrintEventMetaDetailsBuilder()
+            .addLocalEndTime(end)
+            .addLocalStartTime(start)
+            .build();
+
+    List<AEvent> list = cal.getMatchingEvents(print);
+    assertEquals(list.get(0).getSubject(),"RE");
+    assertEquals(list.get(0).getStartDate(),start);
+    assertEquals(list.size(),1); */
   }
 
   @Test
-  public void recurringEvent() {
-    String command = "event --autoDecline \"International Conference\" on 2025-03-01T09:00";
-    ACalendar cal = new Calendar();
-    ICommand createCommand = new CreateCommand();
-    createCommand.execute(command, cal);
-    cal.printEvents();
+  public void dateUtil() {
+    System.out.println(DateUtils.stringToLocalDateTime("2025-03-04 00:00"));
+
   }
-
-  @Test
-  public void recurringEvent1() {
-    String command = "event  \"Annual\" on 2025-04-15 repeats M until 2025-06-01";
-    ACalendar cal = new Calendar();
-    ICommand createCommand = new CreateCommand();
-    createCommand.execute(command, cal);
-    cal.printEvents();
-  }
-
-  @Test
-  public void recurringEvent2() {
-    String command = "event \"R E\" on 2025-04-15 repeats MT for 5 times";
-    ACalendar cal = new Calendar();
-    ICommand createCommand = new CreateCommand();
-    createCommand.execute(command, cal);
-    cal.printEvents();
-  }
-
-  @Test
-  public void recurringEvent3() {
-
-    String command = "event --autoDecline \"International Conference\" on 2025-04-27T09:00";
-    ACalendar cal = new Calendar();
-    ICommand createCommand = new CreateCommand();
-    createCommand.execute(command, cal);
-    cal.printEvents();
-
-    command = "event \"R E\" on 2025-04-20 repeats MT for 5 times";
-    createCommand.execute(command, cal);
-    cal.printEvents();
-  }
-
-  @Test
-  public void recurringEvent4() {
-
-    String command = "event \"International Conference\" from 2025-06-09T09:45 to 2025-06-09T11:00";
-    //String command = "event \"International Conference\" from 2025-03-01T09:00:00 to 2025-03-05T13:00:00";
-
-    ACalendar cal = new Calendar();
-    ICommand createCommand = new CreateCommand();
-    createCommand.execute(command, cal);
-    cal.printEvents();
-
-    command = "event --autoDecline \"NN\" from 2025-04-28T09:00 to 2025-04-28T10:00 repeats MTW until 2025-06-28T09:00";
-    createCommand.execute(command, cal);
-    cal.printEvents();
-  }
-
-
-  @Test
-  public void recurringEvent5() {
-
-    String command = "event \"International Conference\" from 2025-04-30T09:45 to 2025-04-30T10:00";
-    //String command = "event \"International Conference\" from 2025-03-01T09:00:00 to 2025-03-05T13:00:00";
-
-    ACalendar cal = new Calendar();
-    ICommand createCommand = new CreateCommand();
-    createCommand.execute(command, cal);
-    cal.printEvents();
-
-    //command = "event --autoDecline \"NN\" from 2025-04-28T09:00:00 to 2025-04-28T10:00:00 repeats MTW until 2025-06-28T09:00:00";
-    command = "event --autoDecline \"N\" from 2025-04-28T09:00 to 2025-04-28T10:00 repeats MTW for 5 times";
-    createCommand.execute(command, cal);
-    cal.printEvents();
-  }
-
-  @Test
-  public void recurringEvent52() {
-
-    String command = "event \"International Conference\" from 2025-04-30T09:45 to 2025-04-30T10:00";
-    //String command = "event \"International Conference\" from 2025-03-01T09:00:00 to 2025-03-05T13:00:00";
-
-    ACalendar cal = new Calendar();
-    ICommand createCommand = new CreateCommand();
-    createCommand.execute(command, cal);
-    cal.printEvents();
-
-    //command = "event --autoDecline \"NN\" from 2025-04-28T09:00:00 to 2025-04-28T10:00:00 repeats MTW until 2025-06-28T09:00:00";
-    command = "event --autoDecline \"N\" from 2025-04-28T09:00 to 2025-04-28T10:00 repeats MTW for 5 times";
-    createCommand.execute(command, cal);
-    cal.printEvents();
-  }
-
 }
