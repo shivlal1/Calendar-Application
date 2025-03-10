@@ -2,8 +2,7 @@
 
 ## Introduction
 
-This project implements a virtual calendar application inspired by popular applications like Google Calendar and Apple's iCalendar. It allows users to create, modify, query, and export calendar events with features tailored for user-friendliness and ease of use.
-
+This project implements a comprehensive virtual calendar application inspired by popular applications like Google Calendar and Apple's iCalendar. Designed to simplify event management, it provides users with the ability to seamlessly create, modify, query, and export calendar events. It supports a variety of event types, including single-day, multi-day, and recurring events, all-day events with advanced features such as conflict detection and resolution, user-friendly querying, and compatibility with widely-used platforms like Google Calendar and iCalendar. Whether for personal planning or collaborative scheduling, this application aims to enhance productivity and organization through intuitive command-line interactions and robust backend logic.
 ## Feature Overview
 
 - **Single Calendar Support**: Operates on EST timezone, capable of handling events spanning multiple days.
@@ -67,9 +66,10 @@ The exported CSV file is compatible with Google Calendar. Upload the generated f
 
 ## Project Structure
 
-- `src/`: Source code files.
-- `test/`: Contains all unit tests.
-- `README.md`: Project description and user guide.
+- `src/`: This folder contains all the source code files.
+- `test/`: This folder contains all unit tests.
+- `res/`: Contains a screenshot of the Google Calendar with the events, a txt file with the list of valid commands, a txt file with a list of commands where at least one command is invalid and finally the class diagram of the design of the application.
+- `README.md`: Project description and user guide to help the users to run the program.
 
 ## Testing and Quality Assurance
 
