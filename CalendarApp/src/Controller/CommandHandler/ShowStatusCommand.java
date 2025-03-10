@@ -6,15 +6,12 @@ import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 import view.ConsoleView;
 
-// Concrete command for showing event status
 public class ShowStatusCommand extends AbstractCommand {
-  //private ICalendar calendar;
   private static String regex = "status on (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})";
   private LocalDateTime localOnDate;
   private String onDate;
 
   public ShowStatusCommand() {
-    // this.calendar = calendar;
   }
 
   public void commandParser(String commandArgs) {
@@ -31,9 +28,7 @@ public class ShowStatusCommand extends AbstractCommand {
   }
 
   private void printCommandUtil(ACalendar calendar) {
-
     boolean isBusy = calendar.isBusyOnDay(localOnDate);
-
     ConsoleView view = new ConsoleView();
     view.showStatusInConsole(isBusy);
   }

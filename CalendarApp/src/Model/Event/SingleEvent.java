@@ -19,42 +19,7 @@ public class SingleEvent extends Event {
     this.allMetaDetails = allMetaDetails;
   }
 
-  private List<Event> getAllDayEventList(LocalDateTime start) {
-    List<Event> list = new ArrayList<>();
-    LocalDate currentDay = start.toLocalDate();
-    LocalDateTime segmentEnd = currentDay.atTime(23, 59);
-    this.endDate = segmentEnd;
-    list.add(geCalendarEvent(start, this, segmentEnd));
-    return list;
-  }
 
-
-  private List<CalendarEvent> getMultiDayEventList(LocalDateTime start, LocalDateTime end) {
-
-    List<CalendarEvent> list = new ArrayList<>();
-    long daysBetween = ChronoUnit.DAYS.between(start, end) + 1;
-
-    for (int i = 0; i < daysBetween; i++) {
-      LocalDate currentDay = start.toLocalDate().plusDays(i);
-      LocalDateTime segmentStart;
-      LocalDateTime segmentEnd;
-
-      if (i == 0) {
-        segmentStart = start;
-        segmentEnd = currentDay.atTime(23, 59);
-      } else if (i == daysBetween - 1) {
-        segmentStart = currentDay.atStartOfDay();
-        segmentEnd = end;
-      } else {
-        segmentStart = currentDay.atStartOfDay();
-        segmentEnd = currentDay.atTime(23, 59);
-      }
-
-      list.add(geCalendarEvent(segmentStart, this, segmentEnd));
-    }
-
-    return list;
-  }
 
   public List<Event> generateEventsForCalendar() {
 

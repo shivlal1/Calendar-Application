@@ -31,7 +31,6 @@ public class EditCommand extends AbstractCommand {
 
   public void commandParser(String commandArgs) {
 
-
     initRegexPatter(regex, commandArgs);
     metaData = new EditCommandMetaDetails.EditEventMetaDetailsBuilder();
 
@@ -56,7 +55,6 @@ public class EditCommand extends AbstractCommand {
       end = DateUtils.removeTinDateTime(end);
       localEndTime = DateUtils.stringToLocalDateTime(end);
     }
-
     addValuesInMetaDataObject();
   }
 
@@ -69,7 +67,6 @@ public class EditCommand extends AbstractCommand {
     metaData.addLocalStartTime(localStartTime);
     metaData.addLocalEndTime(localEndTime);
   }
-
 
   private void editCommandUtil(ACalendar calendar) {
     allMetaDeta = metaData.build();

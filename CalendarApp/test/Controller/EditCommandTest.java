@@ -24,7 +24,7 @@ public class EditCommandTest {
     command = "event name \"International Conference\" from 2025-03-01T09:00 to 2025-03-03T13:00 with \"Weekly Meeting\"";
     ICommand editCommand = new EditCommand();
     editCommand.execute(command, cal);
-    // cal.printEvents();
+    cal.printEvents();
   }
 
 
@@ -47,7 +47,7 @@ public class EditCommandTest {
     command = "events name \"N \" \"Weekly Meeting\"";
     ICommand editCommand = new EditCommand();
     editCommand.execute(command, cal);
-    //cal.printEvents();
+    cal.printEvents();
 
     //"print events from \"2025-03-01T09:00:00\" to \"2025-03-03T13:00:00\"",
 

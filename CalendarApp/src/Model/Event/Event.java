@@ -84,13 +84,6 @@ public abstract class Event {
   }
 
 
-  CalendarEvent geCalendarEvent(LocalDateTime start,
-                                Event info,
-                                LocalDateTime segmentEnd) {
-    return new CalendarEvent(info, start, segmentEnd);
-  }
-
-
   @Override
   public String toString() {
     StringBuilder details = new StringBuilder();

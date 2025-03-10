@@ -109,23 +109,11 @@ public class CreateCommand extends AbstractCommand {
     if (isRecurring) {
       formatUntilTimeForRecurringEvent();
     }
-
   }
 
   private void createEventUtil(ACalendar calendar) {
     allMetaDeta = metaDeta.build();
     calendar.createEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
-
-/*     EventDetails eventDetails = new EventDetails(subject, localStartDateTime,
-            null, null, localEndDateTime, false);
-
-
-    EventFactory factory = new EventFactory();
-
-    AEvent event = factory.getEvent(subject,localStartDateTime, null,
-            null,  localEndDateTime, false, allMetaDeta);
-    event.pushEventToCalendar(calendar); */
-
   }
 
   private void createCommandProcess(String commandArgs, ACalendar calendar) throws Exception {
