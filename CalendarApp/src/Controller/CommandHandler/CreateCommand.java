@@ -2,6 +2,8 @@ package Controller.CommandHandler;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Controller.MetaData.CreateCommandMetaDetails;
 import Model.Calendar.ACalendar;
@@ -31,14 +33,11 @@ public class CreateCommand extends AbstractCommand {
   public void commandParser(String commandArgs) throws Exception {
     initRegexPatter(regex, commandArgs);
     metaDeta = new CreateCommandMetaDetails.EventMetaDetailsBuilder();
-
     if (!matcher.matches()) {
-      throw new Exception("Create command not a match");
+      throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
-
     String autoDeclineStr = matcher.group(1);
     autoDecline = autoDeclineStr != null && !autoDeclineStr.trim().isEmpty();
-
     subject = matcher.group(2).trim();
     startDateTime = DateUtils.removeTinDateTime(matcher.group(3));
     endDateTime = DateUtils.removeTinDateTime(matcher.group(4));
@@ -47,13 +46,54 @@ public class CreateCommand extends AbstractCommand {
     weekdays = matcher.group(7);
     forTimes = matcher.group(8);
     untilDateTime = matcher.group(9);
-
     isRecurring = (weekdays != null);
     isAllDayEvent = (onDate != null);
-
     addValuesInMetaDataObject();
     processDateValues();
     setEndTime();
+  }
+
+  private String getRepeatsErrorMessage(String command) {
+    Pattern repeatsPattern = Pattern.compile("repeats\\s+([A-Z]+)");
+    Matcher repeatsMatcher = repeatsPattern.matcher(command);
+    String errorMessage = "";
+    if (repeatsMatcher.find()) {
+      String weekdays = repeatsMatcher.group(1);
+      if (!weekdays.matches("[MTWRFSU]+")) {
+        errorMessage = "Invalid command: 'repeats' contains invalid weekday format. Use only M, T, W, R, F, S, U.";
+      }
+    }
+    return errorMessage;
+  }
+
+  public String diagnoseCommandError(String command) {
+    if (!command.startsWith("event")) {
+      return "Invalid command: Must start with 'create event'.";
+    }
+    if (command.contains("--autoDecline")) {
+      if (!command.matches("event\\s+--autoDecline\\s+\".*?\".*")) {
+        return "Invalid command: '--autoDecline' must appear immediately after 'create event'.";
+      }
+    }
+    if (!command.contains(" from ") && !command.contains(" on ")) {
+      return "Invalid command: Missing 'from' or 'on' keyword.";
+    }
+    if (command.contains("repeats")) {
+      return getRepeatsErrorMessage(command);
+    }
+    if (command.contains("from") && !command.contains(" to ")) {
+      return "Invalid command: 'from' must be followed by 'to'.";
+    }
+    if (command.contains("repeats") && !command.contains("for") && !command.contains("until")) {
+      return "Invalid command: 'repeats' must be followed by 'for <N> times' or 'until <date>'.";
+    }
+    if (command.contains("for") && !command.matches(".*for \\d+ times.*")) {
+      return "Invalid command: 'for' must be followed by a valid number of times.";
+    }
+    if (command.contains("until") && !command.matches(".*until \\d{4}-\\d{2}-\\d{2}.*")) {
+      return "Invalid command: 'until' must be followed by a valid date.";
+    }
+    return "Invalid command: Does not match expected format.";
   }
 
   private void addValuesInMetaDataObject() {
@@ -79,7 +119,6 @@ public class CreateCommand extends AbstractCommand {
   }
 
   private void setEndTime() {
-
     localStartDateTime = DateUtils.stringToLocalDateTime(finalStartDate);
 
     if (finalEndDate != null) {
@@ -109,23 +148,11 @@ public class CreateCommand extends AbstractCommand {
     if (isRecurring) {
       formatUntilTimeForRecurringEvent();
     }
-
   }
 
   private void createEventUtil(ACalendar calendar) {
     allMetaDeta = metaDeta.build();
     calendar.createEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
-
-/*     EventDetails eventDetails = new EventDetails(subject, localStartDateTime,
-            null, null, localEndDateTime, false);
-
-
-    EventFactory factory = new EventFactory();
-
-    AEvent event = factory.getEvent(subject,localStartDateTime, null,
-            null,  localEndDateTime, false, allMetaDeta);
-    event.pushEventToCalendar(calendar); */
-
   }
 
   private void createCommandProcess(String commandArgs, ACalendar calendar) throws Exception {

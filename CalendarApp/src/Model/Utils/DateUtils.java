@@ -33,4 +33,9 @@ public class DateUtils {
     return date;
   }
 
+  public static LocalDateTime pareStringToLocalDateTime(String date) {
+    String parsedDate = removeTinDateTime(date);
+    return stringToLocalDateTime(parsedDate);
+  }
+
 }

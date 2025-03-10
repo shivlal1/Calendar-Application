@@ -1,13 +1,13 @@
 package Model.Calendar;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import Model.Event.CalendarEvent;
+import Model.Event.Event;
 
 public abstract class ACalendar implements ICalendar {
 
-  Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> yearMonthDayData = new HashMap<>();
+
+  protected List<Event> calendarStorage = new ArrayList();
 
 }

@@ -24,11 +24,40 @@ public class PrintCommand extends AbstractCommand {
 //    this.calendar = calendar;
   }
 
-  public void commandParser(String commandArgs) {
+  private String diagnoseCommandError(String command) {
+
+    if (!command.startsWith("events"))
+      return "Missing events";
+
+
+    boolean hasFrom = command.contains("from");
+    boolean hasTo = command.contains("to");
+    boolean hasOn = command.contains("on");
+
+    if (!hasFrom && !hasOn) {
+      return ("Missing From and On");
+    }
+
+    if (hasFrom && !hasTo) {
+      return "Missing To";
+    }
+
+    if (!hasFrom && hasTo) {
+      return "Missing From";
+    }
+
+    if (!hasFrom && !hasTo && !hasOn) {
+      return "Missing On";
+    }
+    return "Invalid command: Does not match expected format.";
+
+  }
+
+  public void commandParser(String commandArgs) throws Exception {
     initRegexPatter(regex, commandArgs);
 
     if (!matcher.matches()) {
-      System.out.println("  Command did not match the pattern.");
+      throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
 
     startDate = matcher.group(1) != null ? matcher.group(1) : matcher.group(3);
@@ -50,7 +79,7 @@ public class PrintCommand extends AbstractCommand {
     addValuesInMetaDataObject();
   }
 
-  public void addValuesInMetaDataObject() {
+  private void addValuesInMetaDataObject() {
     //System.out.println(localEnd + " " + localEnd);
     metaData = new PrintCommandMetaDetails.PrintEventMetaDetailsBuilder();
 
@@ -67,13 +96,13 @@ public class PrintCommand extends AbstractCommand {
 
   }
 
-  private void printCommandProcess(String commandArgs, ACalendar calendar) {
+  private void printCommandProcess(String commandArgs, ACalendar calendar) throws Exception {
     commandParser(commandArgs);
     printCommandUtil(calendar);
   }
 
   @Override
-  public void execute(String commandArgs, ACalendar calendar) {
+  public void execute(String commandArgs, ACalendar calendar) throws Exception {
     printCommandProcess(commandArgs, calendar);
   }
 }

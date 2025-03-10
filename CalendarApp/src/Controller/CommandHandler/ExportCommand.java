@@ -9,25 +9,36 @@ public class ExportCommand extends AbstractCommand {
     // this.calendar = calendar;
   }
 
+  private String diagnoseCommandError(String command) {
+
+    if (!command.startsWith("cal")) {
+      return "Missing/Misplaced cal keyword";
+    }
+    if (!command.endsWith(".csv")) {
+      return "Error in fileName";
+    }
+    return "Invalid Command";
+  }
+
   @Override
-  public void commandParser(String commandArgs) {
+  public void commandParser(String commandArgs) throws Exception {
     String regex = "cal (.+\\.csv)";
 
     initRegexPatter(regex, commandArgs);
 
     if (!matcher.matches()) {
-      System.out.println("  Command did not match the pattern.");
+      throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
     String fileName = matcher.group(1);
     System.out.println("filename " + fileName);
   }
 
-  public void exportCommandUtil(ACalendar calendar) {
+  private void exportCommandUtil(ACalendar calendar) {
     String filePath = calendar.exportCalendarAndGetFilePath();
   }
 
   @Override
-  public void execute(String commandArgs, ACalendar calendar) {
+  public void execute(String commandArgs, ACalendar calendar) throws Exception {
     commandParser(commandArgs);
     exportCommandUtil(calendar);
   }
