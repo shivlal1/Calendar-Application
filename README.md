@@ -62,7 +62,7 @@ This mode executes commands listed in a provided text file sequentially.
 
 ## Exporting Calendar
 
-The exported CSV file is compatible with Google Calendar. Upload the generated file to visualize events online.
+The exported CSV file is compatible with Google Calendar. We can upload this CSV file to Google Calendar and see the visual representation of the events created by the program. 
 
 ## Project Structure
 
