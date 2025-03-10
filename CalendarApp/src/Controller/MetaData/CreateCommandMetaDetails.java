@@ -14,7 +14,6 @@ public class CreateCommandMetaDetails {
     this.isAllDay = builder.isAllDay;
     this.addUntilDateTime = builder.addUntilDateTime;
     this.autoDecline = builder.autoDecline;
-
   }
 
   public String getWeekdays() {

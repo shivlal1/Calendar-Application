@@ -93,7 +93,7 @@ public class RecurringEvent extends Event {
     List<Event> newEventsList = new ArrayList<>();
 
     if (!isStartBeforeEnd(start, end)) {
-      return null;
+      return newEventsList;
     }
 
     if (allMetaDetails.getAddUntilDateTime() != null) {

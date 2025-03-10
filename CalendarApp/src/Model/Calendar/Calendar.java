@@ -13,10 +13,7 @@ import Model.Utils.DateUtils;
 
 public class Calendar extends ACalendar {
 
-  public Calendar() {
-  }
-
-  boolean hasConflicts(List<Event> newEvents) {
+  private boolean hasConflicts(List<Event> newEvents) {
 
     for (Event existingEvent : calendarStorage) {
       for (Event newEvent : newEvents) {
@@ -34,7 +31,7 @@ public class Calendar extends ACalendar {
    **/
 
 
-  public void putGeneratedEventsIntoCalendar(List<Event> events, boolean autoDecline) {
+  private void putGeneratedEventsIntoCalendar(List<Event> events, boolean autoDecline) {
 
     if (autoDecline && hasConflicts(events)) {
       System.out.println("HAS CONFLICTS");
@@ -52,7 +49,6 @@ public class Calendar extends ACalendar {
     return ((middle.isAfter(start) || middle.isEqual(start))
             && (middle.isBefore(end) || middle.isEqual(end)));
   }
-
 
   public List<Event> getEventsInBetween(LocalDateTime from, LocalDateTime to) {
     List<Event> eventDetails = new ArrayList<>();
@@ -240,6 +236,7 @@ public class Calendar extends ACalendar {
     EventFactory factory = new EventFactory();
 
     Event event = factory.getEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
+
     List<Event> allEvents = event.generateEventsForCalendar();
 
     if (event.isAutoDeclineEnabled()) {

@@ -113,18 +113,15 @@ public abstract class Event {
 
     LocalDateTime newStartTime = newEvent.getStartDate();
     LocalDateTime newEndTime = newEvent.getEndDate();
-
     LocalDateTime existingStartTime = this.getStartDate();
     LocalDateTime existingEndTime = this.getEndDate();
 
     boolean isConflictExists = false;
 
-    if (newStartTime.isBefore(existingEndTime) &&
-            newEndTime.equals(existingStartTime)) {
+    if (newStartTime.isBefore(existingEndTime) && newEndTime.equals(existingStartTime)) {
       isConflictExists = false;
     }
-    if (existingStartTime.isBefore(newEndTime) &&
-            existingEndTime.equals(newStartTime)) {
+    if (existingStartTime.isBefore(newEndTime) && existingEndTime.equals(newStartTime)) {
       isConflictExists = false;
     }
 
@@ -136,15 +133,11 @@ public abstract class Event {
       isConflictExists = true;
     }
 
-    if (existingStartTime.equals(newStartTime)) {
+    if (existingStartTime.equals(newStartTime) || existingEndTime.equals(newEndTime)) {
       isConflictExists = true;
     }
 
-    if (existingEndTime.equals(newEndTime)) {
-      isConflictExists = true;
-    }
     return isConflictExists;
   }
-
 
 }

@@ -8,6 +8,6 @@ import Model.Event.Event;
 public abstract class ACalendar implements ICalendar {
 
 
-  List<Event> calendarStorage = new ArrayList();
+  protected List<Event> calendarStorage = new ArrayList();
 
 }

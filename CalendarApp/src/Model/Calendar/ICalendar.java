@@ -11,11 +11,9 @@ import Model.Event.Event;
 public interface ICalendar {
 
 
-
   public void createEvent(String subject, LocalDateTime localStartDateTime,
                           LocalDateTime localEndDateTime,
                           CreateCommandMetaDetails allMetaDeta);
-
 
 
   // EDIT

@@ -29,13 +29,13 @@ public class EditCommand extends AbstractCommand {
   public EditCommand() {
   }
 
-  public void commandParser(String commandArgs) {
+  public void commandParser(String commandArgs) throws Exception {
 
     initRegexPatter(regex, commandArgs);
     metaData = new EditCommandMetaDetails.EditEventMetaDetailsBuilder();
 
     if (!matcher.matches()) {
-      System.out.println("  Command did not match the pattern.");
+      throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
 
     property = matcher.group("property");
@@ -68,18 +68,47 @@ public class EditCommand extends AbstractCommand {
     metaData.addLocalEndTime(localEndTime);
   }
 
+  private String diagnoseCommandError(String command) {
+
+    if (!command.startsWith("event") && !command.startsWith("events")) {
+      return "Missing 'edit event(s)'";
+    }
+
+    if (!command.matches("^event(?:s)?\\s+\\S+\\s+\".*?\".*")) {
+      return "Missing 'eventName' or incorrect format";
+    }
+
+    boolean hasFrom = command.contains("from");
+    boolean hasWith = command.contains("with");
+
+    if (hasWith && !hasFrom) {
+      return ("Missing From");
+    }
+
+    if (hasWith) {
+      if (!command.matches(".*with\\s+\".*?\".*")) {
+        return ("Missing or incorrect 'newValue' format (Expected: with \"NewValue\")");
+      }
+    } else if (!command.matches(".*\".*?\"$")) {
+      return ("Missing 'newValue'");
+    }
+
+    return "Invalid command: Does not match expected format.";
+
+  }
+
   private void editCommandUtil(ACalendar calendar) {
     allMetaDeta = metaData.build();
     calendar.editEvent(allMetaDeta);
   }
 
-  private void editCommandProcess(String commandArgs, ACalendar calendar) {
+  private void editCommandProcess(String commandArgs, ACalendar calendar) throws Exception {
     commandParser(commandArgs);
     editCommandUtil(calendar);
   }
 
   @Override
-  public void execute(String commandArgs, ACalendar calendar) {
+  public void execute(String commandArgs, ACalendar calendar) throws Exception {
     editCommandProcess(commandArgs, calendar);
   }
 }
