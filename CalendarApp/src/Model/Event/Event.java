@@ -1,8 +1,7 @@
 package Model.Event;
 
 import java.time.LocalDateTime;
-
-import Model.Calendar.ACalendar;
+import java.util.List;
 
 public abstract class Event {
 
@@ -70,7 +69,26 @@ public abstract class Event {
     this.isPublic = isPublic;
   }
 
-  public abstract void pushEventToCalendar(ACalendar calendar);
+  public abstract List<Event> generateEventsForCalendar();
+
+  public abstract boolean isAutoDeclineEnabled();
+
+  public abstract boolean canBeEditedToDifferentDay();
+
+
+  boolean isStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
+    if (end.isAfter(start)) {
+      return true;
+    }
+    return false;
+  }
+
+
+  CalendarEvent geCalendarEvent(LocalDateTime start,
+                                Event info,
+                                LocalDateTime segmentEnd) {
+    return new CalendarEvent(info, start, segmentEnd);
+  }
 
 
   @Override
@@ -97,17 +115,5 @@ public abstract class Event {
     return details.toString();
   }
 
-  CalendarEvent getCreatedSegmentEvent(ACalendar calendar, LocalDateTime start, Event info,
-                                       LocalDateTime segmentEnd) {
-    CalendarEvent event = new CalendarEvent(info, start, segmentEnd);
-    return event;
-  }
-
-  boolean isStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
-    if (end.isAfter(start)) {
-      return true;
-    }
-    return false;
-  }
 
 }

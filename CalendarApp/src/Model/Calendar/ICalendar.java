@@ -6,7 +6,6 @@ import java.util.List;
 import Controller.MetaData.CreateCommandMetaDetails;
 import Controller.MetaData.EditCommandMetaDetails;
 import Controller.MetaData.PrintCommandMetaDetails;
-import Model.Event.CalendarEvent;
 import Model.Event.Event;
 
 public interface ICalendar {
@@ -16,8 +15,6 @@ public interface ICalendar {
   public void printEvents();
   //
 
-  // CREATE
-  void createEvent(List<CalendarEvent> event, boolean autoDecline);
 
   // EDIT
   public void editEvent(EditCommandMetaDetails allMetaDeta);

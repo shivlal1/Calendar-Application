@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Controller.MetaData.CreateCommandMetaDetails;
-import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 
 public class RecurringEvent extends Event {
@@ -45,20 +44,18 @@ public class RecurringEvent extends Event {
     return false;
   }
 
-  private List<CalendarEvent> getForTimeRecurringEvent(ACalendar calendar, LocalDateTime start,
-                                                       LocalDateTime end, List<CalendarEvent> eventsList) {
+  private List<Event> getForTimeRecurringEvent(LocalDateTime start,
+                                               LocalDateTime end) {
 
     LocalDateTime currDate = start;
-
     int requriredRecurringEvents = Integer.valueOf(allMetaDetails.getForTimes());
+    List<Event> eventsList = new ArrayList<>();
     int eventsEncountered = 0;
 
     while (eventsEncountered < requriredRecurringEvents) {
 
       if (isWeekDayIncluded(currDate)) {
-        Event e = new RecurringEvent(this, currDate, end);
-
-        eventsList.add(getCreatedSegmentEvent(calendar, currDate, e, end));
+        eventsList.add(new RecurringEvent(this, currDate, end));
         eventsEncountered++;
       }
 
@@ -71,17 +68,16 @@ public class RecurringEvent extends Event {
     return eventsList;
   }
 
-  private List<CalendarEvent> getUntilTimeRecurringEvent(ACalendar calendar, LocalDateTime start,
-                                                         LocalDateTime end, List<CalendarEvent> eventsList) {
+  private List<Event> getUntilTimeRecurringEvent(LocalDateTime start,
+                                                 LocalDateTime end) {
 
-    LocalDateTime currDate = start;
+    List<Event> eventsList = new ArrayList<>();
     LocalDateTime until = getRecurringEventEndDate();
+    LocalDateTime currDate = start;
 
     while (!currDate.isAfter(until)) {
       if (isWeekDayIncluded(currDate)) {
-        Event e = new RecurringEvent(this, currDate, end);
-
-        eventsList.add(getCreatedSegmentEvent(calendar, currDate, e, end));
+        eventsList.add(new RecurringEvent(this, currDate, end));
       }
       currDate = currDate.plusDays(1);
       end = end.plusDays(1);
@@ -89,25 +85,32 @@ public class RecurringEvent extends Event {
     return eventsList;
   }
 
-  public void pushEventToCalendar(ACalendar calendar) {
+  public List<Event> generateEventsForCalendar() {
 
     LocalDateTime start = this.startDate;
     LocalDateTime end = this.endDate;
 
+
     if (!isStartBeforeEnd(start, end)) {
-      return;
+      return null;
     }
 
-    List<CalendarEvent> newEventsList = new ArrayList<>();
+    List<Event> newEventsList = new ArrayList<>();
 
     if (allMetaDetails.getAddUntilDateTime() != null) {
-      newEventsList = getUntilTimeRecurringEvent(calendar, start, end, newEventsList);
+      newEventsList = getUntilTimeRecurringEvent(start, end);
 
     } else if (allMetaDetails.getForTimes() != null) {
-      newEventsList = getForTimeRecurringEvent(calendar, start, end, newEventsList);
+      newEventsList = getForTimeRecurringEvent(start, end);
     }
 
-    calendar.createEvent(newEventsList, true);
+    return newEventsList;
+
+  }
+
+  @Override
+  public boolean isAutoDeclineEnabled() {
+    return true;
   }
 
 
@@ -130,6 +133,11 @@ public class RecurringEvent extends Event {
       default:
         return '?';
     }
+  }
+
+  @Override
+  public boolean canBeEditedToDifferentDay() {
+    return false;
   }
 
 }

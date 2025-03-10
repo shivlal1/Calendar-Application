@@ -1,27 +1,22 @@
 package Model.Calendar;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import Controller.MetaData.CreateCommandMetaDetails;
 import Controller.MetaData.EditCommandMetaDetails;
 import Controller.MetaData.PrintCommandMetaDetails;
-import Model.Event.CalendarEvent;
 import Model.Event.Event;
 import Model.Event.EventFactory;
+import Model.Utils.DateUtils;
 
 public class Calendar extends ACalendar {
-
-  CalendarEvent event;
 
   public Calendar() {
   }
 
-  boolean isOverlap(CalendarEvent newEvent, CalendarEvent existingEvent) {
+  boolean isOverlap(Event newEvent, Event existingEvent) {
 
     LocalDateTime newStartTime = newEvent.getStartDate();
     LocalDateTime newEndTime = newEvent.getEndDate();
@@ -58,29 +53,15 @@ public class Calendar extends ACalendar {
     return isConflictExists;
   }
 
-  boolean hasConflicts(List<CalendarEvent> newEvents) {
+  boolean hasConflicts(List<Event> newEvents) {
 
-    Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> dataMap = yearMonthDayData;
-
-    for (CalendarEvent newEvent : newEvents) {
-
-      for (int year : dataMap.keySet()) {
-        for (int month : dataMap.get(year).keySet()) {
-          for (int day : dataMap.get(year).get(month).keySet()) {
-            List<CalendarEvent> events = dataMap.get(year).get(month).get(day);
-            if (!events.isEmpty()) {
-              for (CalendarEvent existingEvent : events) {
-                if (isOverlap(newEvent, existingEvent)) {
-                  return true;
-                }
-              }
-            }
-          }
+    for (Event existingEvent : calendarStorage) {
+      for (Event newEvent : newEvents) {
+        if (isOverlap(newEvent, existingEvent)) {
+          return true;
         }
       }
-
     }
-
     return false;
   }
 
@@ -89,25 +70,8 @@ public class Calendar extends ACalendar {
    * CREATE EVENT function
    **/
 
-  public void createEvent(int year, int month, int day, CalendarEvent event) {
-    // addData(year, month, day, event);
-    yearMonthDayData.computeIfAbsent(year, y -> initializeYear(year));
 
-    Map<Integer, Map<Integer, List<CalendarEvent>>> monthMap = yearMonthDayData.get(year);
-    Map<Integer, List<CalendarEvent>> dayMap = monthMap.get(month);
-
-    // Ensure the day is valid
-    if (!dayMap.containsKey(day)) {
-      System.out.println("Invalid day: " + day + " for " + year + "-" + month);
-      return;
-    }
-
-    dayMap.get(day).add(event);
-
-    //printEvents();
-  }
-
-  public void createEvent(List<CalendarEvent> events, boolean autoDecline) {
+  public void putGeneratedEventsIntoCalendar(List<Event> events, boolean autoDecline) {
 
     if (autoDecline && hasConflicts(events)) {
       System.out.println("HAS CONFLICTS");
@@ -115,104 +79,26 @@ public class Calendar extends ACalendar {
     }
 
     System.out.println("trying to create");
-    for (CalendarEvent event : events) {
-      LocalDateTime date = event.getStartDate();
-      int year = date.getYear();
-      int month = date.getMonthValue();
-      int day = date.getDayOfMonth();
-      yearMonthDayData.computeIfAbsent(year, y -> initializeYear(year));
-      Map<Integer, Map<Integer, List<CalendarEvent>>> monthMap = yearMonthDayData.get(year);
-      Map<Integer, List<CalendarEvent>> dayMap = monthMap.get(month);
-
-      /* check if this can be uncommented lateer
-      if (!dayMap.containsKey(day)) {
-        System.out.println("Invalid day: " + day + " for " + year + "-" + month);
-        return;
-      }*/
-      dayMap.get(day).add(event);
-    }
-
-  }
-
-
-  public void printOnTimeEvents(LocalDateTime from) {
-    List<CalendarEvent> events = getEventsForDate(from);
-    for (CalendarEvent event : events) {
-      System.out.println("Event updated: " + event);
+    for (Event event : events) {
+      calendarStorage.add(event);
     }
   }
 
-  public List<Event> printFromToEvents(LocalDateTime from, LocalDateTime to) {
 
-    List<CalendarEvent> events = getEventsForDate(from);
-    List<Event> matchingDetails = new ArrayList<>();
-    for (CalendarEvent event : events) {
+  private boolean isBetween(LocalDateTime start, LocalDateTime middle, LocalDateTime end) {
+    return ((middle.isAfter(start) || middle.isEqual(start))
+            && (middle.isBefore(end) || middle.isEqual(end)));
+  }
 
-      if ((event.getEvent().getStartDate().isAfter(from) || event.getEvent().getStartDate().equals(from))
-              && (event.getEvent().getEndDate().isBefore(to) || event.getEvent().getEndDate().equals(to))) {
-        matchingDetails.add(event.getEvent());
-        // System.out.println("Matched event: " + event);
+
+  public List<Event> getEventsInBetween(LocalDateTime from, LocalDateTime to) {
+    List<Event> eventDetails = new ArrayList<>();
+    for (Event event : calendarStorage) {
+      if (isBetween(from, event.getStartDate(), to)) {
+        eventDetails.add(event);
       }
     }
-    return matchingDetails;
-  }
-
-  private Map<Integer, Map<Integer, List<CalendarEvent>>> initializeYear(int year) {
-    Map<Integer, Map<Integer, List<CalendarEvent>>> monthMap = new HashMap<>();
-    for (int month = 1; month <= 12; month++) {
-      monthMap.put(month, initializeMonth(year, month));
-    }
-    return monthMap;
-  }
-
-  private Map<Integer, List<CalendarEvent>> initializeMonth(int year, int month) {
-    Map<Integer, List<CalendarEvent>> dayMap = new HashMap<>();
-    int daysInMonth = getDaysInMonth(year, month);
-    for (int day = 1; day <= daysInMonth; day++) {
-      dayMap.put(day, new ArrayList<>());
-    }
-    return dayMap;
-  }
-
-  private int getDaysInMonth(int year, int month) {
-    switch (month) {
-      case 2: // February
-        return isLeapYear(year) ? 29 : 28;
-      case 4:
-      case 6:
-      case 9:
-      case 11: // April, June, September, November
-        return 30;
-      default: // All other months
-        return 31;
-    }
-  }
-
-  private boolean isLeapYear(int year) {
-    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
-  }
-
-
-  private List<Event> getEventsToExport() {
-
-    List<Event> details = new ArrayList<>();
-
-    Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> dataMap = yearMonthDayData;
-    for (int year : dataMap.keySet()) {
-      for (int month : dataMap.get(year).keySet()) {
-        for (int day : dataMap.get(year).get(month).keySet()) {
-          List<CalendarEvent> events = dataMap.get(year).get(month).get(day);
-          if (!events.isEmpty()) {
-            for (CalendarEvent event : events) {
-              details.add(event.getEvent());
-              //System.out.println("year :" + year + " month " + month + " date " + day + " " + event);
-            }
-          }
-        }
-      }
-    }
-    return details;
-
+    return eventDetails;
   }
 
 
@@ -229,80 +115,61 @@ public class Calendar extends ACalendar {
 
   public String exportCalendarAndGetFilePath() {
     String filePath = "output.csv";
-    List<Event> events = getEventsToExport();
-    makeCsvFile(events);
+    // List<Event> events = getEventsToExport();
+    //  makeCsvFile(events);
     return filePath;
   }
 
   public void printEvents() {
-    Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> dataMap = yearMonthDayData;
-    for (int year : dataMap.keySet()) {
-      for (int month : dataMap.get(year).keySet()) {
-        for (int day : dataMap.get(year).get(month).keySet()) {
-          List<CalendarEvent> events = dataMap.get(year).get(month).get(day);
-          if (!events.isEmpty()) {
-            for (CalendarEvent event : events) {
-              System.out.println("year :" + year + " month " + month + " date " + day + " " + event);
-            }
-          }
-        }
-      }
+
+    for (Event event : calendarStorage) {
+      System.out.println(event);
     }
   }
 
 
-  private List<CalendarEvent> getEventsForDate(LocalDateTime start) {
-
-    int year = start.getYear();
-    int month = start.getMonthValue();
-    int day = start.getDayOfMonth();
-
-    if (!yearMonthDayData.containsKey(year)) {
-      System.out.println("Year not found: " + year);
-      return null;
-    }
-
-    Map<Integer, Map<Integer, List<CalendarEvent>>> monthMap = yearMonthDayData.get(year);
-
-    if (!monthMap.containsKey(month)) {
-      System.out.println("Month not found: " + month);
-      return null;
-    }
-
-    Map<Integer, List<CalendarEvent>> dayMap = monthMap.get(month);
-
-    if (!dayMap.containsKey(day)) {
-      System.out.println("Day not found: " + day);
-      return null;
-    }
-
-    return dayMap.get(day);
-  }
-
-  public void setPropertyValue(String property, String newValue, CalendarEvent e) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+  public void setPropertyValue(String property, String newValue, Event event) {
     switch (property) {
       case "name":
-        e.getEvent().setSubject(newValue);
+        event.setSubject(newValue);
         break;
       case "location":
-        e.getEvent().setLocation(newValue);
+        event.setLocation(newValue);
         break;
-      case "start":
-      case "date":
-        e.getEvent().setStartDate(LocalDateTime.parse(newValue, formatter));
+      case "startDate":
+        updateStartDate(event, newValue);
         break;
-      case "end":
-        e.getEvent().setEndDate(LocalDateTime.parse(newValue, formatter));
+
+      case "endDate":
+        updateEndDate(event, newValue);
         break;
-      case "public":
-        e.getEvent().setIsPublic(Boolean.parseBoolean(newValue));
+
+      case "isPublic":
+        event.setIsPublic(Boolean.parseBoolean(newValue));
         break;
       case "description":
-        e.getEvent().setDescription(newValue);
+        event.setDescription(newValue);
         break;
       default:
         System.out.println("No such property!");
+    }
+  }
+
+  private void updateStartDate(Event event, String newValue) {
+    LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
+
+    if ((event.canBeEditedToDifferentDay() && newDate.isBefore(event.getEndDate())) ||
+            newDate.toLocalDate().equals(event.getEndDate().toLocalDate())) {
+      event.setStartDate(newDate);
+    }
+  }
+
+  private void updateEndDate(Event event, String newValue) {
+    LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
+
+    if ((event.canBeEditedToDifferentDay() && newDate.isAfter(event.getStartDate())) ||
+            newDate.toLocalDate().equals(event.getStartDate().toLocalDate())) {
+      event.setEndDate(newDate);
     }
   }
 
@@ -318,7 +185,6 @@ public class Calendar extends ACalendar {
     return (data.getEventName() != null && data.getStartTime() != null && data.getEndTime() != null);
   }
 
-
   public void editEvent(EditCommandMetaDetails data) {
 
     String newValue = data.getNewValue();
@@ -326,106 +192,29 @@ public class Calendar extends ACalendar {
     String eventName = data.getEventName();
 
     if (isEditByEventNameAndStartTime(data)) {
-      editEventUtil(data.getLocalStartTime(), eventName, newValue, property);
+      updateMatchingEvents(eventName, data.getLocalStartTime(), null, newValue, property);
     } else if (isEditByEventName(data)) {
-      editEventUtil(eventName, newValue, property);
+      updateMatchingEvents(eventName, null, null, newValue, property);
     } else if (isEditByEventNameAndTime(data)) {
-      editEventUtil(eventName, data.getLocalStartTime(), data.getLocalEndTime(),
-              newValue, property);
+      updateMatchingEvents(eventName, data.getLocalStartTime(), data.getLocalEndTime(), newValue, property);
     }
 
   }
 
 
-
- /* public void editEventUtil(String eventName, String newValue, String property) {
-    Map<Integer, Map<Integer, Map<Integer, List<CalendarEvent>>>> dataMap = yearMonthDayData;
-    for (int year : dataMap.keySet()) {
-      for (int month : dataMap.get(year).keySet()) {
-        for (int day : dataMap.get(year).get(month).keySet()) {
-          List<CalendarEvent> events = dataMap.get(year).get(month).get(day);
-          if (!events.isEmpty()) {
-            for (CalendarEvent event : events) {
-              if (event.getEvent().getSubject().equals(eventName)) {
-                setPropertyValue(property, newValue, event);
-                System.out.println("Event edited successfully!");
-              }
-            }
-          }
-        }
-      }
-    }
-    //printEvents();
+  private boolean isMatchingEvent(Event event, LocalDateTime start, LocalDateTime end, String eventName) {
+    return (event.getSubject().equals(eventName) &&
+            (start == null || event.getStartDate().equals(start)) &&
+            (end == null || event.getEndDate().equals(end)));
   }
 
-  public void editEventUtil(LocalDateTime start, String name, String newValue, String property) {
-    List<CalendarEvent> events = getEventsForDate(start);
-    boolean found = false;
-    for (CalendarEvent event : events) {
-      if (event.getEvent().getSubject().equals(name) &&
-              event.getEvent().getStartDate().equals(start)) {
-        setPropertyValue(property, newValue, event);
-        found = true;
-        System.out.println("Event updated: " + event);
-      }
-    }
-    if (!found) {
-      System.out.println("Event not found: " + name);
-    }
-  }
 
-  public void editEventUtil(String eventName, LocalDateTime start, LocalDateTime end, String newValue, String property) {
-    List<CalendarEvent> events = getEventsForDate(start);
-    boolean found = false;
-    for (CalendarEvent event : events) {
-      System.out.println(event);
-      if (event.getEvent().getSubject().equals(eventName) &&
-              event.getEvent().getStartDate().equals(start)
-              && event.getEvent().getEndDate().equals(end)) {
-
-        setPropertyValue(property, newValue, event);
-        found = true;
-        System.out.println("Event updated: " + event);
-      }
-    }
-    if (!found) {
-      System.out.println("Event not found: " + eventName);
-    }
-    //printEvents();
-  } */
-
-  public void editEventUtil(String eventName, LocalDateTime start, LocalDateTime end, String newValue, String property) {
-    List<CalendarEvent> events = getEventsForDate(start);
-    updateMatchingEvents(events, eventName, start, end, newValue, property);
-  }
-
-  public void editEventUtil(String eventName, String newValue, String property) {
-    for (int year : yearMonthDayData.keySet()) {
-      for (int month : yearMonthDayData.get(year).keySet()) {
-        for (int day : yearMonthDayData.get(year).get(month).keySet()) {
-          List<CalendarEvent> events = yearMonthDayData.get(year).get(month).get(day);
-          updateMatchingEvents(events, eventName, null, null, newValue, property);
-        }
-      }
-    }
-  }
-
-  public void editEventUtil(LocalDateTime start, String name, String newValue, String property) {
-    List<CalendarEvent> events = getEventsForDate(start);
-    updateMatchingEvents(events, name, start, null, newValue, property);
-  }
-
-  private void updateMatchingEvents(List<CalendarEvent> events, String eventName, LocalDateTime start, LocalDateTime end, String newValue, String property) {
+  private void updateMatchingEvents(String eventName, LocalDateTime start, LocalDateTime end, String newValue, String property) {
     boolean found = false;
 
-    for (CalendarEvent event : events) {
-      if (event.getEvent().getSubject().equals(eventName) &&
-              (start == null || event.getEvent().getStartDate().equals(start)) &&
-              (end == null || event.getEvent().getEndDate().equals(end))) {
-
+    for (Event event : calendarStorage) {
+      if (isMatchingEvent(event, start, end, eventName)) {
         setPropertyValue(property, newValue, event);
-        found = true;
-        System.out.println("Event updated: " + event);
       }
     }
 
@@ -439,13 +228,11 @@ public class Calendar extends ACalendar {
     List<Event> eventDetailsList = new ArrayList<>();
     LocalDateTime startDateTime = allMetaDeta.getLocalStartDate();
     if (isStartToEndDatePrintCommand(allMetaDeta)) {
-      eventDetailsList = printFromToEvents(startDateTime, allMetaDeta.getLocalEndDate());
+      eventDetailsList = getEventsInBetween(startDateTime, allMetaDeta.getLocalEndDate());
     } else if (isOnDatePrintCommand(allMetaDeta)) {
-      eventDetailsList = getEventsOnDateToPrint(startDateTime);
+      eventDetailsList = getEventsOnDate(startDateTime);
     }
-
     return eventDetailsList;
-
   }
 
 
@@ -458,49 +245,20 @@ public class Calendar extends ACalendar {
   }
 
 
-  private List<Event> getEventsOnDateToPrint(LocalDateTime start) {
+  private List<Event> getEventsOnDate(LocalDateTime onDate) {
+    List<Event> events = new ArrayList<>();
 
-    int year = start.getYear();
-    int month = start.getMonthValue();
-    int day = start.getDayOfMonth();
-
-    if (!yearMonthDayData.containsKey(year)) {
-      System.out.println("Year not found: " + year);
-      return null;
+    for (Event event : calendarStorage) {
+      if (event.getStartDate().toLocalDate().equals(onDate.toLocalDate())) {
+        events.add(event);
+      }
     }
-
-    Map<Integer, Map<Integer, List<CalendarEvent>>> monthMap = yearMonthDayData.get(year);
-
-    if (!monthMap.containsKey(month)) {
-      System.out.println("Month not found: " + month);
-      return null;
-    }
-
-    Map<Integer, List<CalendarEvent>> dayMap = monthMap.get(month);
-
-    if (!dayMap.containsKey(day)) {
-      System.out.println("Day not found: " + day);
-      return null;
-    }
-
-    List<Event> details = new ArrayList<>();
-    for (CalendarEvent e : dayMap.get(day)) {
-      details.add(e.getEvent());
-    }
-
-    return details;
+    return events;
   }
 
-  private boolean isBetween(LocalDateTime start, LocalDateTime middle, LocalDateTime end) {
-    return ((middle.isAfter(start) || middle.isEqual(start))
-            && (middle.isBefore(end) || middle.isEqual(end)));
-  }
 
   public boolean isBusyOnDay(LocalDateTime date) {
-
-    List<Event> eventDetails = getEventsOnDateToPrint(date);
-
-    for (Event event : eventDetails) {
+    for (Event event : calendarStorage) {
       LocalDateTime startTime = event.getStartDate();
       LocalDateTime endTime = event.getEndDate();
       if (isBetween(startTime, date, endTime)) {
@@ -511,18 +269,21 @@ public class Calendar extends ACalendar {
   }
 
 
-  ///
-
-  public void createEvent(String subject, LocalDateTime localStartDateTime, LocalDateTime localEndDateTime,
+  public void createEvent(String subject,
+                          LocalDateTime localStartDateTime,
+                          LocalDateTime localEndDateTime,
                           CreateCommandMetaDetails allMetaDeta) {
 
     EventFactory factory = new EventFactory();
 
     Event event = factory.getEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
+    List<Event> allEvents = event.generateEventsForCalendar();
 
-    event.pushEventToCalendar(this);
-
+    if (event.isAutoDeclineEnabled()) {
+      putGeneratedEventsIntoCalendar(allEvents, true);
+    } else {
+      putGeneratedEventsIntoCalendar(allEvents, allMetaDeta.getAutoDecline());
+    }
   }
-
 
 }
