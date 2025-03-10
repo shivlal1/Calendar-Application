@@ -28,7 +28,7 @@ public class ShowStatusCommand extends AbstractCommand {
   }
 
   private void printCommandUtil(ACalendar calendar) {
-    boolean isBusy = calendar.isBusyOnDay(localOnDate);
+    boolean isBusy = calendar.isUserBusy(localOnDate);
     ConsoleView view = new ConsoleView();
     view.showStatusInConsole(isBusy);
   }

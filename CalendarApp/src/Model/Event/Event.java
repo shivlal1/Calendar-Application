@@ -76,7 +76,7 @@ public abstract class Event {
   public abstract boolean canBeEditedToDifferentDay();
 
 
-  boolean isStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
+  protected boolean isStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
     if (end.isAfter(start)) {
       return true;
     }
@@ -106,6 +106,44 @@ public abstract class Event {
     details.append(" isPublic: " + isPublic);
 
     return details.toString();
+  }
+
+
+  public boolean isOverlapWith(Event newEvent) {
+
+    LocalDateTime newStartTime = newEvent.getStartDate();
+    LocalDateTime newEndTime = newEvent.getEndDate();
+
+    LocalDateTime existingStartTime = this.getStartDate();
+    LocalDateTime existingEndTime = this.getEndDate();
+
+    boolean isConflictExists = false;
+
+    if (newStartTime.isBefore(existingEndTime) &&
+            newEndTime.equals(existingStartTime)) {
+      isConflictExists = false;
+    }
+    if (existingStartTime.isBefore(newEndTime) &&
+            existingEndTime.equals(newStartTime)) {
+      isConflictExists = false;
+    }
+
+    if (newStartTime.isBefore(existingEndTime) && existingStartTime.isBefore(newEndTime)) {
+      isConflictExists = true;
+    }
+
+    if (existingStartTime.isBefore(newEndTime) && newStartTime.isBefore(existingEndTime)) {
+      isConflictExists = true;
+    }
+
+    if (existingStartTime.equals(newStartTime)) {
+      isConflictExists = true;
+    }
+
+    if (existingEndTime.equals(newEndTime)) {
+      isConflictExists = true;
+    }
+    return isConflictExists;
   }
 
 

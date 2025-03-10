@@ -16,48 +16,11 @@ public class Calendar extends ACalendar {
   public Calendar() {
   }
 
-  boolean isOverlap(Event newEvent, Event existingEvent) {
-
-    LocalDateTime newStartTime = newEvent.getStartDate();
-    LocalDateTime newEndTime = newEvent.getEndDate();
-
-    LocalDateTime existingStartTime = existingEvent.getStartDate();
-    LocalDateTime existingEndTime = existingEvent.getEndDate();
-
-    boolean isConflictExists = false;
-
-    if (newStartTime.isBefore(existingEndTime) &&
-            newEndTime.equals(existingStartTime)) {
-      isConflictExists = false;
-    }
-    if (existingStartTime.isBefore(newEndTime) &&
-            existingEndTime.equals(newStartTime)) {
-      isConflictExists = false;
-    }
-
-    if (newStartTime.isBefore(existingEndTime) && existingStartTime.isBefore(newEndTime)) {
-      isConflictExists = true;
-    }
-
-    if (existingStartTime.isBefore(newEndTime) && newStartTime.isBefore(existingEndTime)) {
-      isConflictExists = true;
-    }
-
-    if (existingStartTime.equals(newStartTime)) {
-      isConflictExists = true;
-    }
-
-    if (existingEndTime.equals(newEndTime)) {
-      isConflictExists = true;
-    }
-    return isConflictExists;
-  }
-
   boolean hasConflicts(List<Event> newEvents) {
 
     for (Event existingEvent : calendarStorage) {
       for (Event newEvent : newEvents) {
-        if (isOverlap(newEvent, existingEvent)) {
+        if (newEvent.isOverlapWith(existingEvent)) {
           return true;
         }
       }
@@ -257,7 +220,7 @@ public class Calendar extends ACalendar {
   }
 
 
-  public boolean isBusyOnDay(LocalDateTime date) {
+  public boolean isUserBusy(LocalDateTime date) {
     for (Event event : calendarStorage) {
       LocalDateTime startTime = event.getStartDate();
       LocalDateTime endTime = event.getEndDate();

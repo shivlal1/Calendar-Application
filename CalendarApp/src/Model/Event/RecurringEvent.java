@@ -90,12 +90,11 @@ public class RecurringEvent extends Event {
     LocalDateTime start = this.startDate;
     LocalDateTime end = this.endDate;
 
+    List<Event> newEventsList = new ArrayList<>();
 
     if (!isStartBeforeEnd(start, end)) {
       return null;
     }
-
-    List<Event> newEventsList = new ArrayList<>();
 
     if (allMetaDetails.getAddUntilDateTime() != null) {
       newEventsList = getUntilTimeRecurringEvent(start, end);

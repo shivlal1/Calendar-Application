@@ -50,7 +50,6 @@ public class SingleEvent extends Event {
     return true;
   }
 
-
 }
 
 
