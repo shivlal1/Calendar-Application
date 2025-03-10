@@ -1,4 +1,4 @@
-# Virtual Calendar Application
+# Calendar Application
 
 ## Introduction
 
@@ -6,7 +6,7 @@ This project implements a virtual calendar application inspired by popular appli
 
 ## Feature Overview
 
-- **Single Calendar Support**: Operates on EST timezone, with the capability of handling events spanning multiple days.
+- **Single Calendar Support**: Operates on EST timezone, capable of handling events spanning multiple days.
 - **Event Conflict Management**: Automatic conflict detection with existing events.
 - **Recurring events** support with customizable repetition.
 - **Event editing** capabilities.
@@ -16,17 +16,22 @@ This project implements a virtual calendar application inspired by popular appli
 
 ## Supported Commands
 
-| Command                                                                                      | Description                                          |
-| -------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `create event --autoDecline <eventName> from <date> to <date>`                               | Create an event with optional conflict auto-decline. |
-| `create event <eventName> from <dateTime> to <dateTime> repeats <weekdays> until <dateTime>` | Creates a recurring event until specified date.      |
-| `create event <eventName> on <date>`                                                         | Creates an all-day event.                            |
-| `edit event <property> <eventName> from <dateTime> to <dateTime> with <newPropertyValue>`    | Edits properties of an event.                        |
-| `print events on <date>`                                                                     | Lists events on a specific day.                      |
-| `print events from <date> to <date>`                                                         | Lists events within a specified range.               |
-| `export calendar`                                                                            | Exports calendar to CSV and prints file location.    |
-| `show status on <dateTime>`                                                                  | Shows busy status at specified date and time.        |
-| `exit`                                                                                       | Exits the application.                               |
+| Command                                                                                                 | Description                                                                                    |
+| ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `create event --autoDecline <eventName> from <dateTime> to <dateTime>`                                  | Create an event with optional conflict auto-decline.                                           |
+| `create event <eventName> from <dateTime> to <dateTime> repeats <weekdays> until <dateTime>`            | Creates a recurring event until specified date.                                                | 
+| `create event <eventName> on <date>`                                                                    | Creates an all-day event.                                                                      |
+| `create event --autoDecline <eventName> from <dateTime> to <dateTime> repeats <weekdays> for N times`   | Creates a recurring event on the specified weekdays for N times                                |
+| `create event <eventName> on <date> repeats <weekdays> for <N> times`                                   | Creates an event on the specified date repeating on the given days for N times.                |
+| `create event <eventName> on <date> repeats <weekdays> until <date>`                                    | Creates an event on the specified date which repeats on the specified days until a given date. |
+| `edit event <property> <eventName> from <dateTime> to <dateTime> with <newPropertyValue>`               | Edits properties of an event with the given new property value.                                |
+| `edit events <property> <eventName> from <dateStringTtimeString> with <NewPropertyValue>`               | Edits the property of the event that starts from the given date and time.                      |
+| `edit events <property> <eventName> <NewPropertyValue>`                                                 | Edits the property of all events with the given name to the new property value.                |
+| `print events on <date>`                                                                                | Lists events on a specific day.                                                                |
+| `print events from <date> to <date>`                                                                    | Lists events within a specified range of dates.                                                |
+| `export calendar <filename.csv>`                                                                        | Exports calendar to CSV and prints file location.                                              |
+| `show status on <dateTime>`                                                                             | Shows busy status at a specified date and time if an event is already scheduled.               |
+| `exit`                                                                                                  | Exits the application.                                                                         |
 
 ### Weekday Abbreviations:
 
