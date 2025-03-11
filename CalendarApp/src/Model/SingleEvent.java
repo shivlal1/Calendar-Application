@@ -18,7 +18,7 @@ public class SingleEvent extends Event {
   }
 
 
-  public List<Event> generateEventsForCalendar() throws Exception {
+  protected List<Event> generateEventsForCalendar() throws Exception {
 
     List<Event> newEventsList = new ArrayList<>();
 
@@ -39,12 +39,12 @@ public class SingleEvent extends Event {
   }
 
   @Override
-  public boolean isAutoDeclineEnabled() {
+  protected boolean isAutoDeclineEnabled() {
     return false;
   }
 
   @Override
-  public boolean canBeEditedToDifferentDay() {
+  protected boolean canBeEditedToDifferentDay() {
     return true;
   }
 

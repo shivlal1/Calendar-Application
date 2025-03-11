@@ -85,7 +85,7 @@ public class RecurringEvent extends Event {
     return eventsList;
   }
 
-  public List<Event> generateEventsForCalendar() throws Exception {
+  protected List<Event> generateEventsForCalendar() throws Exception {
 
     LocalDateTime start = this.startDate;
     LocalDateTime end = this.endDate;
@@ -108,12 +108,12 @@ public class RecurringEvent extends Event {
   }
 
   @Override
-  public boolean isAutoDeclineEnabled() {
+  protected boolean isAutoDeclineEnabled() {
     return true;
   }
 
 
-  public char getDayAbbreviation(String day) {
+  private char getDayAbbreviation(String day) {
     switch (day) {
       case "MONDAY":
         return 'M';
@@ -135,7 +135,7 @@ public class RecurringEvent extends Event {
   }
 
   @Override
-  public boolean canBeEditedToDifferentDay() {
+  protected boolean canBeEditedToDifferentDay() {
     return false;
   }
 

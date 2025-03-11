@@ -29,7 +29,7 @@ public interface ICalendar {
   public boolean isUserBusy(LocalDateTime date);
 
   // EXPORT
-  public String exportCalendarAndGetFilePath();
+ // public String exportCalendarAndGetFilePath();
 
 
 }
