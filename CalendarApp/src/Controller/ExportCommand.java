@@ -1,13 +1,10 @@
-package Controller.CommandHandler;
+package Controller;
 
 import Model.Calendar.ACalendar;
 
 public class ExportCommand extends AbstractCommand {
   private String fileName;
 
-  public ExportCommand() {
-    // this.calendar = calendar;
-  }
 
   private String diagnoseCommandError(String command) {
 

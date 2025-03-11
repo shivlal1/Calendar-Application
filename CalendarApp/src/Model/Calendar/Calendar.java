@@ -3,10 +3,8 @@ package Model.Calendar;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import Controller.MetaData.CreateCommandMetaDetails;
-import Controller.MetaData.EditCommandMetaDetails;
-import Controller.MetaData.PrintCommandMetaDetails;
 import Model.Event.Event;
 import Model.Event.EventFactory;
 import Model.Utils.DateUtils;
@@ -132,30 +130,31 @@ public class Calendar extends ACalendar {
     }
   }
 
-  private boolean isEditByEventNameAndStartTime(EditCommandMetaDetails data) {
-    return (data.getEventName() != null && data.getStartTime() != null && data.getEndTime() == null);
+  private boolean isEditByEventNameAndStartTime(Map<String, Object> data) {
+    return (data.get("eventName") != null && data.get("startTime") != null && data.get("endTime") == null);
   }
 
-  private boolean isEditByEventName(EditCommandMetaDetails data) {
-    return (data.getEventName() != null && data.getStartTime() == null && data.getEndTime() == null);
+  private boolean isEditByEventName(Map<String, Object> data) {
+    return (data.get("eventName") != null && data.get("startTime") == null && data.get("endTime") == null);
   }
 
-  private boolean isEditByEventNameAndTime(EditCommandMetaDetails data) {
-    return (data.getEventName() != null && data.getStartTime() != null && data.getEndTime() != null);
+  private boolean isEditByEventNameAndTime(Map<String, Object> data) {
+    return (data.get("eventName") != null && data.get("startTime") != null && data.get("endTime") != null);
   }
 
-  public void editEvent(EditCommandMetaDetails data) {
+  public void editEvent(Map<String, Object> data) {
 
-    String newValue = data.getNewValue();
-    String property = data.getProperty();
-    String eventName = data.getEventName();
+    String newValue = (String) data.get("newValue");
+    String property = (String) data.get("property");
+    String eventName = (String) data.get("eventName");
 
     if (isEditByEventNameAndStartTime(data)) {
-      updateMatchingEvents(eventName, data.getLocalStartTime(), null, newValue, property);
+      updateMatchingEvents(eventName, (LocalDateTime) data.get("localStartTime"), null, newValue, property);
     } else if (isEditByEventName(data)) {
       updateMatchingEvents(eventName, null, null, newValue, property);
     } else if (isEditByEventNameAndTime(data)) {
-      updateMatchingEvents(eventName, data.getLocalStartTime(), data.getLocalEndTime(), newValue, property);
+      updateMatchingEvents(eventName, (LocalDateTime) data.get("localStartTime"),
+              (LocalDateTime) data.get("localEndTime"), newValue, property);
     }
 
   }
@@ -182,12 +181,12 @@ public class Calendar extends ACalendar {
     }
   }
 
-  public List<Event> getMatchingEvents(PrintCommandMetaDetails allMetaDeta) {
+  public List<Event> getMatchingEvents(Map<String, Object> allMetaDeta) {
 
     List<Event> eventDetailsList = new ArrayList<>();
-    LocalDateTime startDateTime = allMetaDeta.getLocalStartDate();
+    LocalDateTime startDateTime = (LocalDateTime) allMetaDeta.get("localStartTime");
     if (isStartToEndDatePrintCommand(allMetaDeta)) {
-      eventDetailsList = getEventsInBetween(startDateTime, allMetaDeta.getLocalEndDate());
+      eventDetailsList = getEventsInBetween(startDateTime, (LocalDateTime) allMetaDeta.get("localEndTime"));
     } else if (isOnDatePrintCommand(allMetaDeta)) {
       eventDetailsList = getEventsOnDate(startDateTime);
     }
@@ -195,12 +194,12 @@ public class Calendar extends ACalendar {
   }
 
 
-  private boolean isStartToEndDatePrintCommand(PrintCommandMetaDetails allMetaDeta) {
-    return (allMetaDeta.getLocalStartDate() != null && allMetaDeta.getLocalEndDate() != null);
+  private boolean isStartToEndDatePrintCommand(Map<String, Object> allMetaDeta) {
+    return (allMetaDeta.get("localStartTime") != null && allMetaDeta.get("localEndTime") != null);
   }
 
-  private boolean isOnDatePrintCommand(PrintCommandMetaDetails allMetaDeta) {
-    return (allMetaDeta.getLocalStartDate() != null);
+  private boolean isOnDatePrintCommand(Map<String, Object> allMetaDeta) {
+    return (allMetaDeta.get("localStartTime") != null);
   }
 
 
@@ -231,7 +230,7 @@ public class Calendar extends ACalendar {
   public void createEvent(String subject,
                           LocalDateTime localStartDateTime,
                           LocalDateTime localEndDateTime,
-                          CreateCommandMetaDetails allMetaDeta) throws Exception {
+                          Map<String, Object> allMetaDeta) throws Exception {
 
     EventFactory factory = new EventFactory();
 
@@ -242,7 +241,7 @@ public class Calendar extends ACalendar {
     if (event.isAutoDeclineEnabled()) {
       putGeneratedEventsIntoCalendar(allEvents, true);
     } else {
-      putGeneratedEventsIntoCalendar(allEvents, allMetaDeta.getAutoDecline());
+      putGeneratedEventsIntoCalendar(allEvents, (Boolean) allMetaDeta.get("autoDecline"));
     }
   }
 

@@ -1,4 +1,4 @@
-package Controller.CommandHandler;
+package Controller;
 
 import java.time.LocalDateTime;
 
@@ -10,9 +10,6 @@ public class ShowStatusCommand extends AbstractCommand {
   private static String regex = "status on (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})";
   private LocalDateTime localOnDate;
   private String onDate;
-
-  public ShowStatusCommand() {
-  }
 
   private String diagnoseCommandError(String command) {
 

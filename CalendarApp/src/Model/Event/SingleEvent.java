@@ -4,15 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import Controller.MetaData.CreateCommandMetaDetails;
+import java.util.Map;
 
 public class SingleEvent extends Event {
 
-  private CreateCommandMetaDetails allMetaDetails;
+  private Map<String, Object> allMetaDetails;
 
   SingleEvent(String subject, LocalDateTime startDate, LocalDateTime endDate,
-              CreateCommandMetaDetails allMetaDetails) {
+              Map<String, Object> allMetaDetails) {
 
     super(subject, startDate, endDate);
     this.allMetaDetails = allMetaDetails;
@@ -28,7 +27,7 @@ public class SingleEvent extends Event {
       //return newEventsList;
     }
 
-    if (allMetaDetails.getIsAllDay()) {
+    if ( (Boolean) allMetaDetails.get("isAllDay")) {
       LocalDate currentDay = this.startDate.toLocalDate();
       LocalDateTime newEndDate = currentDay.atTime(23, 59);
       this.endDate = newEndDate;

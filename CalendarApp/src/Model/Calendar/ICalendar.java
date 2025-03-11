@@ -2,10 +2,8 @@ package Model.Calendar;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
-import Controller.MetaData.CreateCommandMetaDetails;
-import Controller.MetaData.EditCommandMetaDetails;
-import Controller.MetaData.PrintCommandMetaDetails;
 import Model.Event.Event;
 
 public interface ICalendar {
@@ -13,11 +11,11 @@ public interface ICalendar {
 
   public void createEvent(String subject, LocalDateTime localStartDateTime,
                           LocalDateTime localEndDateTime,
-                          CreateCommandMetaDetails allMetaDeta) throws Exception;
+                          Map<String, Object> allMetaDeta) throws Exception;
 
 
   // EDIT
-  public void editEvent(EditCommandMetaDetails allMetaDeta);
+  public void editEvent(Map<String, Object> allMetaDeta);
 
 
   //
@@ -26,7 +24,7 @@ public interface ICalendar {
 
 
   // PRINT
-  public List<Event> getMatchingEvents(PrintCommandMetaDetails allMetaData);
+  public List<Event> getMatchingEvents(Map<String, Object> allMetaData);
 
 
   // STATUS

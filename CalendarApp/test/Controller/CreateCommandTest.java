@@ -3,19 +3,13 @@ package Controller;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import Controller.CommandHandler.CreateCommand;
 import Controller.CommandHandler.EditCommand;
 import Controller.CommandHandler.ICommand;
 import Controller.CommandHandler.PrintCommand;
 import Controller.CommandHandler.ShowStatusCommand;
-import Controller.MetaData.PrintCommandMetaDetails;
 import Model.Calendar.ACalendar;
 import Model.Calendar.Calendar;
-import Model.Event.Event;
-import Model.Utils.DateUtils;
 
 import static org.junit.Assert.assertEquals;
 
@@ -557,6 +551,20 @@ public class CreateCommandTest {
       assertEquals(e.getMessage(),msg);
     }
   }
+  @Test
+  public void add() throws Exception {
+    try {
+      command = "event \"Hello\" from 2025-09-20T12:00 to 2025-09-20T13:00";
+      createCommand.execute(command, cal);
+      cal.printEvents();
+    }
+    catch (Exception e){
+      String msg = "error :Does not match expected format.";
+      assertEquals(e.getMessage(),msg);
+    }
+  }
+
+
 
 
 }
