@@ -1,8 +1,9 @@
-package Controller.CommandHandler;
+package Controller;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
-import Controller.MetaData.EditCommandMetaDetails;
 import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 
@@ -12,8 +13,7 @@ public class EditCommand extends AbstractCommand {
   private String start, end;
   private String property, newValue;
   private LocalDateTime localStartTime, localEndTime;
-  private EditCommandMetaDetails.EditEventMetaDetailsBuilder metaData;
-  private EditCommandMetaDetails allMetaDeta;
+  private Map<String, Object> metaData = new HashMap<>();
 
   private static final String regex = "^event(?:s)?\\s+" +
           "(?<property>\\S+)\\s+" +
@@ -32,7 +32,7 @@ public class EditCommand extends AbstractCommand {
   public void commandParser(String commandArgs) throws Exception {
 
     initRegexPatter(regex, commandArgs);
-    metaData = new EditCommandMetaDetails.EditEventMetaDetailsBuilder();
+   // metaData = new EditCommandMetaDetails.EditEventMetaDetailsBuilder();
 
     if (!matcher.matches()) {
       throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
@@ -59,13 +59,14 @@ public class EditCommand extends AbstractCommand {
   }
 
   private void addValuesInMetaDataObject() {
-    metaData.addProperty(property);
-    metaData.addEventName(eventName);
-    metaData.addNewValue(newValue);
-    metaData.addEndTime(end);
-    metaData.addStartTime(start);
-    metaData.addLocalStartTime(localStartTime);
-    metaData.addLocalEndTime(localEndTime);
+
+    metaData.put("property",property);
+    metaData.put("eventName",eventName);
+    metaData.put("newValue",newValue);
+    metaData.put("endTime",end);
+    metaData.put("startTime",start);
+    metaData.put("localStartTime",localStartTime);
+    metaData.put("localEndTime",localEndTime);
   }
 
   private boolean isStringUppercase(String str) {
@@ -122,8 +123,7 @@ public class EditCommand extends AbstractCommand {
   }
 
   private void editCommandUtil(ACalendar calendar) {
-    allMetaDeta = metaData.build();
-    calendar.editEvent(allMetaDeta);
+    calendar.editEvent(metaData);
   }
 
   private void editCommandProcess(String commandArgs, ACalendar calendar) throws Exception {

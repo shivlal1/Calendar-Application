@@ -1,10 +1,10 @@
-package Controller.CommandHandler;
+package Controller;
 
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
-import Controller.MetaData.PrintCommandMetaDetails;
 import Model.Calendar.ACalendar;
 import Model.Event.Event;
 import Model.Utils.DateUtils;
@@ -14,15 +14,11 @@ public class PrintCommand extends AbstractCommand {
 
   private String startDate, endDate;
   private LocalDateTime localStart, localEnd;
-  private PrintCommandMetaDetails.PrintEventMetaDetailsBuilder metaData;
-  private PrintCommandMetaDetails allMetaDeta;
+  private Map<String, Object> metaData;
+  private static final String regex = "^events (?:from \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\" " +
+          "to \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\"|on \"(\\d{4}-\\d{2}-\\d{2})\")$";
 
-  private static final String regex = "^events (?:from \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\" to \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\"|on \"(\\d{4}-\\d{2}-\\d{2})\")$";
-  // private static final String regex = "^events (?:from \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\" to \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\"|on \"(\\d{4}-\\d{2}-\\d{2})\")$
 
-  public PrintCommand() {
-//    this.calendar = calendar;
-  }
 
   private String diagnoseCommandError(String command) {
 
@@ -81,15 +77,13 @@ public class PrintCommand extends AbstractCommand {
 
   private void addValuesInMetaDataObject() {
     //System.out.println(localEnd + " " + localEnd);
-    metaData = new PrintCommandMetaDetails.PrintEventMetaDetailsBuilder();
 
-    metaData.addLocalStartTime(localStart);
-    metaData.addLocalEndTime(localEnd);
+    metaData.put("localStartTime",localStart);
+    metaData.put("localEndTime",localEnd);
   }
 
   private void printCommandUtil(ACalendar calendar) {
-    allMetaDeta = metaData.build();
-    List<Event> eventDetails = calendar.getMatchingEvents(allMetaDeta);
+    List<Event> eventDetails = calendar.getMatchingEvents(metaData);
 
     ConsoleView v = new ConsoleView();
     v.printInConsole(eventDetails);

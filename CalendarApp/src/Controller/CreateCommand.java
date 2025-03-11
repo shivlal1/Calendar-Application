@@ -1,26 +1,24 @@
-package Controller.CommandHandler;
+package Controller;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.Map;
 
-import Controller.MetaData.CreateCommandMetaDetails;
 import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 
 public class CreateCommand extends AbstractCommand {
 
   private String subject, weekdays, forTimes;
-  private CreateCommandMetaDetails.EventMetaDetailsBuilder metaDeta;
   private String startDateTime, endDateTime, untilDateTime;
   private String finalStartDate, finalEndDate, finalUntilDateTime;
   private LocalDateTime localStartDateTime, localEndDateTime;
   private String onDate, onTime;
-  private CreateCommandMetaDetails allMetaDeta;
   private boolean isAllDayEvent;
   private boolean isRecurring;
   private boolean autoDecline;
+  private Map<String, Object> metaData = new HashMap<>();
 
   private static String regex = "^event\\s+(--autoDecline\\s+)?\"(.*?)\"\\s+(?=from\\s+|on\\s+)(?:" +
           "(?:from\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\\s+to\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}))|" +
@@ -31,7 +29,6 @@ public class CreateCommand extends AbstractCommand {
 
   public void commandParser(String commandArgs) throws Exception {
     initRegexPatter(regex, commandArgs);
-    metaDeta = new CreateCommandMetaDetails.EventMetaDetailsBuilder();
     if (!matcher.matches()) {
       throw new Exception("error :" + diagnoseCommandError(commandArgs));
     }
@@ -82,11 +79,12 @@ public class CreateCommand extends AbstractCommand {
   }
 
   private void addValuesInMetaDataObject() {
-    metaDeta.addWeekdays(weekdays);
-    metaDeta.addForTimes(forTimes);
-    metaDeta.addIsRecurring(isRecurring);
-    metaDeta.addIsAllDay(isAllDayEvent);
-    metaDeta.addAutoDecline(autoDecline);
+
+    metaData.put("weekdays",weekdays);
+    metaData.put("forTimes",forTimes);
+    metaData.put("isRecurring",isRecurring);
+    metaData.put("isAllDay",isAllDayEvent);
+    metaData.put("autoDecline",autoDecline);
   }
 
   private void formatUntilTimeForRecurringEvent() {
@@ -99,7 +97,7 @@ public class CreateCommand extends AbstractCommand {
           finalUntilDateTime = DateUtils.changeDateToDateTime(finalUntilDateTime);
         }
       }
-      metaDeta.addUntilDateTime(finalUntilDateTime);
+      metaData.put("untilTime",finalUntilDateTime);
     }
   }
 
@@ -136,8 +134,7 @@ public class CreateCommand extends AbstractCommand {
   }
 
   private void createEventUtil(ACalendar calendar) throws Exception {
-    allMetaDeta = metaDeta.build();
-    calendar.createEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
+    calendar.createEvent(subject, localStartDateTime, localEndDateTime, metaData);
   }
 
   private void createCommandProcess(String commandArgs, ACalendar calendar) throws Exception {

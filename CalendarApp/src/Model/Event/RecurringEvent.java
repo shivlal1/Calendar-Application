@@ -4,16 +4,16 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import Controller.MetaData.CreateCommandMetaDetails;
 import Model.Utils.DateUtils;
 
 public class RecurringEvent extends Event {
 
-  private CreateCommandMetaDetails allMetaDetails;
+  private Map<String, Object> allMetaDetails;
 
   RecurringEvent(String subject, LocalDateTime startDate, LocalDateTime endDate,
-                 CreateCommandMetaDetails allMetaDetails) {
+                 Map<String, Object> allMetaDetails) {
 
     super(subject, startDate, endDate);
     this.allMetaDetails = allMetaDetails;
@@ -29,7 +29,7 @@ public class RecurringEvent extends Event {
   }
 
   private LocalDateTime getRecurringEventEndDate() {
-    String finalUntilDateTime = allMetaDetails.getAddUntilDateTime();
+    String finalUntilDateTime = (String) allMetaDetails.get("untilTime");
     return DateUtils.stringToLocalDateTime(finalUntilDateTime);
   }
 
@@ -37,8 +37,8 @@ public class RecurringEvent extends Event {
 
     DayOfWeek day = date.getDayOfWeek();
     char dayNameAsChar = getDayAbbreviation(day.name());
-
-    if (allMetaDetails.getWeekdays().indexOf(dayNameAsChar) != -1) {
+    String weekdayText = (String) allMetaDetails.get("weekday");
+    if (weekdayText.indexOf(dayNameAsChar) != -1) {
       return true;
     }
     return false;
@@ -48,7 +48,7 @@ public class RecurringEvent extends Event {
                                                LocalDateTime end) {
 
     LocalDateTime currDate = start;
-    int requriredRecurringEvents = Integer.valueOf(allMetaDetails.getForTimes());
+    int requriredRecurringEvents = Integer.valueOf((String) allMetaDetails.get("forTimes"));
     List<Event> eventsList = new ArrayList<>();
     int eventsEncountered = 0;
 
@@ -96,10 +96,10 @@ public class RecurringEvent extends Event {
       throw new Exception("end date cannot be before start date");
     }
 
-    if (allMetaDetails.getAddUntilDateTime() != null) {
+    if (  (String) allMetaDetails.get("untilTime") != null) {
       newEventsList = getUntilTimeRecurringEvent(start, end);
 
-    } else if (allMetaDetails.getForTimes() != null) {
+    } else if (allMetaDetails.get("forTimes") != null) {
       newEventsList = getForTimeRecurringEvent(start, end);
     }
 

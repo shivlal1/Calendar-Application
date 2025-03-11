@@ -1,4 +1,4 @@
-package Controller.CommandHandler;
+package Controller;
 
 import java.util.HashMap;
 import java.util.Map;
