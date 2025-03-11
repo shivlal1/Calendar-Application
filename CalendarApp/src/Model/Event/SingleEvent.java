@@ -19,12 +19,13 @@ public class SingleEvent extends Event {
   }
 
 
-  public List<Event> generateEventsForCalendar() {
+  public List<Event> generateEventsForCalendar() throws Exception {
 
     List<Event> newEventsList = new ArrayList<>();
 
     if (!isStartBeforeEnd(this.startDate, this.endDate)) {
-      return newEventsList;
+      throw new Exception("end date cannot be before start date");
+      //return newEventsList;
     }
 
     if (allMetaDetails.getIsAllDay()) {

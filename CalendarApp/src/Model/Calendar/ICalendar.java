@@ -13,7 +13,7 @@ public interface ICalendar {
 
   public void createEvent(String subject, LocalDateTime localStartDateTime,
                           LocalDateTime localEndDateTime,
-                          CreateCommandMetaDetails allMetaDeta);
+                          CreateCommandMetaDetails allMetaDeta) throws Exception;
 
 
   // EDIT

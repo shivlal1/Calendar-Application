@@ -23,18 +23,17 @@ public class CreateCommand extends AbstractCommand {
   private boolean autoDecline;
 
   private static String regex = "^event\\s+(--autoDecline\\s+)?\"(.*?)\"\\s+(?=from\\s+|on\\s+)(?:" +
-          "(?:from\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\\s+to\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}))" +
-          "|" +
-          "(?:on\\s+(\\d{4}-\\d{2}-\\d{2})(?:T(\\d{2}:\\d{2}))?)" +
-          ")" +
-          "(?:\\s+repeats\\s+([MTWRFSU]+)\\s+(?:(?:for\\s+(\\d+)\\s+times)|(?:until\\s+(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?))))?$";
+          "(?:from\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\\s+to\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}))|" +
+          "(?:on\\s+(\\d{4}-\\d{2}-\\d{2})(?:T(\\d{2}:\\d{2}))?))" +
+          "(?:\\s+repeats\\s+([MTWRFSU]+)\\s+(?:(?:for\\s+(\\d+)\\s+times)|" +
+          "(?:until\\s+(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?))))?$";
 
 
   public void commandParser(String commandArgs) throws Exception {
     initRegexPatter(regex, commandArgs);
     metaDeta = new CreateCommandMetaDetails.EventMetaDetailsBuilder();
     if (!matcher.matches()) {
-      throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
+      throw new Exception("error :" + diagnoseCommandError(commandArgs));
     }
     String autoDeclineStr = matcher.group(1);
     autoDecline = autoDeclineStr != null && !autoDeclineStr.trim().isEmpty();
@@ -53,47 +52,33 @@ public class CreateCommand extends AbstractCommand {
     setEndTime();
   }
 
-  private String getRepeatsErrorMessage(String command) {
-    Pattern repeatsPattern = Pattern.compile("repeats\\s+([A-Z]+)");
-    Matcher repeatsMatcher = repeatsPattern.matcher(command);
-    String errorMessage = "";
-    if (repeatsMatcher.find()) {
-      String weekdays = repeatsMatcher.group(1);
-      if (!weekdays.matches("[MTWRFSU]+")) {
-        errorMessage = "Invalid command: 'repeats' contains invalid weekday format. Use only M, T, W, R, F, S, U.";
-      }
-    }
-    return errorMessage;
-  }
+
 
   public String diagnoseCommandError(String command) {
     if (!command.startsWith("event")) {
-      return "Invalid command: Must start with 'create event'.";
+      return "Must start with create event";
     }
     if (command.contains("--autoDecline")) {
       if (!command.matches("event\\s+--autoDecline\\s+\".*?\".*")) {
-        return "Invalid command: '--autoDecline' must appear immediately after 'create event'.";
+        return "--autoDecline must appear immediately after create event";
       }
     }
     if (!command.contains(" from ") && !command.contains(" on ")) {
-      return "Invalid command: Missing 'from' or 'on' keyword.";
-    }
-    if (command.contains("repeats")) {
-      return getRepeatsErrorMessage(command);
+      return "Missing 'from' or 'on' keyword.";
     }
     if (command.contains("from") && !command.contains(" to ")) {
-      return "Invalid command: 'from' must be followed by 'to'.";
+      return "from must be followed by to date";
     }
     if (command.contains("repeats") && !command.contains("for") && !command.contains("until")) {
-      return "Invalid command: 'repeats' must be followed by 'for <N> times' or 'until <date>'.";
+      return "'repeats' must be followed by 'for <N> times' or 'until <date>'.";
     }
     if (command.contains("for") && !command.matches(".*for \\d+ times.*")) {
-      return "Invalid command: 'for' must be followed by a valid number of times.";
+      return "'for' must be followed by a valid number of times.";
     }
     if (command.contains("until") && !command.matches(".*until \\d{4}-\\d{2}-\\d{2}.*")) {
-      return "Invalid command: 'until' must be followed by a valid date.";
+      return "'until' must be followed by a valid date.";
     }
-    return "Invalid command: Does not match expected format.";
+    return "Does not match expected format.";
   }
 
   private void addValuesInMetaDataObject() {
@@ -150,7 +135,7 @@ public class CreateCommand extends AbstractCommand {
     }
   }
 
-  private void createEventUtil(ACalendar calendar) {
+  private void createEventUtil(ACalendar calendar) throws Exception {
     allMetaDeta = metaDeta.build();
     calendar.createEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
   }

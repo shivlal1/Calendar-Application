@@ -69,7 +69,7 @@ public abstract class Event {
     this.isPublic = isPublic;
   }
 
-  public abstract List<Event> generateEventsForCalendar();
+  public abstract List<Event> generateEventsForCalendar() throws Exception;
 
   public abstract boolean isAutoDeclineEnabled();
 

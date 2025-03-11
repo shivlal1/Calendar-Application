@@ -85,7 +85,7 @@ public class RecurringEvent extends Event {
     return eventsList;
   }
 
-  public List<Event> generateEventsForCalendar() {
+  public List<Event> generateEventsForCalendar() throws Exception {
 
     LocalDateTime start = this.startDate;
     LocalDateTime end = this.endDate;
@@ -93,7 +93,7 @@ public class RecurringEvent extends Event {
     List<Event> newEventsList = new ArrayList<>();
 
     if (!isStartBeforeEnd(start, end)) {
-      return newEventsList;
+      throw new Exception("end date cannot be before start date");
     }
 
     if (allMetaDetails.getAddUntilDateTime() != null) {
