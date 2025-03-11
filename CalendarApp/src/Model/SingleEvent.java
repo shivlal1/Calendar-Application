@@ -19,12 +19,10 @@ public class SingleEvent extends Event {
 
 
   protected List<Event> generateEventsForCalendar() throws Exception {
-
     List<Event> newEventsList = new ArrayList<>();
 
     if (!isStartBeforeEnd(this.startDate, this.endDate)) {
       throw new Exception("end date cannot be before start date");
-      //return newEventsList;
     }
 
     if ((Boolean) allMetaDetails.get("isAllDay")) {
@@ -34,7 +32,6 @@ public class SingleEvent extends Event {
     }
 
     newEventsList.add(this);
-
     return newEventsList;
   }
 
