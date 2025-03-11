@@ -68,22 +68,46 @@ public class EditCommand extends AbstractCommand {
     metaData.addLocalEndTime(localEndTime);
   }
 
+  private boolean isStringUppercase(String str) {
+    for (int i = 0; i < str.length(); i++) {
+      if (Character.isLetter(str.charAt(i)) && !Character.isUpperCase(str.charAt(i))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   private String diagnoseCommandError(String command) {
 
+    if (isStringUppercase(command)) {
+      return "Command should be lower case.";
+    }
+
     if (!command.startsWith("event") && !command.startsWith("events")) {
-      return "Missing 'edit event(s)'";
+      return "Should start with 'edit event(s)' or it is Missing 'edit event(s)'";
     }
 
     if (!command.matches("^event(?:s)?\\s+\\S+\\s+\".*?\".*")) {
-      return "Missing 'eventName' or incorrect format";
+      return "Missing 'eventName' or Property is missing or incorrectly placed";
     }
 
     boolean hasFrom = command.contains("from");
+    boolean hasTo = command.contains("to");
     boolean hasWith = command.contains("with");
+
 
     if (hasWith && !hasFrom) {
       return ("Missing From");
     }
+
+    if (!hasTo && hasFrom) {
+      return ("Missing To");
+    }
+
+    if (!hasWith) {
+      return ("Missing With");
+    }
+
 
     if (hasWith) {
       if (!command.matches(".*with\\s+\".*?\".*")) {

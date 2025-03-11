@@ -34,12 +34,12 @@ public class PrintCommand extends AbstractCommand {
     boolean hasTo = command.contains("to");
     boolean hasOn = command.contains("on");
 
-    if (!hasFrom && !hasOn) {
-      return ("Missing From and On");
-    }
-
     if (hasFrom && !hasTo) {
       return "Missing To";
+    }
+
+    if (!hasFrom && !hasOn) {
+      return ("Missing From/On");
     }
 
     if (!hasFrom && hasTo) {
