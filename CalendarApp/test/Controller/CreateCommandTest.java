@@ -3,11 +3,11 @@ package Controller;
 import org.junit.Before;
 import org.junit.Test;
 
-import Controller.CommandHandler.CreateCommand;
-import Controller.CommandHandler.EditCommand;
-import Controller.CommandHandler.ICommand;
-import Controller.CommandHandler.PrintCommand;
-import Controller.CommandHandler.ShowStatusCommand;
+import Controller.CreateCommand;
+import Controller.EditCommand;
+import Controller.ICommand;
+import Controller.PrintCommand;
+import Controller.ShowStatusCommand;
 import Model.Calendar.ACalendar;
 import Model.Calendar.Calendar;
 

@@ -4,9 +4,9 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.Before;
 
-import Controller.CommandHandler.CreateCommand;
-import Controller.CommandHandler.EditCommand;
-import Controller.CommandHandler.ICommand;
+import Controller.CreateCommand;
+import Controller.EditCommand;
+import Controller.ICommand;
 import Model.Calendar.ACalendar;
 import Model.Calendar.Calendar;
 
