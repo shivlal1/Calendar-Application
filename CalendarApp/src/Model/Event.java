@@ -12,7 +12,7 @@ public abstract class Event {
   protected LocalDateTime endDate;
   protected boolean isPublic;
 
-  public Event(String subject, LocalDateTime startDate, LocalDateTime endDate) {
+  Event(String subject, LocalDateTime startDate, LocalDateTime endDate) {
     this.subject = subject;
     this.startDate = startDate;
     this.endDate = endDate;
@@ -21,60 +21,11 @@ public abstract class Event {
     this.location = null;
   }
 
-  public String getSubject() {
-    return subject;
-  }
+  protected abstract List<Event> generateEventsForCalendar() throws Exception;
 
-  public LocalDateTime getStartDate() {
-    return startDate;
-  }
+  protected abstract boolean isAutoDeclineEnabled();
 
-  public String getDescription() {
-    return description;
-  }
-
-  public String getLocation() {
-    return location;
-  }
-
-  public LocalDateTime getEndDate() {
-    return endDate;
-  }
-
-  public boolean getIsPublic() {
-    return isPublic;
-  }
-
-  public void setSubject(String subject) {
-    this.subject = subject;
-  }
-
-  public void setStartDate(LocalDateTime startDate) {
-    this.startDate = startDate;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public void setLocation(String location) {
-    this.location = location;
-  }
-
-  public void setEndDate(LocalDateTime endDate) {
-    this.endDate = endDate;
-  }
-
-  public void setIsPublic(boolean isPublic) {
-    this.isPublic = isPublic;
-  }
-
-  public abstract List<Event> generateEventsForCalendar() throws Exception;
-
-  public abstract boolean isAutoDeclineEnabled();
-
-  public abstract boolean canBeEditedToDifferentDay();
-
+  protected abstract boolean canBeEditedToDifferentDay();
 
   protected boolean isStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
     if (end.isAfter(start)) {
@@ -82,7 +33,6 @@ public abstract class Event {
     }
     return false;
   }
-
 
   @Override
   public String toString() {
@@ -109,12 +59,12 @@ public abstract class Event {
   }
 
 
-  public boolean isOverlapWith(Event newEvent) {
+  protected boolean isOverlapWith(Event newEvent) {
 
-    LocalDateTime newStartTime = newEvent.getStartDate();
-    LocalDateTime newEndTime = newEvent.getEndDate();
-    LocalDateTime existingStartTime = this.getStartDate();
-    LocalDateTime existingEndTime = this.getEndDate();
+    LocalDateTime newStartTime = newEvent.startDate;
+    LocalDateTime newEndTime = newEvent.endDate;
+    LocalDateTime existingStartTime = this.startDate;
+    LocalDateTime existingEndTime = this.endDate;
 
     boolean isConflictExists = false;
 

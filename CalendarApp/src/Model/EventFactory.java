@@ -7,8 +7,8 @@ public class EventFactory {
 
   private Event event;
 
-  public Event getEvent(String subject, LocalDateTime localStartDateTime, LocalDateTime localEndDateTime,
-                        Map<String, Object> allMetaDeta) {
+  Event getEvent(String subject, LocalDateTime localStartDateTime, LocalDateTime localEndDateTime,
+                 Map<String, Object> allMetaDeta) {
 
     if ((Boolean) allMetaDeta.get("isRecurring")) {
       event = new RecurringEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);

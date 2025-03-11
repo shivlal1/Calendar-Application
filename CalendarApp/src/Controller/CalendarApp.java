@@ -3,7 +3,7 @@ package Controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import Model.ACalendar;
+import Model.ICalendar;
 import Model.Calendar;
 
 
@@ -12,7 +12,7 @@ public class CalendarApp {
 
   public static void main(String[] args) throws Exception {
 
-    ACalendar calendar = new Calendar();
+    ICalendar calendar = new Calendar();
 
     Map<String, ICommand> commandMap = new HashMap<>();
     commandMap.put("create", new CreateCommand());

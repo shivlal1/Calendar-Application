@@ -1,7 +1,7 @@
 package Controller;
 
-import Model.ACalendar;
+import Model.ICalendar;
 
 public interface ICommand {
-  public void execute(String commandArgs, ACalendar calendar) throws Exception;
+  public void execute(String commandArgs, ICalendar calendar) throws Exception;
 }

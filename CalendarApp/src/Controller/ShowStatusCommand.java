@@ -4,12 +4,12 @@ import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Model.ACalendar;
+import Model.ICalendar;
 import Utils.DateUtils;
 import view.ConsoleView;
 
 public class ShowStatusCommand implements ICommand {
-  private static String regex = "status on (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})";
+  private static final String regex = "status on (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})";
   private LocalDateTime localOnDate;
   private String onDate;
   private Pattern pattern;
@@ -36,14 +36,14 @@ public class ShowStatusCommand implements ICommand {
     localOnDate = DateUtils.stringToLocalDateTime(onDate);
   }
 
-  private void printCommandUtil(ACalendar calendar) {
+  private void printCommandUtil(ICalendar calendar) {
     boolean isBusy = calendar.isUserBusy(localOnDate);
     ConsoleView view = new ConsoleView();
     view.showStatusInConsole(isBusy);
   }
 
   @Override
-  public void execute(String commandArgs, ACalendar calendar) throws Exception {
+  public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);
     printCommandUtil(calendar);
   }

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Model.ACalendar;
+import Model.ICalendar;
 import Utils.DateUtils;
 
 public class CreateCommand implements ICommand {
@@ -131,7 +131,7 @@ public class CreateCommand implements ICommand {
   }
 
   @Override
-  public void execute(String commandArgs, ACalendar calendar) throws Exception {
+  public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);
     calendar.createEvent(subject, localStartDateTime, localEndDateTime, metaData);
   }

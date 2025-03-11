@@ -7,10 +7,14 @@ import java.util.Map;
 
 import Utils.DateUtils;
 
-public class Calendar extends ACalendar {
+public class Calendar implements ICalendar {
 
+  private List<Event> calendarStorage;
+
+  public Calendar(){
+    calendarStorage = new ArrayList();
+  }
   private boolean hasConflicts(List<Event> newEvents) {
-
     for (Event existingEvent : calendarStorage) {
       for (Event newEvent : newEvents) {
         if (newEvent.isOverlapWith(existingEvent)) {
@@ -21,20 +25,11 @@ public class Calendar extends ACalendar {
     return false;
   }
 
-
-  /**
-   * CREATE EVENT function
-   **/
-
-
   private void putGeneratedEventsIntoCalendar(List<Event> events, boolean autoDecline) {
-
     if (autoDecline && hasConflicts(events)) {
       System.out.println("HAS CONFLICTS");
       return;
     }
-
-    System.out.println("trying to create");
     for (Event event : events) {
       calendarStorage.add(event);
     }
@@ -46,10 +41,10 @@ public class Calendar extends ACalendar {
             && (middle.isBefore(end) || middle.isEqual(end)));
   }
 
-  public List<Event> getEventsInBetween(LocalDateTime from, LocalDateTime to) {
+  private List<Event> getEventsInBetween(LocalDateTime from, LocalDateTime to) {
     List<Event> eventDetails = new ArrayList<>();
     for (Event event : calendarStorage) {
-      if (isBetween(from, event.getStartDate(), to)) {
+      if (isBetween(from, event.startDate, to)) {
         eventDetails.add(event);
       }
     }
@@ -57,53 +52,32 @@ public class Calendar extends ACalendar {
   }
 
 
-  private void makeCsvFile(List<Event> events) {
-
-    for (Event e : events) {
-      StringBuilder csvString;
-
-      if (e.getSubject() != null) {
-        e.getSubject();
-      }
-    }
-  }
-
-  public String exportCalendarAndGetFilePath() {
-    String filePath = "output.csv";
-    // List<Event> events = getEventsToExport();
-    //  makeCsvFile(events);
-    return filePath;
-  }
-
   public void printEvents() {
-
     for (Event event : calendarStorage) {
       System.out.println(event);
     }
   }
 
 
-  public void setPropertyValue(String property, String newValue, Event event) {
+  private void setPropertyValue(String property, String newValue, Event event) {
     switch (property) {
       case "name":
-        event.setSubject(newValue);
+        event.subject = newValue;
         break;
       case "location":
-        event.setLocation(newValue);
+        event.location = newValue;
         break;
       case "startDate":
         updateStartDate(event, newValue);
         break;
-
       case "endDate":
         updateEndDate(event, newValue);
         break;
-
       case "isPublic":
-        event.setIsPublic(Boolean.parseBoolean(newValue));
+        event.isPublic = (Boolean.parseBoolean(newValue));
         break;
       case "description":
-        event.setDescription(newValue);
+        event.description = (newValue);
         break;
       default:
         System.out.println("No such property!");
@@ -113,18 +87,18 @@ public class Calendar extends ACalendar {
   private void updateStartDate(Event event, String newValue) {
     LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
 
-    if ((event.canBeEditedToDifferentDay() && newDate.isBefore(event.getEndDate())) ||
-            newDate.toLocalDate().equals(event.getEndDate().toLocalDate())) {
-      event.setStartDate(newDate);
+    if ((event.canBeEditedToDifferentDay() && newDate.isBefore(event.endDate)) ||
+            newDate.toLocalDate().equals(event.endDate.toLocalDate())) {
+      event.startDate = (newDate);
     }
   }
 
   private void updateEndDate(Event event, String newValue) {
     LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
 
-    if ((event.canBeEditedToDifferentDay() && newDate.isAfter(event.getStartDate())) ||
-            newDate.toLocalDate().equals(event.getStartDate().toLocalDate())) {
-      event.setEndDate(newDate);
+    if ((event.canBeEditedToDifferentDay() && newDate.isAfter(event.startDate)) ||
+            newDate.toLocalDate().equals(event.startDate.toLocalDate())) {
+      event.endDate = (newDate);
     }
   }
 
@@ -140,7 +114,7 @@ public class Calendar extends ACalendar {
     return (data.get("eventName") != null && data.get("startTime") != null && data.get("endTime") != null);
   }
 
-  public void editEvent(Map<String, Object> data) {
+  public void editEvent(Map<String, Object> data) throws Exception {
 
     String newValue = (String) data.get("newValue");
     String property = (String) data.get("property");
@@ -154,20 +128,18 @@ public class Calendar extends ACalendar {
       updateMatchingEvents(eventName, (LocalDateTime) data.get("localStartTime"),
               (LocalDateTime) data.get("localEndTime"), newValue, property);
     }
-
   }
 
 
   private boolean isMatchingEvent(Event event, LocalDateTime start, LocalDateTime end, String eventName) {
-    return (event.getSubject().equals(eventName) &&
-            (start == null || event.getStartDate().equals(start)) &&
-            (end == null || event.getEndDate().equals(end)));
+    return (event.subject.equals(eventName) &&
+            (start == null || event.startDate.equals(start)) &&
+            (end == null || event.endDate.equals(end)));
   }
 
 
-  private void updateMatchingEvents(String eventName, LocalDateTime start, LocalDateTime end, String newValue, String property) {
+  private void updateMatchingEvents(String eventName, LocalDateTime start, LocalDateTime end, String newValue, String property) throws Exception {
     boolean found = false;
-
     for (Event event : calendarStorage) {
       if (isMatchingEvent(event, start, end, eventName)) {
         setPropertyValue(property, newValue, event);
@@ -175,12 +147,11 @@ public class Calendar extends ACalendar {
     }
 
     if (!found) {
-      //  System.out.println("Event not found: " + eventName);
+      throw new Exception("no matching update");
     }
   }
 
   public List<Event> getMatchingEvents(Map<String, Object> allMetaDeta) {
-
     List<Event> eventDetailsList = new ArrayList<>();
     LocalDateTime startDateTime = (LocalDateTime) allMetaDeta.get("localStartTime");
     if (isStartToEndDatePrintCommand(allMetaDeta)) {
@@ -200,12 +171,11 @@ public class Calendar extends ACalendar {
     return (allMetaDeta.get("localStartTime") != null);
   }
 
-
   private List<Event> getEventsOnDate(LocalDateTime onDate) {
     List<Event> events = new ArrayList<>();
 
     for (Event event : calendarStorage) {
-      if (event.getStartDate().toLocalDate().equals(onDate.toLocalDate())) {
+      if (event.startDate.toLocalDate().equals(onDate.toLocalDate())) {
         events.add(event);
       }
     }
@@ -215,8 +185,8 @@ public class Calendar extends ACalendar {
 
   public boolean isUserBusy(LocalDateTime date) {
     for (Event event : calendarStorage) {
-      LocalDateTime startTime = event.getStartDate();
-      LocalDateTime endTime = event.getEndDate();
+      LocalDateTime startTime = event.startDate;
+      LocalDateTime endTime = event.endDate;
       if (isBetween(startTime, date, endTime)) {
         return true;
       }
@@ -231,7 +201,6 @@ public class Calendar extends ACalendar {
                           Map<String, Object> allMetaDeta) throws Exception {
 
     EventFactory factory = new EventFactory();
-
     Event event = factory.getEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
 
     List<Event> allEvents = event.generateEventsForCalendar();

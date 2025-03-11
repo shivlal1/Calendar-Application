@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Model.ACalendar;
+import Model.ICalendar;
 import Utils.DateUtils;
 
 public class EditCommand implements ICommand {
@@ -105,7 +105,7 @@ public class EditCommand implements ICommand {
   }
 
   @Override
-  public void execute(String commandArgs, ACalendar calendar) throws Exception {
+  public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);
     calendar.editEvent(metaData);
   }

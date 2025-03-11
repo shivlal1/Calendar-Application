@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Model.ACalendar;
+import Model.ICalendar;
 import Model.Event;
 import Utils.DateUtils;
 import view.ConsoleView;
@@ -51,23 +51,17 @@ public class PrintCommand implements ICommand {
     if (!matcher.matches()) {
       throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
-
     startDate = matcher.group(1) != null ? matcher.group(1) : matcher.group(3);
     endDate = matcher.group(2);
-
     startDate = DateUtils.removeTinDateTime(startDate);
     endDate = DateUtils.removeTinDateTime(endDate);
-
     if (startDate.indexOf(":") == -1) {
       startDate = DateUtils.changeDateToDateTime(startDate);
     }
-    //System.out.println("startDate " + startDate);
-
     localStart = DateUtils.stringToLocalDateTime(startDate);
     if (endDate != null) {
       localEnd = DateUtils.stringToLocalDateTime(endDate);
     }
-
     addValuesInMetaDataObject();
   }
 
@@ -76,15 +70,14 @@ public class PrintCommand implements ICommand {
     metaData.put("localEndTime", localEnd);
   }
 
-  private void printCommandUtil(ACalendar calendar) {
+  private void printCommandUtil(ICalendar calendar) {
     List<Event> eventDetails = calendar.getMatchingEvents(metaData);
     ConsoleView v = new ConsoleView();
     v.printInConsole(eventDetails);
   }
 
-
   @Override
-  public void execute(String commandArgs, ACalendar calendar) throws Exception {
+  public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);
     printCommandUtil(calendar);
   }
