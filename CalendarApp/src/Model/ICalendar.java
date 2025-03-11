@@ -13,7 +13,7 @@ public interface ICalendar {
 
 
   // EDIT
-  public void editEvent(Map<String, Object> allMetaDeta);
+  public void editEvent(Map<String, Object> allMetaDeta) throws Exception;
 
 
   //

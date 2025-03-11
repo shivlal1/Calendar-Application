@@ -10,7 +10,6 @@ import Utils.DateUtils;
 public class Calendar extends ACalendar {
 
   private boolean hasConflicts(List<Event> newEvents) {
-
     for (Event existingEvent : calendarStorage) {
       for (Event newEvent : newEvents) {
         if (newEvent.isOverlapWith(existingEvent)) {
@@ -22,13 +21,10 @@ public class Calendar extends ACalendar {
   }
 
   private void putGeneratedEventsIntoCalendar(List<Event> events, boolean autoDecline) {
-
     if (autoDecline && hasConflicts(events)) {
       System.out.println("HAS CONFLICTS");
       return;
     }
-
-    System.out.println("trying to create");
     for (Event event : events) {
       calendarStorage.add(event);
     }
@@ -53,7 +49,6 @@ public class Calendar extends ACalendar {
 
 
   public void printEvents() {
-
     for (Event event : calendarStorage) {
       System.out.println(event);
     }
@@ -115,7 +110,7 @@ public class Calendar extends ACalendar {
     return (data.get("eventName") != null && data.get("startTime") != null && data.get("endTime") != null);
   }
 
-  public void editEvent(Map<String, Object> data) {
+  public void editEvent(Map<String, Object> data) throws Exception {
 
     String newValue = (String) data.get("newValue");
     String property = (String) data.get("property");
@@ -129,7 +124,6 @@ public class Calendar extends ACalendar {
       updateMatchingEvents(eventName, (LocalDateTime) data.get("localStartTime"),
               (LocalDateTime) data.get("localEndTime"), newValue, property);
     }
-
   }
 
 
@@ -140,9 +134,8 @@ public class Calendar extends ACalendar {
   }
 
 
-  private void updateMatchingEvents(String eventName, LocalDateTime start, LocalDateTime end, String newValue, String property) {
+  private void updateMatchingEvents(String eventName, LocalDateTime start, LocalDateTime end, String newValue, String property) throws Exception {
     boolean found = false;
-
     for (Event event : calendarStorage) {
       if (isMatchingEvent(event, start, end, eventName)) {
         setPropertyValue(property, newValue, event);
@@ -150,12 +143,11 @@ public class Calendar extends ACalendar {
     }
 
     if (!found) {
-      //  System.out.println("Event not found: " + eventName);
+      throw new Exception("no matching update");
     }
   }
 
   public List<Event> getMatchingEvents(Map<String, Object> allMetaDeta) {
-
     List<Event> eventDetailsList = new ArrayList<>();
     LocalDateTime startDateTime = (LocalDateTime) allMetaDeta.get("localStartTime");
     if (isStartToEndDatePrintCommand(allMetaDeta)) {
@@ -174,7 +166,6 @@ public class Calendar extends ACalendar {
   private boolean isOnDatePrintCommand(Map<String, Object> allMetaDeta) {
     return (allMetaDeta.get("localStartTime") != null);
   }
-
 
   private List<Event> getEventsOnDate(LocalDateTime onDate) {
     List<Event> events = new ArrayList<>();
@@ -206,7 +197,6 @@ public class Calendar extends ACalendar {
                           Map<String, Object> allMetaDeta) throws Exception {
 
     EventFactory factory = new EventFactory();
-
     Event event = factory.getEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
 
     List<Event> allEvents = event.generateEventsForCalendar();
