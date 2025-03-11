@@ -2,7 +2,7 @@ package view;
 
 import java.util.List;
 
-import Model.Event.Event;
+import Model.Event;
 
 public class ConsoleView {
 

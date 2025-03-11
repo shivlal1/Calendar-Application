@@ -3,8 +3,8 @@ package Controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import Model.Calendar.ACalendar;
-import Model.Calendar.Calendar;
+import Model.ACalendar;
+import Model.Calendar;
 
 
 public class CalendarApp {

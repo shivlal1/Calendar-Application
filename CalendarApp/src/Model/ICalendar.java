@@ -1,10 +1,8 @@
-package Model.Calendar;
+package Model;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-
-import Model.Event.Event;
 
 public interface ICalendar {
 

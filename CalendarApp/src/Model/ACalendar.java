@@ -1,9 +1,7 @@
-package Model.Calendar;
+package Model;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import Model.Event.Event;
 
 public abstract class ACalendar implements ICalendar {
 
