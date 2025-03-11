@@ -51,23 +51,17 @@ public class PrintCommand implements ICommand {
     if (!matcher.matches()) {
       throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
-
     startDate = matcher.group(1) != null ? matcher.group(1) : matcher.group(3);
     endDate = matcher.group(2);
-
     startDate = DateUtils.removeTinDateTime(startDate);
     endDate = DateUtils.removeTinDateTime(endDate);
-
     if (startDate.indexOf(":") == -1) {
       startDate = DateUtils.changeDateToDateTime(startDate);
     }
-    //System.out.println("startDate " + startDate);
-
     localStart = DateUtils.stringToLocalDateTime(startDate);
     if (endDate != null) {
       localEnd = DateUtils.stringToLocalDateTime(endDate);
     }
-
     addValuesInMetaDataObject();
   }
 
@@ -81,7 +75,6 @@ public class PrintCommand implements ICommand {
     ConsoleView v = new ConsoleView();
     v.printInConsole(eventDetails);
   }
-
 
   @Override
   public void execute(String commandArgs, ACalendar calendar) throws Exception {

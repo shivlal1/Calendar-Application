@@ -12,7 +12,7 @@ public abstract class Event {
   protected LocalDateTime endDate;
   protected boolean isPublic;
 
-  public Event(String subject, LocalDateTime startDate, LocalDateTime endDate) {
+  Event(String subject, LocalDateTime startDate, LocalDateTime endDate) {
     this.subject = subject;
     this.startDate = startDate;
     this.endDate = endDate;
@@ -22,7 +22,9 @@ public abstract class Event {
   }
 
   protected abstract List<Event> generateEventsForCalendar() throws Exception;
+
   protected abstract boolean isAutoDeclineEnabled();
+
   protected abstract boolean canBeEditedToDifferentDay();
 
   protected boolean isStartBeforeEnd(LocalDateTime start, LocalDateTime end) {

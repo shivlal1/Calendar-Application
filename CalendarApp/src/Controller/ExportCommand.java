@@ -10,7 +10,7 @@ public class ExportCommand implements ICommand {
   private Pattern pattern;
   private Matcher matcher;
 
-  protected String diagnoseCommandError(String command) {
+  private String diagnoseCommandError(String command) {
     if (!command.startsWith("cal")) {
       return "Missing/Misplaced cal keyword";
     }
@@ -32,7 +32,7 @@ public class ExportCommand implements ICommand {
   }
 
   private void exportCommandUtil(ACalendar calendar) {
-   // String filePath = calendar.exportCalendarAndGetFilePath();
+    // String filePath = calendar.exportCalendarAndGetFilePath();
   }
 
   @Override

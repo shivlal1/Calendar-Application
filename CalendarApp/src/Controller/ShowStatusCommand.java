@@ -9,7 +9,7 @@ import Utils.DateUtils;
 import view.ConsoleView;
 
 public class ShowStatusCommand implements ICommand {
-  private static String regex = "status on (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})";
+  private static final String regex = "status on (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})";
   private LocalDateTime localOnDate;
   private String onDate;
   private Pattern pattern;

@@ -47,7 +47,6 @@ public class Calendar extends ACalendar {
   }
 
 
-
   public void printEvents() {
     for (Event event : calendarStorage) {
       System.out.println(event);
@@ -61,7 +60,7 @@ public class Calendar extends ACalendar {
         event.subject = newValue;
         break;
       case "location":
-        event.location  = newValue;
+        event.location = newValue;
         break;
       case "startDate":
         updateStartDate(event, newValue);
