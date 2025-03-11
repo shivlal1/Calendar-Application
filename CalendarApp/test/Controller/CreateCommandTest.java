@@ -3,11 +3,6 @@ package Controller;
 import org.junit.Before;
 import org.junit.Test;
 
-import Controller.CommandHandler.CreateCommand;
-import Controller.CommandHandler.EditCommand;
-import Controller.CommandHandler.ICommand;
-import Controller.CommandHandler.PrintCommand;
-import Controller.CommandHandler.ShowStatusCommand;
 import Model.Calendar.ACalendar;
 import Model.Calendar.Calendar;
 
@@ -127,9 +122,8 @@ public class CreateCommandTest {
     try {
       command = "evnt --autoDecline \"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Must start with create event");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Must start with create event");
     }
   }
 
@@ -138,9 +132,8 @@ public class CreateCommandTest {
     try {
       command = "event \"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 --autoDecline";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :--autoDecline must appear immediately after create event");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :--autoDecline must appear immediately after create event");
     }
   }
 
@@ -149,39 +142,38 @@ public class CreateCommandTest {
     try {
       command = "event \"Hello\" 2025-03-01T09:00 to 2025-03-01T10:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Missing 'from' or 'on' keyword.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Missing 'from' or 'on' keyword.");
     }
   }
+
   @Test
   public void toMissing() throws Exception {
     try {
       command = "event \"Hello\" from 2025-03-01T09:00 2025-03-01T10:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :from must be followed by to date");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :from must be followed by to date");
     }
   }
+
   @Test
   public void missingFromDate() throws Exception {
     try {
       command = "event \"Hello\" from to 2025-03-01T10:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
+
   @Test
   public void missingToDate() throws Exception {
     try {
       command = "event \"Hello\" from 2025-03-01T10:00 to";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :from must be followed by to date");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :from must be followed by to date");
     }
   }
 
@@ -190,19 +182,18 @@ public class CreateCommandTest {
     try {
       command = "event \"Hello\" from 2025-03-01x10:00 to 2025-03-01T11:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
+
   @Test
   public void invalidDate2() throws Exception {
     try {
       command = "event \"Hello\" from 2025-03-01 to 2025-03-01T11:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
 
@@ -211,9 +202,8 @@ public class CreateCommandTest {
     try {
       command = "event \"Hello\" from 2025-03-01T10:00 to 2025-03-01T11:00 repeats MT for N times";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :'for' must be followed by a valid number of times.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :'for' must be followed by a valid number of times.");
     }
   }
 
@@ -222,9 +212,8 @@ public class CreateCommandTest {
     try {
       command = "event \"Hello\" from 2025-03-01T10:00 to 2025-03-01T11:00 repeats MT? for 5 times";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
 
@@ -234,9 +223,8 @@ public class CreateCommandTest {
     try {
       command = "event \"Hello\"  2025-03-01T10:00 to 2025-03-01T11:00 repeats MT for 5 times";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Missing 'from' or 'on' keyword.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Missing 'from' or 'on' keyword.");
     }
   }
 
@@ -245,9 +233,8 @@ public class CreateCommandTest {
     try {
       command = "event \"Hello\" from 2025-03-01T10:00 repeats MT for 5 times";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :from must be followed by to date");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :from must be followed by to date");
     }
   }
 
@@ -256,9 +243,8 @@ public class CreateCommandTest {
     try {
       command = "event \"Hello\"  from 2025-03-01T10:00 to 2025-03-01T11:00 repeats MT";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :'repeats' must be followed by 'for <N> times' or 'until <date>'.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :'repeats' must be followed by 'for <N> times' or 'until <date>'.");
     }
   }
 
@@ -267,9 +253,8 @@ public class CreateCommandTest {
     try {
       command = "event \"Hello\"  from 2025-03-01T10:00 to 2025-03-01T11:00 for 5 times";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
 
@@ -281,9 +266,8 @@ public class CreateCommandTest {
               "repeats M until";
 
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :'until' must be followed by a valid date.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :'until' must be followed by a valid date.");
     }
   }
 
@@ -294,9 +278,8 @@ public class CreateCommandTest {
               "repeats  until 2025-03-025T11:00";
 
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
 
@@ -308,9 +291,8 @@ public class CreateCommandTest {
               "repeats  MT until";
 
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :'until' must be followed by a valid date.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :'until' must be followed by a valid date.");
     }
   }
 
@@ -319,9 +301,8 @@ public class CreateCommandTest {
     try {
       command = "--autoDecline \"Hello world\" on 2025-03-01T11:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Must start with create event");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Must start with create event");
     }
   }
 
@@ -330,9 +311,8 @@ public class CreateCommandTest {
     try {
       command = "event on 2025-03-01T11:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
 
@@ -341,19 +321,18 @@ public class CreateCommandTest {
     try {
       command = " ";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Must start with create event");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Must start with create event");
     }
   }
+
   @Test
   public void recError() throws Exception {
     try {
       command = "event \"Hello\" on 2025-03-01 repeats MT\n";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :'repeats' must be followed by 'for <N> times' or 'until <date>'.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :'repeats' must be followed by 'for <N> times' or 'until <date>'.");
     }
   }
 
@@ -362,9 +341,8 @@ public class CreateCommandTest {
     try {
       command = "event \"Conference Call\" from 2025-03-10 14:30 to 2025-03-10T15:30";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
 
@@ -373,59 +351,58 @@ public class CreateCommandTest {
     try {
       command = "event Team Meeting from 2025-03-10T14:30 to 2025-03-10T15:30";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
+
   @Test
   public void incorrectDateFormat() throws Exception {
     try {
       command = "event \"Project Review\" from 03-10-2025T14:30 to 03-10-2025T15:30";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
+
   @Test
   public void invalidDAte() throws Exception {
     try {
       command = "event \"Dinner\" from 2025-04-20T19:00 to 2025-04-20";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
+
   @Test
   public void invalidHourInTime() throws Exception {
     try {
       command = "event \"Breakfast\" from 2025-04-20T8:00 to 2025-04-20T09:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
+
   @Test
   public void fromAndToSwapOrder() throws Exception {
     try {
       command = "event \"Sprint Planning\" to 2025-03-10T14:30 from 2025-03-10T15:30 ";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
+
   @Test
   public void startTimeAfterEndTime() throws Exception {
     try {
       command = "event \"Yoga Session\" from 2025-06-15T10:00 to 2025-06-15T09:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"end date cannot be before start date");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "end date cannot be before start date");
     }
   }
 
@@ -434,9 +411,8 @@ public class CreateCommandTest {
     try {
       command = "event \"Call with Client\" from 2025-09-30T16:00 2025-09-30T17:00 ";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :from must be followed by to date");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :from must be followed by to date");
     }
   }
 
@@ -446,41 +422,40 @@ public class CreateCommandTest {
     try {
       command = "event \"Game Night\" from 2025-10-10T18:30 to 2025-10-10T22:00 at John's Place";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
+
   @Test
   public void specialChar() throws Exception {
     try {
       command = "event Project@Review from 2025-06-05T13:00 to 2025-06-05T14:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"error :Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "error :Does not match expected format.");
     }
   }
+
   @Test
   public void invalidMonth() throws Exception {
     try {
       command = "event \"Checkup\" from 2025-13-05T10:00 to 2025-13-05T11:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       String msg = "Text '2025-13-05 10:00' could not be parsed: Invalid value for MonthOfYear (valid values 1 - 12): 13";
-      assertEquals(e.getMessage(),msg);
+      assertEquals(e.getMessage(), msg);
     }
   }
+
   @Test
   public void invalidDay() throws Exception {
     try {
       command = "event \"Checkup\" from 2025-02-33T10:00 to 2025-02-31T11:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       String msg = "Text '2025-02-33 10:00' could not be parsed: Invalid value for DayOfMonth (valid values 1 - 28/31): 33";
-      assertEquals(e.getMessage(),msg);
+      assertEquals(e.getMessage(), msg);
     }
   }
 
@@ -489,10 +464,9 @@ public class CreateCommandTest {
     try {
       command = "event \"Training\" from 2025-0A-10T09:00 to 2025-0A-10T10:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       String msg = "error :Does not match expected format.";
-      assertEquals(e.getMessage(),msg);
+      assertEquals(e.getMessage(), msg);
     }
   }
 
@@ -501,70 +475,67 @@ public class CreateCommandTest {
     try {
       command = "event from 2025-09-20T12:00 to 2025-09-20T13:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       String msg = "error :Does not match expected format.";
-      assertEquals(e.getMessage(),msg);
+      assertEquals(e.getMessage(), msg);
     }
   }
+
   @Test
   public void lowerCaseT() throws Exception {
     try {
       command = "event from 2025-09-20T12:00 to 2025-09-20T13:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       String msg = "error :Does not match expected format.";
-      assertEquals(e.getMessage(),msg);
+      assertEquals(e.getMessage(), msg);
     }
   }
+
   @Test
   public void weekdayError() throws Exception {
     try {
       command = "event \"Gym\" from 2025-06-01T07:00 to 2025-06-01T08:00 repeats Monday for 5 times";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       String msg = "error :Does not match expected format.";
-      assertEquals(e.getMessage(),msg);
+      assertEquals(e.getMessage(), msg);
     }
   }
+
   @Test
   public void incorrectUntilDate() throws Exception {
     try {
       command = "event \"Dance Class\" on 2025-07-15 repeats TWR until 15-10-2025";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       String msg = "error :'until' must be followed by a valid date.";
-      assertEquals(e.getMessage(),msg);
+      assertEquals(e.getMessage(), msg);
     }
   }
+
   @Test
   public void nonNumericValuesInDate() throws Exception {
     try {
       command = "event \"Meeting\" from 2025-0X-15T14:00 to 2025-0X-15T15:00";
       createCommand.execute(command, cal);
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       String msg = "error :Does not match expected format.";
-      assertEquals(e.getMessage(),msg);
+      assertEquals(e.getMessage(), msg);
     }
   }
+
   @Test
   public void add() throws Exception {
     try {
       command = "event \"Hello\" from 2025-09-20T12:00 to 2025-09-20T13:00";
       createCommand.execute(command, cal);
       cal.printEvents();
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       String msg = "error :Does not match expected format.";
-      assertEquals(e.getMessage(),msg);
+      assertEquals(e.getMessage(), msg);
     }
   }
-
-
 
 
 }

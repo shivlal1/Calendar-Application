@@ -6,7 +6,7 @@ import org.junit.Test;
 import Model.Calendar.ACalendar;
 import Model.Calendar.Calendar;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class PrintCommandTest {
   ICommand printCommand;
@@ -23,9 +23,8 @@ public class PrintCommandTest {
     try {
       command = "events from 2025-04-01T10:00 2025-04-04";
       printCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Missing To");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Missing To");
     }
   }
 
@@ -34,9 +33,8 @@ public class PrintCommandTest {
     try {
       command = "events 2025-04-01T10:00 2025-04-04";
       printCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Missing From/On");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Missing From/On");
     }
   }
 
@@ -45,9 +43,8 @@ public class PrintCommandTest {
     try {
       command = "events";
       printCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Missing From/On");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Missing From/On");
     }
   }
 
@@ -56,9 +53,8 @@ public class PrintCommandTest {
     try {
       command = "from 2025-04-01T10:00 2025-04-04";
       printCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Missing events");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Missing events");
     }
   }
 

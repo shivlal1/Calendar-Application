@@ -3,17 +3,20 @@ package Controller;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 
-public class EditCommand extends AbstractCommand {
-
+public class EditCommand implements ICommand {
   private String eventName;
   private String start, end;
   private String property, newValue;
   private LocalDateTime localStartTime, localEndTime;
   private Map<String, Object> metaData = new HashMap<>();
+  private Pattern pattern;
+  private Matcher matcher;
 
   private static final String regex = "^event(?:s)?\\s+" +
           "(?<property>\\S+)\\s+" +
@@ -26,18 +29,12 @@ public class EditCommand extends AbstractCommand {
           "\"(?<newValue2>.*?)\"" +
           ")$";
 
-  public EditCommand() {
-  }
-
-  public void commandParser(String commandArgs) throws Exception {
-
-    initRegexPatter(regex, commandArgs);
-   // metaData = new EditCommandMetaDetails.EditEventMetaDetailsBuilder();
-
+  private void commandParser(String commandArgs) throws Exception {
+    pattern = Pattern.compile(regex);
+    matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {
       throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
-
     property = matcher.group("property");
     eventName = matcher.group("eventName").trim();
     start = matcher.group("start");
@@ -45,8 +42,6 @@ public class EditCommand extends AbstractCommand {
     newValue = matcher.group("newValue") != null
             ? matcher.group("newValue").trim()
             : matcher.group("newValue2").trim();
-
-
     if (start != null) {
       start = DateUtils.removeTinDateTime(start);
       localStartTime = DateUtils.stringToLocalDateTime(start);
@@ -59,14 +54,13 @@ public class EditCommand extends AbstractCommand {
   }
 
   private void addValuesInMetaDataObject() {
-
-    metaData.put("property",property);
-    metaData.put("eventName",eventName);
-    metaData.put("newValue",newValue);
-    metaData.put("endTime",end);
-    metaData.put("startTime",start);
-    metaData.put("localStartTime",localStartTime);
-    metaData.put("localEndTime",localEndTime);
+    metaData.put("property", property);
+    metaData.put("eventName", eventName);
+    metaData.put("newValue", newValue);
+    metaData.put("endTime", end);
+    metaData.put("startTime", start);
+    metaData.put("localStartTime", localStartTime);
+    metaData.put("localEndTime", localEndTime);
   }
 
   private boolean isStringUppercase(String str) {
@@ -79,37 +73,27 @@ public class EditCommand extends AbstractCommand {
   }
 
   private String diagnoseCommandError(String command) {
-
     if (isStringUppercase(command)) {
       return "Command should be lower case.";
     }
-
     if (!command.startsWith("event") && !command.startsWith("events")) {
       return "Should start with 'edit event(s)' or it is Missing 'edit event(s)'";
     }
-
     if (!command.matches("^event(?:s)?\\s+\\S+\\s+\".*?\".*")) {
       return "Missing 'eventName' or Property is missing or incorrectly placed";
     }
-
     boolean hasFrom = command.contains("from");
     boolean hasTo = command.contains("to");
     boolean hasWith = command.contains("with");
-
-
     if (hasWith && !hasFrom) {
       return ("Missing From");
     }
-
     if (!hasTo && hasFrom) {
       return ("Missing To");
     }
-
     if (!hasWith) {
       return ("Missing With");
     }
-
-
     if (hasWith) {
       if (!command.matches(".*with\\s+\".*?\".*")) {
         return ("Missing or incorrect 'newValue' format (Expected: with \"NewValue\")");
@@ -117,22 +101,12 @@ public class EditCommand extends AbstractCommand {
     } else if (!command.matches(".*\".*?\"$")) {
       return ("Missing 'newValue'");
     }
-
     return "Invalid command: Does not match expected format.";
-
-  }
-
-  private void editCommandUtil(ACalendar calendar) {
-    calendar.editEvent(metaData);
-  }
-
-  private void editCommandProcess(String commandArgs, ACalendar calendar) throws Exception {
-    commandParser(commandArgs);
-    editCommandUtil(calendar);
   }
 
   @Override
   public void execute(String commandArgs, ACalendar calendar) throws Exception {
-    editCommandProcess(commandArgs, calendar);
+    commandParser(commandArgs);
+    calendar.editEvent(metaData);
   }
 }

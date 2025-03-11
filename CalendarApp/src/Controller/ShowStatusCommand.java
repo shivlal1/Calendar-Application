@@ -1,36 +1,36 @@
 package Controller;
 
 import java.time.LocalDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 import view.ConsoleView;
 
-public class ShowStatusCommand extends AbstractCommand {
+public class ShowStatusCommand implements ICommand {
   private static String regex = "status on (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})";
   private LocalDateTime localOnDate;
   private String onDate;
+  private Pattern pattern;
+  private Matcher matcher;
 
   private String diagnoseCommandError(String command) {
-
     if (!command.startsWith("status")) {
       return "Status Missing";
     }
-
     if (!command.contains("status on")) {
       return "Missing or misplaced On";
     }
     return "Invalid command";
   }
 
-  public void commandParser(String commandArgs) throws Exception {
-
-    initRegexPatter(regex, commandArgs);
-
+  private void commandParser(String commandArgs) throws Exception {
+    pattern = Pattern.compile(regex);
+    matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {
       throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
-
     onDate = matcher.group(1);
     onDate = DateUtils.removeTinDateTime(onDate);
     localOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -38,18 +38,13 @@ public class ShowStatusCommand extends AbstractCommand {
 
   private void printCommandUtil(ACalendar calendar) {
     boolean isBusy = calendar.isUserBusy(localOnDate);
-
     ConsoleView view = new ConsoleView();
     view.showStatusInConsole(isBusy);
   }
 
-  private void showCommandProcess(String commandArgs, ACalendar calendar) throws Exception {
-    commandParser(commandArgs);
-    printCommandUtil(calendar);
-  }
-
   @Override
   public void execute(String commandArgs, ACalendar calendar) throws Exception {
-    showCommandProcess(commandArgs, calendar);
+    commandParser(commandArgs);
+    printCommandUtil(calendar);
   }
 }

@@ -1,13 +1,16 @@
 package Controller;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import Model.Calendar.ACalendar;
 
-public class ExportCommand extends AbstractCommand {
+public class ExportCommand implements ICommand {
   private String fileName;
+  private Pattern pattern;
+  private Matcher matcher;
 
-
-  private String diagnoseCommandError(String command) {
-
+  protected String diagnoseCommandError(String command) {
     if (!command.startsWith("cal")) {
       return "Missing/Misplaced cal keyword";
     }
@@ -17,12 +20,10 @@ public class ExportCommand extends AbstractCommand {
     return "Invalid Command";
   }
 
-  @Override
-  public void commandParser(String commandArgs) throws Exception {
+  private void commandParser(String commandArgs) throws Exception {
     String regex = "cal (.+\\.csv)";
-
-    initRegexPatter(regex, commandArgs);
-
+    pattern = Pattern.compile(regex);
+    matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {
       throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
@@ -39,6 +40,5 @@ public class ExportCommand extends AbstractCommand {
     commandParser(commandArgs);
     exportCommandUtil(calendar);
   }
-
 
 }

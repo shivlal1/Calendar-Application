@@ -6,7 +6,7 @@ import org.junit.Test;
 import Model.Calendar.ACalendar;
 import Model.Calendar.Calendar;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ExportCommandTest {
   ICommand exportCommand;
@@ -23,9 +23,8 @@ public class ExportCommandTest {
     try {
       command = "cal filename.csv";
       exportCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command");
     }
   }
 
@@ -34,9 +33,8 @@ public class ExportCommandTest {
     try {
       command = "cal thisisaverylongfilenamethatistobeadded.csv";
       exportCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command");
     }
   }
 
@@ -45,9 +43,8 @@ public class ExportCommandTest {
     try {
       command = "filename.csv";
       exportCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Missing/Misplaced cal keyword");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Missing/Misplaced cal keyword");
     }
   }
 
@@ -56,9 +53,8 @@ public class ExportCommandTest {
     try {
       command = "cal";
       exportCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Error in fileName");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Error in fileName");
     }
   }
 
@@ -67,9 +63,8 @@ public class ExportCommandTest {
     try {
       command = "cal filename.png";
       exportCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Error in fileName");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Error in fileName");
     }
   }
 
@@ -78,9 +73,8 @@ public class ExportCommandTest {
     try {
       command = "cal filename.csv hello there";
       exportCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Error in fileName");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Error in fileName");
     }
   }
 

@@ -4,12 +4,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 
-public class CreateCommand extends AbstractCommand {
-
+public class CreateCommand implements ICommand {
   private String subject, weekdays, forTimes;
   private String startDateTime, endDateTime, untilDateTime;
   private String finalStartDate, finalEndDate, finalUntilDateTime;
@@ -19,16 +20,19 @@ public class CreateCommand extends AbstractCommand {
   private boolean isRecurring;
   private boolean autoDecline;
   private Map<String, Object> metaData = new HashMap<>();
+  private Pattern pattern;
+  private Matcher matcher;
 
-  private static String regex = "^event\\s+(--autoDecline\\s+)?\"(.*?)\"\\s+(?=from\\s+|on\\s+)(?:" +
-          "(?:from\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\\s+to\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}))|" +
+  private static final String regex = "^event\\s+(--autoDecline\\s+)?\"(.*?)\"\\s+(?=" +
+          "from\\s+|on\\s+)(?:(?:from\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\\s+" +
+          "to\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}))|" +
           "(?:on\\s+(\\d{4}-\\d{2}-\\d{2})(?:T(\\d{2}:\\d{2}))?))" +
           "(?:\\s+repeats\\s+([MTWRFSU]+)\\s+(?:(?:for\\s+(\\d+)\\s+times)|" +
           "(?:until\\s+(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?))))?$";
 
-
-  public void commandParser(String commandArgs) throws Exception {
-    initRegexPatter(regex, commandArgs);
+  private void commandParser(String commandArgs) throws Exception {
+    pattern = Pattern.compile(regex);
+    matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {
       throw new Exception("error :" + diagnoseCommandError(commandArgs));
     }
@@ -49,9 +53,7 @@ public class CreateCommand extends AbstractCommand {
     setEndTime();
   }
 
-
-
-  public String diagnoseCommandError(String command) {
+  private String diagnoseCommandError(String command) {
     if (!command.startsWith("event")) {
       return "Must start with create event";
     }
@@ -79,12 +81,11 @@ public class CreateCommand extends AbstractCommand {
   }
 
   private void addValuesInMetaDataObject() {
-
-    metaData.put("weekdays",weekdays);
-    metaData.put("forTimes",forTimes);
-    metaData.put("isRecurring",isRecurring);
-    metaData.put("isAllDay",isAllDayEvent);
-    metaData.put("autoDecline",autoDecline);
+    metaData.put("weekdays", weekdays);
+    metaData.put("forTimes", forTimes);
+    metaData.put("isRecurring", isRecurring);
+    metaData.put("isAllDay", isAllDayEvent);
+    metaData.put("autoDecline", autoDecline);
   }
 
   private void formatUntilTimeForRecurringEvent() {
@@ -97,17 +98,15 @@ public class CreateCommand extends AbstractCommand {
           finalUntilDateTime = DateUtils.changeDateToDateTime(finalUntilDateTime);
         }
       }
-      metaData.put("untilTime",finalUntilDateTime);
+      metaData.put("untilTime", finalUntilDateTime);
     }
   }
 
   private void setEndTime() {
     localStartDateTime = DateUtils.stringToLocalDateTime(finalStartDate);
-
     if (finalEndDate != null) {
       localEndDateTime = DateUtils.stringToLocalDateTime(finalEndDate);
     }
-
     if (isAllDayEvent) {
       setDatesForAllDayEvent();
     }
@@ -120,30 +119,21 @@ public class CreateCommand extends AbstractCommand {
   }
 
   private void processDateValues() {
-
     if (startDateTime != null && endDateTime != null) {
       finalStartDate = startDateTime;
       finalEndDate = endDateTime;
     } else if (onDate != null) {
       finalStartDate = DateUtils.getFinalStartDateFromOndate(onDate, onTime);
     }
-
     if (isRecurring) {
       formatUntilTimeForRecurringEvent();
     }
   }
 
-  private void createEventUtil(ACalendar calendar) throws Exception {
+  @Override
+  public void execute(String commandArgs, ACalendar calendar) throws Exception {
+    commandParser(commandArgs);
     calendar.createEvent(subject, localStartDateTime, localEndDateTime, metaData);
   }
 
-  private void createCommandProcess(String commandArgs, ACalendar calendar) throws Exception {
-    commandParser(commandArgs);
-    createEventUtil(calendar);
-  }
-
-  @Override
-  public void execute(String commandArgs, ACalendar calendar) throws Exception {
-    createCommandProcess(commandArgs, calendar);
-  }
 }
