@@ -1,14 +1,12 @@
 package Controller;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 
-import Controller.CreateCommand;
-import Controller.EditCommand;
-import Controller.ICommand;
 import Model.Calendar.ACalendar;
 import Model.Calendar.Calendar;
+
+import static org.junit.Assert.assertEquals;
 
 public class EditCommandTest {
 
@@ -30,8 +28,9 @@ public class EditCommandTest {
 //    //cal.printEvents();
 //
 //    //            "edit event name \"Annual Meeting\" from 2025-03-01T09:00:00 to 2025-03-01T10:00:00 with \"Weekly Meeting\"",
-////            "edit events public \"Annual Meeting\" from 2025-03-01T09:00:00 with \"true\""
-////            "edit events name \"Annual Meeting\" \"Weekly Meeting\""
+
+  /// /            "edit events public \"Annual Meeting\" from 2025-03-01T09:00:00 with \"true\""
+  /// /            "edit events name \"Annual Meeting\" \"Weekly Meeting\""
 //
 //    command = "event name \"International Conference\" from 2025-03-01T09:00 to 2025-03-03T13:00 with \"Weekly Meeting\"";
 //    ICommand editCommand = new EditCommand();
@@ -64,15 +63,13 @@ public class EditCommandTest {
 //    //"print events from \"2025-03-01T09:00:00\" to \"2025-03-03T13:00:00\"",
 //
 //  }
-
   @Test
   public void missingEditEvent() throws Exception {
     try {
       command = "\"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Should start with 'edit event(s)' or it is Missing 'edit event(s)'");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Should start with 'edit event(s)' or it is Missing 'edit event(s)'");
     }
   }
 
@@ -81,9 +78,8 @@ public class EditCommandTest {
     try {
       command = "event \"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Missing 'eventName' or Property is missing");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Missing 'eventName' or Property is missing");
     }
   }
 
@@ -92,9 +88,8 @@ public class EditCommandTest {
     try {
       command = "event name \"Meeting\" 2025-03-01T09:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Missing From");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Missing From");
     }
   }
 
@@ -103,9 +98,8 @@ public class EditCommandTest {
     try {
       command = "event name \"Meeting\" from 2025-03-01T09:00 2025-03-01T10:00 with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Missing To");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Missing To");
     }
   }
 
@@ -114,9 +108,8 @@ public class EditCommandTest {
     try {
       command = "event name \"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 with";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Missing or incorrect 'newValue' format (Expected: with \"NewValue\")");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Missing or incorrect 'newValue' format (Expected: with \"NewValue\")");
     }
   }
 
@@ -125,9 +118,8 @@ public class EditCommandTest {
     try {
       command = "event name \"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 \"Weekly Meeting\"";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Missing With");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Missing With");
     }
   }
 
@@ -136,9 +128,8 @@ public class EditCommandTest {
     try {
       command = "event name \"Meeting\" from 2025-03-0109:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Invalid command: Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match expected format.");
     }
   }
 
@@ -147,9 +138,8 @@ public class EditCommandTest {
     try {
       command = "event name \"Meeting\" from 2025-03-0109:00 to 2025-03-01T10:00 with \"Weekly Meeting\" hello there";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Invalid command: Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match expected format.");
     }
   }
 
@@ -158,9 +148,8 @@ public class EditCommandTest {
     try {
       command = "Hello there event name \"Meeting\" from 2025-03-0109:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Should start with 'edit event(s)' or it is Missing 'edit event(s)'");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Should start with 'edit event(s)' or it is Missing 'edit event(s)'");
     }
   }
 
@@ -169,9 +158,8 @@ public class EditCommandTest {
     try {
       command = "event name \"Meeting\" from from 2025-03-0109:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Invalid command: Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match expected format.");
     }
   }
 
@@ -180,9 +168,8 @@ public class EditCommandTest {
     try {
       command = "event name \"Meeting\" from from 2025-03-0109:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Invalid command: Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match expected format.");
     }
   }
 
@@ -191,9 +178,8 @@ public class EditCommandTest {
     try {
       command = "event name \"Meeting\" from from 2025-03-0109:00 to 2025-03-01T10:00 with \"\"";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Invalid command: Does not match expected format.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match expected format.");
     }
   }
 
@@ -203,9 +189,8 @@ public class EditCommandTest {
     try {
       command = "EVENT LOCATION BIRTHDAYPARTY FROM 2024-05-12T14:00 TO 2024-05-12T16:00 WITH JOHN’S HOUSE";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e){
-      assertEquals(e.getMessage(),"Invalid Command Command should be lower case.");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Command should be lower case.");
     }
   }
 
@@ -214,9 +199,8 @@ public class EditCommandTest {
     try {
       command = "event \"Meeting\" name from 2025-03-0109:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
-    }
-    catch (Exception e) {
-      assertEquals(e.getMessage(),"Invalid Command Missing 'eventName' or Property is missing or incorrectly placed");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "Invalid Command Missing 'eventName' or Property is missing or incorrectly placed");
     }
   }
 

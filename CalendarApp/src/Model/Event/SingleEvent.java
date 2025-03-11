@@ -27,7 +27,7 @@ public class SingleEvent extends Event {
       //return newEventsList;
     }
 
-    if ( (Boolean) allMetaDetails.get("isAllDay")) {
+    if ((Boolean) allMetaDetails.get("isAllDay")) {
       LocalDate currentDay = this.startDate.toLocalDate();
       LocalDateTime newEndDate = currentDay.atTime(23, 59);
       this.endDate = newEndDate;

@@ -96,7 +96,7 @@ public class RecurringEvent extends Event {
       throw new Exception("end date cannot be before start date");
     }
 
-    if (  (String) allMetaDetails.get("untilTime") != null) {
+    if ((String) allMetaDetails.get("untilTime") != null) {
       newEventsList = getUntilTimeRecurringEvent(start, end);
 
     } else if (allMetaDetails.get("forTimes") != null) {

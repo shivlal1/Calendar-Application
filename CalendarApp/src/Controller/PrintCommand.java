@@ -15,9 +15,10 @@ public class PrintCommand extends AbstractCommand {
   private String startDate, endDate;
   private LocalDateTime localStart, localEnd;
   private Map<String, Object> metaData;
-  private static final String regex = "^events (?:from \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\" " +
-          "to \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\"|on \"(\\d{4}-\\d{2}-\\d{2})\")$";
-
+  private static final String regex = "^events (?:" +
+          "from \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\" " +
+          "to \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\"|" +
+          "on \"(\\d{4}-\\d{2}-\\d{2})\")$";
 
 
   private String diagnoseCommandError(String command) {
@@ -49,7 +50,7 @@ public class PrintCommand extends AbstractCommand {
 
   }
 
-  public void commandParser(String commandArgs) throws Exception {
+  private void commandParser(String commandArgs) throws Exception {
     initRegexPatter(regex, commandArgs);
 
     if (!matcher.matches()) {
@@ -76,27 +77,20 @@ public class PrintCommand extends AbstractCommand {
   }
 
   private void addValuesInMetaDataObject() {
-    //System.out.println(localEnd + " " + localEnd);
-
-    metaData.put("localStartTime",localStart);
-    metaData.put("localEndTime",localEnd);
+    metaData.put("localStartTime", localStart);
+    metaData.put("localEndTime", localEnd);
   }
 
   private void printCommandUtil(ACalendar calendar) {
     List<Event> eventDetails = calendar.getMatchingEvents(metaData);
-
     ConsoleView v = new ConsoleView();
     v.printInConsole(eventDetails);
-
   }
 
-  private void printCommandProcess(String commandArgs, ACalendar calendar) throws Exception {
-    commandParser(commandArgs);
-    printCommandUtil(calendar);
-  }
 
   @Override
   public void execute(String commandArgs, ACalendar calendar) throws Exception {
-    printCommandProcess(commandArgs, calendar);
+    commandParser(commandArgs);
+    printCommandUtil(calendar);
   }
 }

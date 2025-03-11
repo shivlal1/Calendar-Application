@@ -27,7 +27,7 @@ public class CreateCommand extends AbstractCommand {
           "(?:until\\s+(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?))))?$";
 
 
-  public void commandParser(String commandArgs) throws Exception {
+  private void commandParser(String commandArgs) throws Exception {
     initRegexPatter(regex, commandArgs);
     if (!matcher.matches()) {
       throw new Exception("error :" + diagnoseCommandError(commandArgs));
@@ -50,8 +50,7 @@ public class CreateCommand extends AbstractCommand {
   }
 
 
-
-  public String diagnoseCommandError(String command) {
+  private String diagnoseCommandError(String command) {
     if (!command.startsWith("event")) {
       return "Must start with create event";
     }
@@ -79,12 +78,11 @@ public class CreateCommand extends AbstractCommand {
   }
 
   private void addValuesInMetaDataObject() {
-
-    metaData.put("weekdays",weekdays);
-    metaData.put("forTimes",forTimes);
-    metaData.put("isRecurring",isRecurring);
-    metaData.put("isAllDay",isAllDayEvent);
-    metaData.put("autoDecline",autoDecline);
+    metaData.put("weekdays", weekdays);
+    metaData.put("forTimes", forTimes);
+    metaData.put("isRecurring", isRecurring);
+    metaData.put("isAllDay", isAllDayEvent);
+    metaData.put("autoDecline", autoDecline);
   }
 
   private void formatUntilTimeForRecurringEvent() {
@@ -97,17 +95,15 @@ public class CreateCommand extends AbstractCommand {
           finalUntilDateTime = DateUtils.changeDateToDateTime(finalUntilDateTime);
         }
       }
-      metaData.put("untilTime",finalUntilDateTime);
+      metaData.put("untilTime", finalUntilDateTime);
     }
   }
 
   private void setEndTime() {
     localStartDateTime = DateUtils.stringToLocalDateTime(finalStartDate);
-
     if (finalEndDate != null) {
       localEndDateTime = DateUtils.stringToLocalDateTime(finalEndDate);
     }
-
     if (isAllDayEvent) {
       setDatesForAllDayEvent();
     }
@@ -120,30 +116,21 @@ public class CreateCommand extends AbstractCommand {
   }
 
   private void processDateValues() {
-
     if (startDateTime != null && endDateTime != null) {
       finalStartDate = startDateTime;
       finalEndDate = endDateTime;
     } else if (onDate != null) {
       finalStartDate = DateUtils.getFinalStartDateFromOndate(onDate, onTime);
     }
-
     if (isRecurring) {
       formatUntilTimeForRecurringEvent();
     }
   }
-
-  private void createEventUtil(ACalendar calendar) throws Exception {
+  
+  @Override
+  public void execute(String commandArgs, ACalendar calendar) throws Exception {
+    commandParser(commandArgs);
     calendar.createEvent(subject, localStartDateTime, localEndDateTime, metaData);
   }
 
-  private void createCommandProcess(String commandArgs, ACalendar calendar) throws Exception {
-    commandParser(commandArgs);
-    createEventUtil(calendar);
-  }
-
-  @Override
-  public void execute(String commandArgs, ACalendar calendar) throws Exception {
-    createCommandProcess(commandArgs, calendar);
-  }
 }

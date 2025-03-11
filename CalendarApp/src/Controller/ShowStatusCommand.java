@@ -12,25 +12,20 @@ public class ShowStatusCommand extends AbstractCommand {
   private String onDate;
 
   private String diagnoseCommandError(String command) {
-
     if (!command.startsWith("status")) {
       return "Status Missing";
     }
-
     if (!command.contains("status on")) {
       return "Missing or misplaced On";
     }
     return "Invalid command";
   }
 
-  public void commandParser(String commandArgs) throws Exception {
-
+  private void commandParser(String commandArgs) throws Exception {
     initRegexPatter(regex, commandArgs);
-
     if (!matcher.matches()) {
       throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
-
     onDate = matcher.group(1);
     onDate = DateUtils.removeTinDateTime(onDate);
     localOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -38,18 +33,13 @@ public class ShowStatusCommand extends AbstractCommand {
 
   private void printCommandUtil(ACalendar calendar) {
     boolean isBusy = calendar.isUserBusy(localOnDate);
-
     ConsoleView view = new ConsoleView();
     view.showStatusInConsole(isBusy);
   }
 
-  private void showCommandProcess(String commandArgs, ACalendar calendar) throws Exception {
-    commandParser(commandArgs);
-    printCommandUtil(calendar);
-  }
-
   @Override
   public void execute(String commandArgs, ACalendar calendar) throws Exception {
-    showCommandProcess(commandArgs, calendar);
+    commandParser(commandArgs);
+    printCommandUtil(calendar);
   }
 }
