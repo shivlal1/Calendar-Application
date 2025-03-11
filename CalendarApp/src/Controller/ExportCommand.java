@@ -3,7 +3,7 @@ package Controller;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Model.Calendar.ACalendar;
+import Model.ACalendar;
 
 public class ExportCommand implements ICommand {
   private String fileName;

@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Model.Calendar.ACalendar;
-import Model.Event.Event;
-import Model.Utils.DateUtils;
+import Model.ACalendar;
+import Model.Event;
+import Utils.DateUtils;
 import view.ConsoleView;
 
 public class PrintCommand implements ICommand {

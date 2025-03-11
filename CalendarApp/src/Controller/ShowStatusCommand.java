@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Model.Calendar.ACalendar;
-import Model.Utils.DateUtils;
+import Model.ACalendar;
+import Utils.DateUtils;
 import view.ConsoleView;
 
 public class ShowStatusCommand implements ICommand {

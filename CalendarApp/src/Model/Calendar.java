@@ -1,13 +1,11 @@
-package Model.Calendar;
+package Model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import Model.Event.Event;
-import Model.Event.EventFactory;
-import Model.Utils.DateUtils;
+import Utils.DateUtils;
 
 public class Calendar extends ACalendar {
 

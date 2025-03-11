@@ -1,4 +1,4 @@
-package Model.Event;
+package Model;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import Model.Utils.DateUtils;
+import Utils.DateUtils;
 
 public class RecurringEvent extends Event {
 
