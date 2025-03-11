@@ -3,17 +3,20 @@ package Controller;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 
-public class EditCommand extends AbstractCommand {
-
+public class EditCommand implements ICommand {
   private String eventName;
   private String start, end;
   private String property, newValue;
   private LocalDateTime localStartTime, localEndTime;
   private Map<String, Object> metaData = new HashMap<>();
+  private Pattern pattern;
+  private Matcher matcher;
 
   private static final String regex = "^event(?:s)?\\s+" +
           "(?<property>\\S+)\\s+" +
@@ -26,9 +29,9 @@ public class EditCommand extends AbstractCommand {
           "\"(?<newValue2>.*?)\"" +
           ")$";
 
-
   private void commandParser(String commandArgs) throws Exception {
-    initRegexPatter(regex, commandArgs);
+    pattern = Pattern.compile(regex);
+    matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {
       throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
@@ -100,7 +103,6 @@ public class EditCommand extends AbstractCommand {
     }
     return "Invalid command: Does not match expected format.";
   }
-
 
   @Override
   public void execute(String commandArgs, ACalendar calendar) throws Exception {

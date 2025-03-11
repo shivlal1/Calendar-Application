@@ -4,55 +4,50 @@ package Controller;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Model.Calendar.ACalendar;
 import Model.Event.Event;
 import Model.Utils.DateUtils;
 import view.ConsoleView;
 
-public class PrintCommand extends AbstractCommand {
-
+public class PrintCommand implements ICommand {
   private String startDate, endDate;
   private LocalDateTime localStart, localEnd;
   private Map<String, Object> metaData;
+  private Pattern pattern;
+  private Matcher matcher;
+
   private static final String regex = "^events (?:" +
           "from \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\" " +
           "to \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\"|" +
           "on \"(\\d{4}-\\d{2}-\\d{2})\")$";
 
-
   private String diagnoseCommandError(String command) {
-
     if (!command.startsWith("events"))
       return "Missing events";
-
-
     boolean hasFrom = command.contains("from");
     boolean hasTo = command.contains("to");
     boolean hasOn = command.contains("on");
-
     if (hasFrom && !hasTo) {
       return "Missing To";
     }
-
     if (!hasFrom && !hasOn) {
       return ("Missing From/On");
     }
-
     if (!hasFrom && hasTo) {
       return "Missing From";
     }
-
     if (!hasFrom && !hasTo && !hasOn) {
       return "Missing On";
     }
     return "Invalid command: Does not match expected format.";
-
   }
 
   private void commandParser(String commandArgs) throws Exception {
-    initRegexPatter(regex, commandArgs);
-
+    pattern = Pattern.compile(regex);
+    matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {
       throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }

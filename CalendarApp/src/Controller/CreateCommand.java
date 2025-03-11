@@ -4,12 +4,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Model.Calendar.ACalendar;
 import Model.Utils.DateUtils;
 
-public class CreateCommand extends AbstractCommand {
-
+public class CreateCommand implements ICommand {
   private String subject, weekdays, forTimes;
   private String startDateTime, endDateTime, untilDateTime;
   private String finalStartDate, finalEndDate, finalUntilDateTime;
@@ -19,16 +20,19 @@ public class CreateCommand extends AbstractCommand {
   private boolean isRecurring;
   private boolean autoDecline;
   private Map<String, Object> metaData = new HashMap<>();
+  private Pattern pattern;
+  private Matcher matcher;
 
-  private static String regex = "^event\\s+(--autoDecline\\s+)?\"(.*?)\"\\s+(?=from\\s+|on\\s+)(?:" +
-          "(?:from\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\\s+to\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}))|" +
+  private static final String regex = "^event\\s+(--autoDecline\\s+)?\"(.*?)\"\\s+(?=" +
+          "from\\s+|on\\s+)(?:(?:from\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\\s+" +
+          "to\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}))|" +
           "(?:on\\s+(\\d{4}-\\d{2}-\\d{2})(?:T(\\d{2}:\\d{2}))?))" +
           "(?:\\s+repeats\\s+([MTWRFSU]+)\\s+(?:(?:for\\s+(\\d+)\\s+times)|" +
           "(?:until\\s+(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?))))?$";
 
-
   private void commandParser(String commandArgs) throws Exception {
-    initRegexPatter(regex, commandArgs);
+    pattern = Pattern.compile(regex);
+    matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {
       throw new Exception("error :" + diagnoseCommandError(commandArgs));
     }
@@ -48,7 +52,6 @@ public class CreateCommand extends AbstractCommand {
     processDateValues();
     setEndTime();
   }
-
 
   private String diagnoseCommandError(String command) {
     if (!command.startsWith("event")) {
@@ -126,7 +129,7 @@ public class CreateCommand extends AbstractCommand {
       formatUntilTimeForRecurringEvent();
     }
   }
-  
+
   @Override
   public void execute(String commandArgs, ACalendar calendar) throws Exception {
     commandParser(commandArgs);
