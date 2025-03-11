@@ -22,7 +22,7 @@ public interface ICalendar {
 
 
   // PRINT
-  public List<Event> getMatchingEvents(Map<String, Object> allMetaData);
+  public  List<Map<String, Object>>  getMatchingEvents(Map<String, Object> allMetaData);
 
 
   // STATUS

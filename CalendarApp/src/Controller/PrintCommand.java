@@ -71,7 +71,7 @@ public class PrintCommand implements ICommand {
   }
 
   private void printCommandUtil(ICalendar calendar) {
-    List<Event> eventDetails = calendar.getMatchingEvents(metaData);
+    List<Map<String, Object>>  eventDetails = calendar.getMatchingEvents(metaData);
     ConsoleView v = new ConsoleView();
     v.printInConsole(eventDetails);
   }

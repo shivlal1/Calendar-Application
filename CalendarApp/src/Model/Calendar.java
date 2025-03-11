@@ -2,6 +2,7 @@ package Model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,11 +42,11 @@ public class Calendar implements ICalendar {
             && (middle.isBefore(end) || middle.isEqual(end)));
   }
 
-  private List<Event> getEventsInBetween(LocalDateTime from, LocalDateTime to) {
-    List<Event> eventDetails = new ArrayList<>();
+  private List<Map<String, Object>> getEventsInBetween(LocalDateTime from, LocalDateTime to) {
+    List<Map<String, Object>> eventDetails = new ArrayList<>();
     for (Event event : calendarStorage) {
       if (isBetween(from, event.startDate, to)) {
-        eventDetails.add(event);
+        eventDetails.add( getEventInMap(event));
       }
     }
     return eventDetails;
@@ -151,8 +152,8 @@ public class Calendar implements ICalendar {
     }
   }
 
-  public List<Event> getMatchingEvents(Map<String, Object> allMetaDeta) {
-    List<Event> eventDetailsList = new ArrayList<>();
+  public List<Map<String, Object>> getMatchingEvents(Map<String, Object> allMetaDeta) {
+    List<Map<String, Object>> eventDetailsList = new ArrayList<>();
     LocalDateTime startDateTime = (LocalDateTime) allMetaDeta.get("localStartTime");
     if (isStartToEndDatePrintCommand(allMetaDeta)) {
       eventDetailsList = getEventsInBetween(startDateTime, (LocalDateTime) allMetaDeta.get("localEndTime"));
@@ -171,12 +172,22 @@ public class Calendar implements ICalendar {
     return (allMetaDeta.get("localStartTime") != null);
   }
 
-  private List<Event> getEventsOnDate(LocalDateTime onDate) {
-    List<Event> events = new ArrayList<>();
+  private Map<String, Object> getEventInMap(Event event){
+    Map<String, Object> mapEvent = new HashMap<>();
+    mapEvent.put("subject",(event.subject));
+    mapEvent.put("startDate",(event.startDate));
+    mapEvent.put("endDate",(event.endDate));
+    mapEvent.put("description",(event.description));
+    mapEvent.put("location",(event.location));
+    mapEvent.put("isPublic",(event.isPublic));
+    return  mapEvent;
+  }
+  private List<Map<String, Object>> getEventsOnDate(LocalDateTime onDate) {
+    List<Map<String, Object>> events = new ArrayList<>();
 
     for (Event event : calendarStorage) {
       if (event.startDate.toLocalDate().equals(onDate.toLocalDate())) {
-        events.add(event);
+        events.add( getEventInMap(event));
       }
     }
     return events;
