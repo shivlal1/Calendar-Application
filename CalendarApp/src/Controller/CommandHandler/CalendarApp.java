@@ -58,6 +58,12 @@ public class CalendarApp {
         System.out.println("Invalid command: " + result[0]);
       }
     }
+
+//
+//    String result = splitString(commands);
+//    ICommand command = commandMap.get(result[0]);
+//    command.execute(result[1], calendar);  // Pass the remaining command as an argument
+
   }
 
   public static String[] splitString(String s) {
