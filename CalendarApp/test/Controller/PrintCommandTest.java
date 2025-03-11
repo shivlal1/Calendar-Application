@@ -3,14 +3,14 @@ package Controller;
 import org.junit.Before;
 import org.junit.Test;
 
-import Model.ACalendar;
+import Model.ICalendar;
 import Model.Calendar;
 
 import static org.junit.Assert.assertEquals;
 
 public class PrintCommandTest {
   ICommand printCommand;
-  ACalendar cal = new Calendar();
+  ICalendar cal = new Calendar();
   String command;
 
   @Before

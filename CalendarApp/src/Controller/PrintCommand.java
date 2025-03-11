@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Model.ACalendar;
+import Model.ICalendar;
 import Model.Event;
 import Utils.DateUtils;
 import view.ConsoleView;
@@ -70,14 +70,14 @@ public class PrintCommand implements ICommand {
     metaData.put("localEndTime", localEnd);
   }
 
-  private void printCommandUtil(ACalendar calendar) {
+  private void printCommandUtil(ICalendar calendar) {
     List<Event> eventDetails = calendar.getMatchingEvents(metaData);
     ConsoleView v = new ConsoleView();
     v.printInConsole(eventDetails);
   }
 
   @Override
-  public void execute(String commandArgs, ACalendar calendar) throws Exception {
+  public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);
     printCommandUtil(calendar);
   }

@@ -3,7 +3,7 @@ package Controller;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Model.ACalendar;
+import Model.ICalendar;
 
 public class ExportCommand implements ICommand {
   private String fileName;
@@ -31,12 +31,12 @@ public class ExportCommand implements ICommand {
     System.out.println("filename " + fileName);
   }
 
-  private void exportCommandUtil(ACalendar calendar) {
+  private void exportCommandUtil(ICalendar calendar) {
     // String filePath = calendar.exportCalendarAndGetFilePath();
   }
 
   @Override
-  public void execute(String commandArgs, ACalendar calendar) throws Exception {
+  public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);
     exportCommandUtil(calendar);
   }

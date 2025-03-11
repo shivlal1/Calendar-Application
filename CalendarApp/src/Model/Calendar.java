@@ -7,8 +7,13 @@ import java.util.Map;
 
 import Utils.DateUtils;
 
-public class Calendar extends ACalendar {
+public class Calendar implements ICalendar {
 
+  private List<Event> calendarStorage;
+
+  public Calendar(){
+    calendarStorage = new ArrayList();
+  }
   private boolean hasConflicts(List<Event> newEvents) {
     for (Event existingEvent : calendarStorage) {
       for (Event newEvent : newEvents) {

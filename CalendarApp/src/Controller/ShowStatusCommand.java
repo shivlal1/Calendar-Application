@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Model.ACalendar;
+import Model.ICalendar;
 import Utils.DateUtils;
 import view.ConsoleView;
 
@@ -36,14 +36,14 @@ public class ShowStatusCommand implements ICommand {
     localOnDate = DateUtils.stringToLocalDateTime(onDate);
   }
 
-  private void printCommandUtil(ACalendar calendar) {
+  private void printCommandUtil(ICalendar calendar) {
     boolean isBusy = calendar.isUserBusy(localOnDate);
     ConsoleView view = new ConsoleView();
     view.showStatusInConsole(isBusy);
   }
 
   @Override
-  public void execute(String commandArgs, ACalendar calendar) throws Exception {
+  public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);
     printCommandUtil(calendar);
   }
