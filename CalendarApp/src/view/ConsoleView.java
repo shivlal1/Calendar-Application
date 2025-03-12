@@ -10,7 +10,6 @@ public class ConsoleView implements View {
   }
 
   public void viewEvents(List<Map<String, Object>> events) {
-
     for (Map<String, Object> event : events) {
       System.out.println(event.get("subject"));
       System.out.println(event.get("startDate"));
