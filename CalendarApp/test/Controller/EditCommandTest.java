@@ -3,8 +3,8 @@ package Controller;
 import org.junit.Before;
 import org.junit.Test;
 
-import Model.ICalendar;
 import Model.Calendar;
+import Model.ICalendar;
 
 import static org.junit.Assert.assertEquals;
 

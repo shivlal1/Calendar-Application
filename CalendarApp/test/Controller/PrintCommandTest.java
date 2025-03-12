@@ -3,8 +3,8 @@ package Controller;
 import org.junit.Before;
 import org.junit.Test;
 
-import Model.ICalendar;
 import Model.Calendar;
+import Model.ICalendar;
 
 import static org.junit.Assert.assertEquals;
 
@@ -58,4 +58,12 @@ public class PrintCommandTest {
     }
   }
 
+  @Test
+  public void printtest() throws Exception {
+    command = "print events from \"2025-04-01T10:00\" to \"2025-04-04T11:00\"";
+    command = "print events on \"2025-04-01\"";
+
+    ICommand cmd = new CalendarController();
+    cmd.execute(command, cal);
+  }
 }

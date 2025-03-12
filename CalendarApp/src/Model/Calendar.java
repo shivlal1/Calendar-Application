@@ -1,5 +1,6 @@
 package Model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,9 +13,10 @@ public class Calendar implements ICalendar {
 
   private List<Event> calendarStorage;
 
-  public Calendar(){
+  public Calendar() {
     calendarStorage = new ArrayList();
   }
+
   private boolean hasConflicts(List<Event> newEvents) {
     for (Event existingEvent : calendarStorage) {
       for (Event newEvent : newEvents) {
@@ -26,10 +28,9 @@ public class Calendar implements ICalendar {
     return false;
   }
 
-  private void putGeneratedEventsIntoCalendar(List<Event> events, boolean autoDecline) {
+  private void putGeneratedEventsIntoCalendar(List<Event> events, boolean autoDecline) throws Exception {
     if (autoDecline && hasConflicts(events)) {
-      System.out.println("HAS CONFLICTS");
-      return;
+      throw new Exception("the event conflicts with another event");
     }
     for (Event event : events) {
       calendarStorage.add(event);
@@ -42,11 +43,12 @@ public class Calendar implements ICalendar {
             && (middle.isBefore(end) || middle.isEqual(end)));
   }
 
+
   private List<Map<String, Object>> getEventsInBetween(LocalDateTime from, LocalDateTime to) {
     List<Map<String, Object>> eventDetails = new ArrayList<>();
     for (Event event : calendarStorage) {
       if (isBetween(from, event.startDate, to)) {
-        eventDetails.add( getEventInMap(event));
+        eventDetails.add(getEventInMap(event));
       }
     }
     return eventDetails;
@@ -172,22 +174,29 @@ public class Calendar implements ICalendar {
     return (allMetaDeta.get("localStartTime") != null);
   }
 
-  private Map<String, Object> getEventInMap(Event event){
+  private Map<String, Object> getEventInMap(Event event) {
     Map<String, Object> mapEvent = new HashMap<>();
-    mapEvent.put("subject",(event.subject));
-    mapEvent.put("startDate",(event.startDate));
-    mapEvent.put("endDate",(event.endDate));
-    mapEvent.put("description",(event.description));
-    mapEvent.put("location",(event.location));
-    mapEvent.put("isPublic",(event.isPublic));
-    return  mapEvent;
+    mapEvent.put("subject", (event.subject));
+    mapEvent.put("startDate", (event.startDate));
+    mapEvent.put("endDate", (event.endDate));
+    mapEvent.put("description", (event.description));
+    mapEvent.put("location", (event.location));
+    mapEvent.put("isPublic", (event.isPublic));
+    return mapEvent;
   }
+
   private List<Map<String, Object>> getEventsOnDate(LocalDateTime onDate) {
     List<Map<String, Object>> events = new ArrayList<>();
 
+    LocalDate localOnDate = onDate.toLocalDate();
+
     for (Event event : calendarStorage) {
-      if (event.startDate.toLocalDate().equals(onDate.toLocalDate())) {
-        events.add( getEventInMap(event));
+      LocalDate startDate = event.startDate.toLocalDate();
+      LocalDate endDate = event.endDate.toLocalDate();
+
+      if (startDate.equals(localOnDate) ||
+              localOnDate.isAfter(startDate) && localOnDate.isBefore(endDate)) {
+        events.add(getEventInMap(event));
       }
     }
     return events;
@@ -223,4 +232,14 @@ public class Calendar implements ICalendar {
     }
   }
 
+  @Override
+  public List<Map<String, Object>> getAllCalendarEvents() {
+    List<Map<String, Object>> events = new ArrayList<>();
+
+    for (Event event : calendarStorage) {
+      events.add(getEventInMap(event));
+    }
+    return events;
+
+  }
 }

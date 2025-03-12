@@ -22,14 +22,13 @@ public interface ICalendar {
 
 
   // PRINT
-  public  List<Map<String, Object>>  getMatchingEvents(Map<String, Object> allMetaData);
+  public List<Map<String, Object>> getMatchingEvents(Map<String, Object> allMetaData);
 
 
   // STATUS
   public boolean isUserBusy(LocalDateTime date);
 
-  // EXPORT
-  // public String exportCalendarAndGetFilePath();
+  public List<Map<String, Object>> getAllCalendarEvents();
 
 
 }

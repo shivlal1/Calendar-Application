@@ -37,7 +37,7 @@ public class RecurringEvent extends Event {
 
     DayOfWeek day = date.getDayOfWeek();
     char dayNameAsChar = getDayAbbreviation(day.name());
-    String weekdayText = (String) allMetaDetails.get("weekday");
+    String weekdayText = (String) allMetaDetails.get("weekdays");
     if (weekdayText.indexOf(dayNameAsChar) != -1) {
       return true;
     }
