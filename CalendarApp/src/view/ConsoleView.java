@@ -5,11 +5,11 @@ import java.util.Map;
 
 public class ConsoleView implements View {
 
-  public void messageView(String message) {
+  public void viewMessage(String message) {
     System.out.println(message);
   }
 
-  public void eventsView(List<Map<String, Object>> events) {
+  public void viewEvents(List<Map<String, Object>> events) {
 
     for (Map<String, Object> event : events) {
       System.out.println(event.get("subject"));
@@ -22,7 +22,7 @@ public class ConsoleView implements View {
   }
 
 
-  public void showStatusInConsole(boolean status) {
+  public void viewStatus(boolean status) {
     System.out.println("status " + status);
   }
 }

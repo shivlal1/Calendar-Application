@@ -24,7 +24,7 @@ public class CalendarApp {
 
     if (isArgsStartingWithMode(args)) {
       if (isInteractiveMode(args)) {
-        view.messageView("Using interactive mode.To quit use exit");
+        view.viewMessage("Using interactive mode.To quit use exit");
         while (true) {
           String commandArgs = scanner.nextLine();
           if (commandArgs.equals("exit")) {
@@ -33,7 +33,7 @@ public class CalendarApp {
           controller.execute(commandArgs, calendar);
         }
       } else if (isHeadlessMode(args)) {
-        view.messageView("Headless mode");
+        view.viewMessage("Headless mode");
         String filePath = scanner.nextLine();
         List<String> lines;
         try {
