@@ -1,9 +1,12 @@
 package Controller;
 
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import Model.ICalendar;
+import Utils.CalendarCsvExporter;
 
 public class ExportCommand implements ICommand {
   private String fileName;
@@ -31,8 +34,12 @@ public class ExportCommand implements ICommand {
     System.out.println("filename " + fileName);
   }
 
-  private void exportCommandUtil(ICalendar calendar) {
+  private void exportCommandUtil(ICalendar calendar) throws Exception {
     // String filePath = calendar.exportCalendarAndGetFilePath();
+    List<Map<String, Object>> events = calendar.getAllCalendarEvents();
+    CalendarCsvExporter exporter = new CalendarCsvExporter();
+    String filePath = exporter.export(events, fileName);
+
   }
 
   @Override

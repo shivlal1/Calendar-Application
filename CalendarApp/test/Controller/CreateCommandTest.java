@@ -3,8 +3,16 @@ package Controller;
 import org.junit.Before;
 import org.junit.Test;
 
-import Model.ICalendar;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import Model.Calendar;
+import Model.ICalendar;
+import Utils.DateUtils;
 
 import static org.junit.Assert.assertEquals;
 
@@ -525,20 +533,273 @@ public class CreateCommandTest {
     }
   }
 
+
+  // CREATE EVENTS TESTING
+
   @Test
-  public void add() throws Exception {
+  public void createAsimpleEvent() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event \"Hello\" from 2025-09-20T12:00 to 2025-09-20T13:00";
+    createCommand.execute(command, calendar);
+    calendar.printEvents();
+
+    String onDate = DateUtils.changeDateToDateTime("2025-09-20");
+    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
+
+    Map<String, Object> metaData = new HashMap<>();
+    metaData.put("localStartTime", newOnDate);
+
+    List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
+
+    assertEquals(events.size(), 1);
+    Map<String, Object> firstEvent = events.get(0);
+    assertEquals((String) firstEvent.get("subject"), "Hello");
+    assertEquals((LocalDateTime) firstEvent.get("startDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-20T12:00"));
+    assertEquals((LocalDateTime) firstEvent.get("endDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-20T13:00"));
+
+  }
+
+
+  @Test
+  public void simpleEventWithAutoDecline() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event --autoDecline \"Hello\" from 2025-09-20T12:00 to 2025-09-20T13:00";
+    createCommand.execute(command, calendar);
+    calendar.printEvents();
+
+    String onDate = DateUtils.changeDateToDateTime("2025-09-20");
+    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
+
+    Map<String, Object> metaData = new HashMap<>();
+    metaData.put("localStartTime", newOnDate);
+
+    List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
+
+    assertEquals(events.size(), 1);
+    Map<String, Object> firstEvent = events.get(0);
+    assertEquals((String) firstEvent.get("subject"), "Hello");
+    assertEquals((LocalDateTime) firstEvent.get("startDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-20T12:00"));
+    assertEquals((LocalDateTime) firstEvent.get("endDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-20T13:00"));
+
+  }
+
+  @Test
+  public void autoDeclineSimpleEvent() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event  \"Hello\" from 2025-09-20T12:00 to 2025-09-20T13:00";
+    createCommand.execute(command, calendar);
+    calendar.printEvents();
+
+    String onDate = DateUtils.changeDateToDateTime("2025-09-20");
+    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
+
+    Map<String, Object> metaData = new HashMap<>();
+    metaData.put("localStartTime", newOnDate);
+
+    List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
+
+    assertEquals(events.size(), 1);
+    Map<String, Object> firstEvent = events.get(0);
+    assertEquals((String) firstEvent.get("subject"), "Hello");
+    assertEquals((LocalDateTime) firstEvent.get("startDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-20T12:00"));
+    assertEquals((LocalDateTime) firstEvent.get("endDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-20T13:00"));
+
+    command = "event --autoDecline \"Hello 123\" from 2025-09-20T12:00 to 2025-09-20T13:00";
+
     try {
-      command = "event \"Hello\" from 2025-09-20T12:00 to 2025-09-20T13:00";
-      createCommand.execute(command, cal);
-      cal.printEvents();
+      createCommand.execute(command, calendar);
     } catch (Exception e) {
-      String msg = "error :Does not match expected format.";
-      assertEquals(e.getMessage(), msg);
+      assertEquals(e.getMessage(), "the event conflicts with another event");
+
+      List<Map<String, Object>> events1 = calendar.getMatchingEvents(metaData);
+      assertEquals(events1.size(), 1);
     }
   }
 
 
-  // CREATE EVENTS TESTING
+  @Test
+  public void multiDaySimpleEvent() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event  \"multi Day@123 Event\" from 2025-09-20T12:00 to 2025-09-25T13:00";
+    createCommand.execute(command, calendar);
+    calendar.printEvents();
+
+    String onDate = DateUtils.changeDateToDateTime("2025-09-20");
+    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
+
+    Map<String, Object> metaData = new HashMap<>();
+    metaData.put("localStartTime", newOnDate);
+
+    List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
+
+    assertEquals(events.size(), 1);
+    Map<String, Object> firstEvent = events.get(0);
+    assertEquals((String) firstEvent.get("subject"), "Hello");
+    assertEquals((LocalDateTime) firstEvent.get("startDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-20T12:00"));
+    assertEquals((LocalDateTime) firstEvent.get("endDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-25T13:00"));
+  }
+
+  @Test
+  public void TwomultiDaySimpleEventsOverlap() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event  \"Event 1\" from 2025-09-20T12:00 to 2025-09-25T13:00";
+    createCommand.execute(command, calendar);
+
+    command = "event  \"Event 2\" from 2025-09-20T12:45 to 2025-09-25T13:45";
+    createCommand.execute(command, calendar);
+
+    command = "event  \"Event 3\" from 2025-09-19T12:45 to 2025-09-23T13:45";
+    createCommand.execute(command, calendar);
+
+    String onDate = DateUtils.changeDateToDateTime("2025-09-20");
+    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
+
+    Map<String, Object> metaData = new HashMap<>();
+    metaData.put("localStartTime", newOnDate);
+
+    calendar.printEvents();
+    List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
+
+    assertEquals(events.size(), 3);
+    Map<String, Object> firstEvent = events.get(0);
+    assertEquals((String) firstEvent.get("subject"), "Event 1");
+    assertEquals((LocalDateTime) firstEvent.get("startDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-20T12:00"));
+    assertEquals((LocalDateTime) firstEvent.get("endDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-25T13:00"));
+
+    Map<String, Object> secondEvent = events.get(1);
+    assertEquals((String) secondEvent.get("subject"), "Event 2");
+    assertEquals((LocalDateTime) secondEvent.get("startDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-20T12:45"));
+    assertEquals((LocalDateTime) secondEvent.get("endDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-25T13:45"));
+
+
+    Map<String, Object> thirdEvent = events.get(2);
+    assertEquals((String) thirdEvent.get("subject"), "Event 3");
+    assertEquals((LocalDateTime) thirdEvent.get("startDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-19T12:45"));
+    assertEquals((LocalDateTime) thirdEvent.get("endDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-23T13:45"));
+  }
+
+  @Test
+  public void noEventOnDate() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event  \"multi Day@123 Event\" from 2025-09-20T12:00 to 2025-09-25T13:00";
+    createCommand.execute(command, calendar);
+    calendar.printEvents();
+
+    String onDate = DateUtils.changeDateToDateTime("2025-09-26");
+    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
+
+    Map<String, Object> metaData = new HashMap<>();
+    metaData.put("localStartTime", newOnDate);
+
+    List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
+
+    assertEquals(events.size(), 0);
+  }
+
+  @Test
+  public void allDayEvent() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event \"All Day Event\" on 2025-09-20T12:00";
+    createCommand.execute(command, calendar);
+    calendar.printEvents();
+
+    String onDate = DateUtils.changeDateToDateTime("2025-09-20");
+    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
+
+    Map<String, Object> metaData = new HashMap<>();
+    metaData.put("localStartTime", newOnDate);
+
+    List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
+
+    assertEquals(events.size(), 1);
+    Map<String, Object> firstEvent = events.get(0);
+    assertEquals((String) firstEvent.get("subject"), "All Day Event");
+    assertEquals((LocalDateTime) firstEvent.get("startDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-20T00:00"));
+    assertEquals((LocalDateTime) firstEvent.get("endDate"),
+            DateUtils.pareStringToLocalDateTime("2025-09-20T23:59"));
+  }
+
+
+  @Test
+  public void simpleRecEvent() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
+            "repeats TW for 2 times";
+    createCommand.execute(command, calendar);
+    calendar.printEvents();
+
+    String onDate = DateUtils.changeDateToDateTime("2025-03-11");
+    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
+
+    Map<String, Object> metaData = new HashMap<>();
+    metaData.put("localStartTime", newOnDate);
+
+    List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
+
+    assertEquals(events.size(), 1);
+    Map<String, Object> firstEvent = events.get(0);
+    assertEquals((String) firstEvent.get("subject"), "Recurring Event");
+    assertEquals((LocalDateTime) firstEvent.get("startDate"),
+            DateUtils.pareStringToLocalDateTime("2025-03-11T01:00"));
+    assertEquals((LocalDateTime) firstEvent.get("endDate"),
+            DateUtils.pareStringToLocalDateTime("2025-03-11T02:00"));
+  }
+
+  @Test
+  public void recEventMultipleMonths() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
+            "repeats TW for 2 times";
+    createCommand.execute(command, calendar);
+    calendar.printEvents();
+
+    String onDate = DateUtils.changeDateToDateTime("2025-03-11");
+    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
+
+    Map<String, Object> metaData = new HashMap<>();
+    metaData.put("localStartTime", newOnDate);
+
+    List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
+
+    PrintStream originalOut = System.out;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    PrintStream customOut = new PrintStream(outputStream);
+    System.setOut(customOut);
+
+
+    customOut.flush();
+    int captureStartIndex = outputStream.size();
+
+
+    // Generate output to capture
+    System.out.println("Captured line 1");
+    System.out.println("Captured line 2");
+
+    // Restore original System.out
+    System.setOut(originalOut);
+
+    // Get captured output after the marked index
+    String capturedOutput = outputStream.toString();
+    String filteredOutput = capturedOutput.substring(captureStartIndex);
+
+
+    System.out.println(filteredOutput);
+  }
 
 
 }

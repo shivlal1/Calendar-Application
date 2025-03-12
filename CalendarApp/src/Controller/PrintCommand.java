@@ -2,13 +2,13 @@ package Controller;
 
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import Model.ICalendar;
-import Model.Event;
 import Utils.DateUtils;
 import view.ConsoleView;
 
@@ -23,6 +23,10 @@ public class PrintCommand implements ICommand {
           "from \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\" " +
           "to \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\"|" +
           "on \"(\\d{4}-\\d{2}-\\d{2})\")$";
+
+  public PrintCommand() {
+    metaData = new HashMap<>();
+  }
 
   private String diagnoseCommandError(String command) {
     if (!command.startsWith("events"))
@@ -71,9 +75,9 @@ public class PrintCommand implements ICommand {
   }
 
   private void printCommandUtil(ICalendar calendar) {
-    List<Map<String, Object>>  eventDetails = calendar.getMatchingEvents(metaData);
+    List<Map<String, Object>> eventDetails = calendar.getMatchingEvents(metaData);
     ConsoleView v = new ConsoleView();
-    v.printInConsole(eventDetails);
+    v.viewEvents(eventDetails);
   }
 
   @Override

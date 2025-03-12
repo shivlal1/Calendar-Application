@@ -29,6 +29,10 @@ public class EditCommand implements ICommand {
           "\"(?<newValue2>.*?)\"" +
           ")$";
 
+  public EditCommand() {
+    metaData = new HashMap<>();
+  }
+
   private void commandParser(String commandArgs) throws Exception {
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);

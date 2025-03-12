@@ -30,6 +30,10 @@ public class CreateCommand implements ICommand {
           "(?:\\s+repeats\\s+([MTWRFSU]+)\\s+(?:(?:for\\s+(\\d+)\\s+times)|" +
           "(?:until\\s+(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?))))?$";
 
+  public CreateCommand() {
+    metaData = new HashMap<>();
+  }
+
   private void commandParser(String commandArgs) throws Exception {
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);

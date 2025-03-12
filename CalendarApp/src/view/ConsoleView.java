@@ -3,12 +3,13 @@ package view;
 import java.util.List;
 import java.util.Map;
 
-import Model.Event;
+public class ConsoleView implements View {
 
-public class ConsoleView {
+  public void viewMessage(String message) {
+    System.out.println(message);
+  }
 
-  public void printInConsole( List<Map<String, Object>>  events) {
-    System.out.println("CONSOLE VIEW");
+  public void viewEvents(List<Map<String, Object>> events) {
 
     for (Map<String, Object> event : events) {
       System.out.println(event.get("subject"));
@@ -20,7 +21,8 @@ public class ConsoleView {
 
   }
 
-  public void showStatusInConsole(boolean status) {
+
+  public void viewStatus(boolean status) {
     System.out.println("status " + status);
   }
 }
