@@ -1,17 +1,36 @@
-# Calendar Application
+# Virtual Calendar Application
 
 ## Introduction
 
-This project implements a comprehensive virtual calendar application inspired by popular applications like Google Calendar and Apple's iCalendar. Designed to simplify event management, it provides users with the ability to seamlessly create, modify, query, and export calendar events. It supports a variety of event types, including single-day, multi-day, and recurring events, all-day events with advanced features such as conflict detection and resolution, user-friendly querying, and compatibility with widely-used platforms like Google Calendar and iCalendar. Whether for personal planning or collaborative scheduling, this application aims to enhance productivity and organization through intuitive command-line interactions and robust backend logic.
-## Feature Overview
+This project implements a comprehensive virtual calendar application inspired by Google Calendar and Apple's iCalendar. It simplifies event management, allowing users to seamlessly create, modify, query, and export calendar events through intuitive command-line interactions.
 
-- **Single Calendar Support**: Operates on EST timezone, capable of handling events spanning multiple days.
-- **Event Conflict Management**: Automatic conflict detection with existing events.
-- **Recurring events** support with customizable repetition.
-- **Event editing** capabilities.
-- **Calendar querying** for events or busy status.
-- **Export functionality** to CSV compatible with Google Calendar.
-- Text-based commands through interactive or headless mode.
+## Features
+
+- **Single Calendar Support** (EST timezone)
+- **Event Conflict Management** (Automatic conflict detection and optional auto-decline)
+- **Recurring Events** (Customizable repetitions)
+- **Event Editing**
+- **Event Querying** (View events or check busy status)
+- **CSV Export** (Compatible with Google Calendar)
+- **Interactive and Headless Modes**
+
+## Usage
+
+### Interactive Mode
+
+Start interactive command entry:
+
+```bash
+java CalendarApp --mode interactive
+```
+
+### Headless Mode
+
+Execute commands from a file:
+
+```bash
+java CalendarApp --headless commands.txt
+```
 
 ## Supported Commands
 
@@ -32,46 +51,67 @@ This project implements a comprehensive virtual calendar application inspired by
 | `show status on <dateTime>`                                                                             | Shows busy status at a specified date and time if an event is already scheduled.               |
 | `exit`                                                                                                  | Exits the application.                                                                         |
 
-### Weekday Abbreviations:
+## Sample Command Variations
 
-- **M**: Monday
-- **T**: Tuesday
-- **W**: Wednesday
-- **R**: Thursday
-- **F**: Friday
-- **S**: Saturday
-- **U**: Sunday
-
-## Running the Application
-
-### Interactive Mode
-
-```
-java CalendarApp --mode interactive
-```
-
-This mode enables interactive command entry.
-
-### Headless Mode
+### Create Events
 
 ```bash
-java CalendarApp --headless <commands.txt>
+create event --autoDecline TeamMeeting from 2024-04-01T09:00 to 2024-04-01T10:00
+create event YogaSession from 2024-03-15T18:00 to 2024-03-15T19:00 repeats TR until 2024-05-30
+create event CompanyHoliday on 2024-07-04
 ```
 
-This mode executes commands listed in a provided text file sequentially.
+### Edit Events
 
-## Exporting Calendar
+```bash
+edit event location TeamMeeting from 2024-04-01T09:00 to 2024-04-01T10:00 with ConferenceRoomA
+edit events title YogaSession from 2024-03-15T18:00 with EveningYoga
+edit events location CompanyHoliday Remote
+```
 
-The exported CSV file is compatible with Google Calendar. We can upload this CSV file to Google Calendar and see the visual representation of the events created by the program. 
+### Print Events
+
+```bash
+print events on 2024-04-01
+print events from 2024-03-01 to 2024-03-31
+```
+
+### Show Status
+
+```bash
+show status on 2024-04-01T09:30
+```
+
+### Export Calendar
+
+```bash
+export calendar april_calendar.csv
+```
+
+## Weekday Abbreviations
+
+| Abbreviation | Day       |
+|--------------|-----------|
+| **M**        | Monday    |
+| **T**        | Tuesday   |
+| **W**        | Wednesday |
+| **R**        | Thursday  |
+| **F**        | Friday    |
+| **S**        | Saturday  |
+| **U**        | Sunday    |
 
 ## Project Structure
 
-- `src/`: This folder contains all the source code files.
-- `test/`: This folder contains all unit tests.
-- `res/`: Contains a screenshot of the Google Calendar with the events, a txt file with the list of valid commands, a txt file with a list of commands where at least one command is invalid and finally the class diagram of the design of the application.
-- `README.md`: Project description and user guide to help the users to run the program.
+- `src/`: Source code
+- `test/`: Unit tests
+- `res/`: Resources (screenshots, command files, diagrams)
+- `README.md`: Project documentation
 
 ## Testing and Quality Assurance
 
-The project adheres to MVC architecture and applies SOLID principles, ensuring modular, maintainable, and scalable code. Comprehensive test cases using JUnit verify the application's robustness and correctness.
+The application follows MVC architecture and SOLID principles, ensuring modularity and maintainability. Comprehensive JUnit tests verify application robustness and correctness.
+
+## CSV Integration with Google Calendar
+
+Exported CSV files can be uploaded to Google Calendar for visual event management.
 
