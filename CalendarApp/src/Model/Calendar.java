@@ -9,14 +9,27 @@ import java.util.Map;
 
 import Utils.DateUtils;
 
+/**
+ * The calendar class implements the ICalendar interface and provides functionality
+ * for managing events in a calendar system.
+ */
 public class Calendar implements ICalendar {
 
   private List<Event> calendarStorage;
 
+  /**
+   * This method creates a new Calendar object and initializes the event storage.
+   */
   public Calendar() {
     calendarStorage = new ArrayList();
   }
 
+  /**
+   * Checks if there are any conflicts between existing events and new events.
+   *
+   * @param newEvents The list of new events to check for conflicts.
+   * @return true if any conflict is found; false otherwise.
+   */
   private boolean hasConflicts(List<Event> newEvents) {
     for (Event existingEvent : calendarStorage) {
       for (Event newEvent : newEvents) {
@@ -28,6 +41,13 @@ public class Calendar implements ICalendar {
     return false;
   }
 
+  /**
+   * This method adds a new events to the calendar, considering auto-decline if conflicts occur.
+   *
+   * @param events      The list of events to add.
+   * @param autoDecline Whether to auto-decline if conflicts are found.
+   * @throws Exception If auto-decline is enabled and conflicts exist.
+   */
   private void putGeneratedEventsIntoCalendar(List<Event> events, boolean autoDecline) throws Exception {
     if (autoDecline && hasConflicts(events)) {
       throw new Exception("the event conflicts with another event");
@@ -37,13 +57,26 @@ public class Calendar implements ICalendar {
     }
   }
 
-
+  /**
+   * Checks if a given date is between two other dates.
+   *
+   * @param start  The start date.
+   * @param middle The date to check.
+   * @param end    The end date.
+   * @return true if the middle date is between start and end, else false.
+   */
   private boolean isBetween(LocalDateTime start, LocalDateTime middle, LocalDateTime end) {
     return ((middle.isAfter(start) || middle.isEqual(start))
             && (middle.isBefore(end) || middle.isEqual(end)));
   }
 
-
+  /**
+   * This method events that occur between two specified dates.
+   *
+   * @param from The start date.
+   * @param to   The end date.
+   * @return A list of event details in map format.
+   */
   private List<Map<String, Object>> getEventsInBetween(LocalDateTime from, LocalDateTime to) {
     List<Map<String, Object>> eventDetails = new ArrayList<>();
     for (Event event : calendarStorage) {
@@ -54,14 +87,22 @@ public class Calendar implements ICalendar {
     return eventDetails;
   }
 
-
+  /**
+   * This method all events in the calendar to the console.
+   */
   public void printEvents() {
     for (Event event : calendarStorage) {
       System.out.println(event);
     }
   }
 
-
+  /**
+   * Sets a property of an event to a new value.
+   *
+   * @param property The property to update.
+   * @param newValue The new value for the property.
+   * @param event    The event to update.
+   */
   private void setPropertyValue(String property, String newValue, Event event) {
     switch (property) {
       case "name":
@@ -87,6 +128,12 @@ public class Calendar implements ICalendar {
     }
   }
 
+  /**
+   * Updates the start date of an event.
+   *
+   * @param event    The event to update.
+   * @param newValue The new start date as a string.
+   */
   private void updateStartDate(Event event, String newValue) {
     LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
 
@@ -96,6 +143,12 @@ public class Calendar implements ICalendar {
     }
   }
 
+  /**
+   * This method updates the end date of an event.
+   *
+   * @param event    The event to update.
+   * @param newValue The new end date as a string.
+   */
   private void updateEndDate(Event event, String newValue) {
     LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
 
@@ -105,18 +158,45 @@ public class Calendar implements ICalendar {
     }
   }
 
+  /**
+   * This method checks if an edit operation is by event name and start time.
+   *
+   * @param data Metadata containing edit details.
+   * @return true if the edit is by event name and start time; false otherwise.
+   */
   private boolean isEditByEventNameAndStartTime(Map<String, Object> data) {
-    return (data.get("eventName") != null && data.get("startTime") != null && data.get("endTime") == null);
+    return (data.get("eventName") != null && data.get("startTime") != null && data.get("endTime")
+            == null);
   }
 
+  /**
+   * This method checks if an edit operation is by event name only.
+   *
+   * @param data Metadata containing edit details.
+   * @return true if the edit is by event name only; false otherwise.
+   */
   private boolean isEditByEventName(Map<String, Object> data) {
-    return (data.get("eventName") != null && data.get("startTime") == null && data.get("endTime") == null);
+    return (data.get("eventName") != null && data.get("startTime") == null && data.get("endTime")
+            == null);
   }
 
+  /**
+   * This method checks if an edit operation is by event name and both start and end times.
+   *
+   * @param data Metadata containing edit details.
+   * @return true if the edit is by event name and both start and end times; false otherwise.
+   */
   private boolean isEditByEventNameAndTime(Map<String, Object> data) {
-    return (data.get("eventName") != null && data.get("startTime") != null && data.get("endTime") != null);
+    return (data.get("eventName") != null && data.get("startTime") != null && data.get("endTime")
+            != null);
   }
 
+  /**
+   * Edits an event based on the provided metadata.
+   *
+   * @param data Metadata containing details for the edit operation.
+   * @throws Exception If no matching event is found.
+   */
   public void editEvent(Map<String, Object> data) throws Exception {
 
     String newValue = (String) data.get("newValue");
@@ -124,7 +204,8 @@ public class Calendar implements ICalendar {
     String eventName = (String) data.get("eventName");
 
     if (isEditByEventNameAndStartTime(data)) {
-      updateMatchingEvents(eventName, (LocalDateTime) data.get("localStartTime"), null, newValue, property);
+      updateMatchingEvents(eventName, (LocalDateTime) data.get("localStartTime"),
+              null, newValue, property);
     } else if (isEditByEventName(data)) {
       updateMatchingEvents(eventName, null, null, newValue, property);
     } else if (isEditByEventNameAndTime(data)) {
@@ -133,15 +214,34 @@ public class Calendar implements ICalendar {
     }
   }
 
-
-  private boolean isMatchingEvent(Event event, LocalDateTime start, LocalDateTime end, String eventName) {
+  /**
+   * This method checks if an event matches the specified criteria (name, start time, end time).
+   *
+   * @param event     The event to check.
+   * @param start     The start time to match.
+   * @param end       The end time to match.
+   * @param eventName The event name to match.
+   * @return true if the event matches; false otherwise.
+   */
+  private boolean isMatchingEvent(Event event, LocalDateTime start, LocalDateTime end,
+                                  String eventName) {
     return (event.subject.equals(eventName) &&
             (start == null || event.startDate.equals(start)) &&
             (end == null || event.endDate.equals(end)));
   }
 
-
-  private void updateMatchingEvents(String eventName, LocalDateTime start, LocalDateTime end, String newValue, String property) throws Exception {
+  /**
+   * This updates matching events based on the provided criteria.
+   *
+   * @param eventName The name of the event to update.
+   * @param start     The start time to match.
+   * @param end       The end time to match.
+   * @param newValue  The new value for the property.
+   * @param property  The property to update.
+   * @throws Exception If no matching event is found.
+   */
+  private void updateMatchingEvents(String eventName, LocalDateTime start, LocalDateTime end,
+                                    String newValue, String property) throws Exception {
     boolean found = false;
     for (Event event : calendarStorage) {
       if (isMatchingEvent(event, start, end, eventName)) {
@@ -154,6 +254,12 @@ public class Calendar implements ICalendar {
     }
   }
 
+  /**
+   * This method retrieves the events matching the specified metadata.
+   *
+   * @param allMetaDeta metadata containing criteria for event matching.
+   * @return A list of event details in map format.
+   */
   public List<Map<String, Object>> getMatchingEvents(Map<String, Object> allMetaDeta) {
     List<Map<String, Object>> eventDetailsList = new ArrayList<>();
     LocalDateTime startDateTime = (LocalDateTime) allMetaDeta.get("localStartTime");
@@ -165,15 +271,32 @@ public class Calendar implements ICalendar {
     return eventDetailsList;
   }
 
-
+  /**
+   * Checks if the metadata indicates a print command for a date range.
+   *
+   * @param allMetaDeta Metadata containing print criteria.
+   * @return true if it's a print command for a date range; false otherwise.
+   */
   private boolean isStartToEndDatePrintCommand(Map<String, Object> allMetaDeta) {
     return (allMetaDeta.get("localStartTime") != null && allMetaDeta.get("localEndTime") != null);
   }
 
+  /**
+   * Checks if the metadata indicates a print command for a single date.
+   *
+   * @param allMetaDeta Metadata containing print criteria.
+   * @return true if it's a print command for a single date; false otherwise.
+   */
   private boolean isOnDatePrintCommand(Map<String, Object> allMetaDeta) {
     return (allMetaDeta.get("localStartTime") != null);
   }
 
+  /**
+   * Converts an event into a map for easier data access.
+   *
+   * @param event The event to convert.
+   * @return A map containing event details.
+   */
   private Map<String, Object> getEventInMap(Event event) {
     Map<String, Object> mapEvent = new HashMap<>();
     mapEvent.put("subject", (event.subject));
@@ -185,6 +308,12 @@ public class Calendar implements ICalendar {
     return mapEvent;
   }
 
+  /**
+   * Retrieves events occurring on a specific date.
+   *
+   * @param onDate The date to retrieve events for.
+   * @return A list of event details in map format.
+   */
   private List<Map<String, Object>> getEventsOnDate(LocalDateTime onDate) {
     List<Map<String, Object>> events = new ArrayList<>();
 
@@ -202,7 +331,12 @@ public class Calendar implements ICalendar {
     return events;
   }
 
-
+  /**
+   * This method checks if there is an event during the same date.
+   *
+   * @param date the date to check for.
+   * @return true if the schedule is busy else false.
+   */
   public boolean isUserBusy(LocalDateTime date) {
     for (Event event : calendarStorage) {
       LocalDateTime startTime = event.startDate;
@@ -214,7 +348,16 @@ public class Calendar implements ICalendar {
     return false;
   }
 
-
+  /**
+   * Creates a new event in the calendar with the specified details.
+   *
+   * @param subject            The subject or title of the event.
+   * @param localStartDateTime The start date and time of the event.
+   * @param localEndDateTime   The end date and time of the event.
+   * @param allMetaDeta        Additional metadata for the event, such as recurrence or auto-decline
+   *                           settings.
+   * @throws Exception if there's an error in creating the events.
+   */
   public void createEvent(String subject,
                           LocalDateTime localStartDateTime,
                           LocalDateTime localEndDateTime,
@@ -232,6 +375,11 @@ public class Calendar implements ICalendar {
     }
   }
 
+  /**
+   * This method retrieves all the events stored in the calendar as a list of maps.
+   *
+   * @return A list of event details in map format containing event properties.
+   */
   @Override
   public List<Map<String, Object>> getAllCalendarEvents() {
     List<Map<String, Object>> events = new ArrayList<>();
@@ -240,6 +388,5 @@ public class Calendar implements ICalendar {
       events.add(getEventInMap(event));
     }
     return events;
-
   }
 }

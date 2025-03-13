@@ -8,6 +8,9 @@ import Model.ICalendar;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * A unit test for the EditCommand class.
+ */
 public class EditCommandTest {
 
   ICommand editCommand;

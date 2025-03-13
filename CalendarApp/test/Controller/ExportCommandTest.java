@@ -8,6 +8,9 @@ import Model.ICalendar;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * A unit test for the ExportCommand class.
+ */
 public class ExportCommandTest {
   ICommand exportCommand;
   ICalendar cal = new Calendar();
