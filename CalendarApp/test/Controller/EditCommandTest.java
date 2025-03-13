@@ -258,65 +258,134 @@ public class EditCommandTest {
     return actualOutput;
   }
 
-//
-//  @Test
-//  public void editSingleEventNameOnlySingleEvent() throws Exception {
-//    // Recurring Event creation with future until time
-//    ICalendar calendar = new Calendar();
-//    command = "event \"Event\" from 2025-03-01T09:00 to 2025-03-01T10:00";
-//    createCommand.execute(command, calendar);
-//
-//    command = "event \"Hello\" from 2025-05-07T11:00 to 2025-05-07T12:00";
-//    createCommand.execute(command, calendar);
-//
-//    command = "event \"Event\" from 2025-05-05T11:00 to 2025-05-06T12:00";
-//    createCommand.execute(command, calendar);
-//
-//    //change events with name "Event" to "New Name"
-//    command = "events name \"Event\" \"New Name\"";
-//    editCommand.execute(command, calendar);
-//
-//    view.viewEvents( calendar.getAllCalendarEvents());
-//
-//    // check whether the first event is added properly
-//    String actualOutput = getEventStringOnADate("2025-03-01", calendar);
-//    actualOutput = actualOutput + getEventStringOnADate("2025-03-01", calendar);
-//
-//    assertEquals("", actualOutput);
-//    assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-13T01:05")), true);
-//
-//  }
-//
-//  @Test
-//  public void editEventNameOnlyRecurring() throws Exception {
-//    // Recurring Event creation with future until time
-//    ICalendar calendar = new Calendar();
-//    command = "event \"Event\" from 2025-03-01T09:00 to 2025-03-01T10:00";
-//    createCommand.execute(command, calendar);
-//
-//    command = "event \"Hello\" from 2025-05-07T11:00 to 2025-05-07T12:00";
-//    createCommand.execute(command, calendar);
-//
-//    command = "event \"Event\" from 2025-05-05T11:00 to 2025-05-06T12:00";
-//    createCommand.execute(command, calendar);
-//
-//    command = "event \"Event\" from 2025-03-12T01:00 to 2025-03-12T02:00 " +
-//            "repeats W until 2025-03-12T06:00";
-//    createCommand.execute(command, calendar);
-//
-//    //change events with name "Event" to "New Name"
-//
-//    command = "events name \"Event\" \"New Name\"";
-//    editCommand.execute(command, calendar);
-//
-//    getViewCalendarOutput( calendar.getAllCalendarEvents() );
-//
-//    // check whether the first event is added properly
-//    String actualOutput = getEventStringOnADate("2025-03-01", calendar);
-//    actualOutput = actualOutput + getEventStringOnADate("2025-03-01", calendar);
-//
-//    assertEquals("", actualOutput);
-//    assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-13T01:05")), true);
-//
-//  }
+
+  @Test
+  public void editSingleEventName() throws Exception {
+    // Recurring Event creation with future until time
+    ICalendar calendar = new Calendar();
+    command = "event \"Event\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Hello\" from 2025-05-07T11:05 to 2025-05-09T12:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event\" from 2025-05-05T11:00 to 2025-05-06T12:00";
+    createCommand.execute(command, calendar);
+
+    //change events with name "Event" to "New Name"
+    command = "events name \"Event\" \"New Name\"";
+    editCommand.execute(command, calendar);
+
+    //calendar.printEvents();
+    //view.viewEvents( calendar.getAllCalendarEvents());
+
+    String actualOutput = getViewCalendarOutput( calendar.getAllCalendarEvents());
+    String event1 = "• Subject : New Name,Start date : 2025-03-01,Start time : 09:00," +
+            "End date : 2025-03-01,End time : 10:00\n";
+    String event2 = "• Subject : Hello,Start date : 2025-05-07,Start time : 11:05," +
+            "End date : 2025-05-09,End time : 12:00\n";
+    String event3 = "• Subject : New Name,Start date : 2025-05-05,Start time : 11:00," +
+            "End date : 2025-05-06,End time : 12:00\n";
+
+    assertEquals(event1+event2+event3, actualOutput);
+
+  }
+
+
+  @Test
+  public void editEventNameOnlyRecurring() throws Exception {
+    // Recurring Event creation with future until time
+    ICalendar calendar = new Calendar();
+
+    command = "event \"no update\" from 2025-03-15T01:00 to 2025-03-15T02:00 " +
+            "repeats S until 2025-03-15T06:00";
+    createCommand.execute(command, calendar);
+
+
+    command = "event \"Event\" from 2025-03-12T01:00 to 2025-03-12T02:00 " +
+            "repeats W until 2025-03-12T06:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "events name \"Event\" \"New Name\"";
+    editCommand.execute(command, calendar);
+
+    String actualOutput = getViewCalendarOutput( calendar.getAllCalendarEvents() );
+    String event1 = "• Subject : no update,Start date : 2025-03-15,Start time : 01:00,End date : 2025-03-15,End time : 02:00\n";
+    String event2 = "• Subject : New Name,Start date : 2025-03-12,Start time : 01:00,End date : 2025-03-12,End time : 02:00\n";
+    String event3 = "• Subject : New Name,Start date : 2025-03-01,Start time : 09:00,End date : 2025-03-01,End time : 10:00\n";
+    // check whether the first event is added properly
+
+    assertEquals(event1+event2+event3, actualOutput);
+
+  }
+
+  @Test
+  public void editSingleEvenLocation() throws Exception {
+    // Recurring Event creation with future until time
+    ICalendar calendar = new Calendar();
+    command = "event \"Event\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Hello\" from 2025-05-07T11:05 to 2025-05-09T12:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event\" from 2025-05-05T11:00 to 2025-05-06T12:00";
+    createCommand.execute(command, calendar);
+
+    //change events with name "Event" to "New Name"
+    command = "events location \"Event\" \"Snell Library\"";
+    editCommand.execute(command, calendar);
+
+    String actualOutput = getViewCalendarOutput( calendar.getAllCalendarEvents());
+    String event1 = "• Subject : Event,Start date : 2025-03-01,Start time : 09:00," +
+            "End date : 2025-03-01,End time : 10:00,location : Snell Library\n";
+    String event2 = "• Subject : Hello,Start date : 2025-05-07,Start time : 11:05," +
+            "End date : 2025-05-09,End time : 12:00\n";
+    String event3 = "• Subject : Event,Start date : 2025-05-05,Start time : 11:00," +
+            "End date : 2025-05-06,End time : 12:00,location : Snell Library\n";
+
+    assertEquals(event1+event2+event3, actualOutput);
+  }
+
+  @Test
+  public void editLocation() throws Exception {
+    // Recurring Event creation with future until time
+    ICalendar calendar = new Calendar();
+
+    command = "event \"no update\" from 2025-03-15T01:00 to 2025-03-15T02:00 " +
+            "repeats S until 2025-03-15T06:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event\" from 2025-03-12T01:00 to 2025-03-12T02:00 " +
+            "repeats W until 2025-03-12T06:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "events name \"Event\" \"New Name\"";
+    editCommand.execute(command, calendar);
+
+    command = "events name \"New Name\" \"OLD Name\"";
+    editCommand.execute(command, calendar);
+
+    command = "events description \"no update\" \"this event has no update\"";
+    editCommand.execute(command, calendar);
+
+    view.viewEvents( calendar.getAllCalendarEvents() );
+
+    String actualOutput = getViewCalendarOutput( calendar.getAllCalendarEvents() );
+    String event1 = "• Subject : no update,Start date : 2025-03-15," +
+            "Start time : 01:00,End date : 2025-03-15,End time : 02:00\n";
+    String event2 = "• Subject : OLD Name,Start date : 2025-03-12," +
+            "Start time : 01:00,End date : 2025-03-12,End time : 02:00\n";
+    String event3 = "• Subject : OLD Name,Start date : 2025-03-01," +
+            "Start time : 09:00,End date : 2025-03-01,End time : 10:00\n";
+
+    assertEquals(event1+event2+event3, actualOutput);
+  }
+
 }
