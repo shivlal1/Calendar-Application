@@ -8,6 +8,9 @@ import Model.ICalendar;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * A unit test for the PrintCommand class.
+ */
 public class PrintCommandTest {
   ICommand printCommand;
   ICalendar cal = new Calendar();

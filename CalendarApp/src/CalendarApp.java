@@ -8,7 +8,19 @@ import Model.Calendar;
 import Model.ICalendar;
 import view.ConsoleView;
 
+/**
+ * The CalendarApp class is the main entry point for the calendar application.
+ * It handles command-line arguments to determine the operating mode (interactive or headless)
+ * and executes commands accordingly.
+ */
 public class CalendarApp {
+
+  /**
+   * The main method that starts the application.
+   *
+   * @param args Command-line arguments.
+   * @throws Exception If there's an error in processing arguments or executing commands.
+   */
   public static void main(String[] args) throws Exception {
 
     if (args.length < 2) {
@@ -56,18 +68,42 @@ public class CalendarApp {
     }
   }
 
+  /**
+   * Checks if the command-line arguments start with the '--mode' keyword.
+   *
+   * @param args Command-line arguments.
+   * @return true if the arguments start with '--mode' else, false.
+   */
   private static boolean isArgsStartingWithMode(String args[]) {
     return args[0].equalsIgnoreCase("--mode");
   }
 
+  /**
+   * Checks if the operating mode is 'interactive'.
+   *
+   * @param args Command-line arguments.
+   * @return true if the mode is 'interactive' else, false.
+   */
   private static boolean isInteractiveMode(String args[]) {
     return args[1].toLowerCase().equals("interactive");
   }
 
+  /**
+   * Checks if the operating mode is 'headless'.
+   *
+   * @param args Command-line arguments.
+   * @return true if the mode is 'headless' else, false.
+   */
   private static boolean isHeadlessMode(String args[]) {
     return args[1].toLowerCase().equals("headless");
   }
 
+  /**
+   * Checks if the last command in a file is 'exit'.
+   *
+   * @param lines List of commands read from a file.
+   * @return true if the last command is 'exit' else, false.
+   */
   private static boolean isLastCommandExit(List<String> lines) {
     return lines.get(lines.size() - 1).trim().equalsIgnoreCase("exit");
   }

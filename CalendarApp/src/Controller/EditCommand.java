@@ -9,6 +9,10 @@ import java.util.regex.Pattern;
 import Model.ICalendar;
 import Utils.DateUtils;
 
+/**
+ * This class implements the ICommand interface and has methods for parsing
+ * and running edit commands.
+ */
 public class EditCommand implements ICommand {
   private String eventName;
   private String start, end;
@@ -29,10 +33,19 @@ public class EditCommand implements ICommand {
           "\"(?<newValue2>.*?)\"" +
           ")$";
 
+  /**
+   * This method constructs an EditCommand object and initializes the metadata map.
+   */
   public EditCommand() {
     metaData = new HashMap<>();
   }
 
+  /**
+   * Parses the command to get the details about the event to be edited.
+   *
+   * @param commandArgs the command arguments in String format.
+   * @throws Exception if there's an error while parsing the fields.
+   */
   private void commandParser(String commandArgs) throws Exception {
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);
@@ -57,6 +70,9 @@ public class EditCommand implements ICommand {
     addValuesInMetaDataObject();
   }
 
+  /**
+   * This method adds the parsed values to the metadata map.
+   */
   private void addValuesInMetaDataObject() {
     metaData.put("property", property);
     metaData.put("eventName", eventName);
@@ -67,6 +83,12 @@ public class EditCommand implements ICommand {
     metaData.put("localEndTime", localEndTime);
   }
 
+  /**
+   * This method checks if a given string contains only uppercase letters.
+   *
+   * @param str the string we need to check.
+   * @return true if all letters in the string are uppercase, else false.
+   */
   private boolean isStringUppercase(String str) {
     for (int i = 0; i < str.length(); i++) {
       if (Character.isLetter(str.charAt(i)) && !Character.isUpperCase(str.charAt(i))) {
@@ -76,6 +98,13 @@ public class EditCommand implements ICommand {
     return true;
   }
 
+  /**
+   * This method validates and checks the errors in the command format and provides error messages
+   * for the respective cases.
+   *
+   * @param command the command we need to validate.
+   * @return a string representing the error message.
+   */
   private String diagnoseCommandError(String command) {
     if (isStringUppercase(command)) {
       return "Command should be lower case.";
@@ -108,6 +137,14 @@ public class EditCommand implements ICommand {
     return "Invalid command: Does not match expected format.";
   }
 
+  /**
+   * This method runs the edit event command by parsing the arguments and calling
+   * the calendar's editEvent method with the updated details.
+   *
+   * @param commandArgs the command arguments in String format.
+   * @param calendar    the ICalendar object where the event will be edited.
+   * @throws Exception if at all there's an error while running the edit event program.
+   */
   @Override
   public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);

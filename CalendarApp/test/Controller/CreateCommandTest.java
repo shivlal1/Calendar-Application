@@ -16,6 +16,10 @@ import Utils.DateUtils;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * A unit test for the CreateCommand class.
+ */
+
 public class CreateCommandTest {
   ICommand createCommand;
   ICommand editCommand;
