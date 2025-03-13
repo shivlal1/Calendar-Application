@@ -1,4 +1,4 @@
-package Utils;
+package utils;
 
 import java.io.FileWriter;
 import java.nio.file.Paths;

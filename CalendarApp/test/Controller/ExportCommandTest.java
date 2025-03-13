@@ -1,10 +1,10 @@
-package Controller;
+package controller;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import Model.Calendar;
-import Model.ICalendar;
+import model.Calendar;
+import model.ICalendar;
 
 import static org.junit.Assert.assertEquals;
 

@@ -1,6 +1,6 @@
-package Controller;
+package controller;
 
-import Model.ICalendar;
+import model.ICalendar;
 
 /**
  * This interface sets a base for the classes that implement commands

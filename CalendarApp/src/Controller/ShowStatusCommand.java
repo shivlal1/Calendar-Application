@@ -1,11 +1,11 @@
-package Controller;
+package controller;
 
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Model.ICalendar;
-import Utils.DateUtils;
+import model.ICalendar;
+import utils.DateUtils;
 import view.ConsoleView;
 
 /**
