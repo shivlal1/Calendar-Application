@@ -1,7 +1,9 @@
 package controller;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -12,12 +14,13 @@ import java.util.Map;
 
 import model.Calendar;
 import model.ICalendar;
+import model.RecurringEvent;
 import utils.DateUtils;
 import view.ConsoleView;
 import view.View;
 
-import static utils.DateUtils.pareStringToLocalDateTime;
 import static org.junit.Assert.assertEquals;
+import static utils.DateUtils.pareStringToLocalDateTime;
 
 /**
  * A unit test for the CreateCommand class.
@@ -464,7 +467,6 @@ public class CreateCommandTest {
     ICalendar calendar = new Calendar();
     command = "event \"Hello\" from 2025-09-20T12:00 to 2025-09-20T13:00";
     createCommand.execute(command, calendar);
-    calendar.printEvents();
 
     String onDate = DateUtils.changeDateToDateTime("2025-09-20");
     LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -490,7 +492,6 @@ public class CreateCommandTest {
     ICalendar calendar = new Calendar();
     command = "event --autoDecline \"Hello\" from 2025-09-20T12:00 to 2025-09-20T13:00";
     createCommand.execute(command, calendar);
-    calendar.printEvents();
 
     String onDate = DateUtils.changeDateToDateTime("2025-09-20");
     LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -515,7 +516,6 @@ public class CreateCommandTest {
     ICalendar calendar = new Calendar();
     command = "event  \"Hello\" from 2025-09-20T12:00 to 2025-09-20T13:00";
     createCommand.execute(command, calendar);
-    calendar.printEvents();
 
     String onDate = DateUtils.changeDateToDateTime("2025-09-20");
     LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -551,7 +551,6 @@ public class CreateCommandTest {
     ICalendar calendar = new Calendar();
     command = "event  \"multi Day@123 Event\" from 2025-09-20T12:00 to 2025-09-25T13:00";
     createCommand.execute(command, calendar);
-    calendar.printEvents();
 
     String onDate = DateUtils.changeDateToDateTime("2025-09-20");
     LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -588,7 +587,6 @@ public class CreateCommandTest {
     Map<String, Object> metaData = new HashMap<>();
     metaData.put("localStartTime", newOnDate);
 
-    calendar.printEvents();
     List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
 
     assertEquals(events.size(), 3);
@@ -620,7 +618,6 @@ public class CreateCommandTest {
     ICalendar calendar = new Calendar();
     command = "event  \"multi Day@123 Event\" from 2025-09-20T12:00 to 2025-09-25T13:00";
     createCommand.execute(command, calendar);
-    calendar.printEvents();
 
     String onDate = DateUtils.changeDateToDateTime("2025-09-26");
     LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -638,7 +635,6 @@ public class CreateCommandTest {
     ICalendar calendar = new Calendar();
     command = "event \"All Day Event\" on 2025-09-20T12:00";
     createCommand.execute(command, calendar);
-    calendar.printEvents();
 
     String onDate = DateUtils.changeDateToDateTime("2025-09-20");
     LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -664,7 +660,6 @@ public class CreateCommandTest {
     command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
             "repeats TW for 2 times";
     createCommand.execute(command, calendar);
-    calendar.printEvents();
 
     String onDate = DateUtils.changeDateToDateTime("2025-03-11");
     LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -689,7 +684,6 @@ public class CreateCommandTest {
     command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
             "repeats TW for 2 times";
     createCommand.execute(command, calendar);
-    calendar.printEvents();
 
     String onDate = DateUtils.changeDateToDateTime("2025-03-11");
     LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -708,9 +702,6 @@ public class CreateCommandTest {
     System.setOut(customOut);
     customOut.flush();
     int captureStartIndex = outputStream.size();
-
-
-    cal.printEvents();
 
     System.setOut(originalOut);
     String capturedOutput = outputStream.toString();
@@ -748,8 +739,6 @@ public class CreateCommandTest {
     command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
             "repeats TW for 2 times";
     createCommand.execute(command, calendar);
-
-    calendar.printEvents();
 
     // check whether the first event is added properly
     String onDate = DateUtils.changeDateToDateTime("2025-03-11");
@@ -1113,9 +1102,142 @@ public class CreateCommandTest {
     ICalendar calendar = new Calendar();
     command = "event \"All Day\" on 2025-03-17 repeats MT until  2025-03-16";
     createCommand.execute(command, calendar);
-    calendar.printEvents();
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-17T01:05")), false);
     assertEquals(calendar.getAllCalendarEvents().size(), 0);
+  }
+
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+   @Test
+   public void autoDecline1() throws Exception {
+
+     thrown.expect(Exception.class);
+     thrown.expectMessage("the event conflicts with another event");
+
+    ICalendar calendar = new Calendar();
+
+     command = "event \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+     createCommand.execute(command,calendar);
+
+     command = "event --autoDecline \"event 2\" from 2025-03-01T09:45 to 2025-03-01T10:15";
+     createCommand.execute(command,calendar);
+   }
+
+  @Test
+  public void autoDecline2() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("the event conflicts with another event");
+
+    ICalendar calendar = new Calendar();
+    command = "event --autoDecline \"event 2\" from 2025-03-01T09:45 to 2025-03-01T10:15";
+    createCommand.execute(command,calendar);
+
+    command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command,calendar);
+  }
+  @Test
+  public void autoDecline3() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("the event conflicts with another event");
+
+    ICalendar calendar = new Calendar();
+    command = "event --autoDecline \"event 2\" from 2025-03-01T09:45 to 2025-03-01T10:15";
+    createCommand.execute(command,calendar);
+
+    command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:45 to 2025-03-01T12:00";
+    createCommand.execute(command,calendar);
+  }
+  @Test
+  public void autoDecline4() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("the event conflicts with another event");
+
+    ICalendar calendar = new Calendar();
+    command = "event --autoDecline \"event 2\" from 2025-03-01T09:00 to 2025-03-01T10:15";
+    createCommand.execute(command,calendar);
+
+    command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:45 to 2025-03-01T10:15";
+    createCommand.execute(command,calendar);
+  }
+
+  @Test
+  public void autoDecline5() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("the event conflicts with another event");
+
+    ICalendar calendar = new Calendar();
+    command = "event --autoDecline \"event 2\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command,calendar);
+
+    command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:45 to 2025-03-01T09:50";
+    createCommand.execute(command,calendar);
+  }
+  @Test
+  public void autoDecline6() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event --autoDecline \"event 2\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command,calendar);
+
+    command = "event --autoDecline \"SingleEvent\" from 2025-03-01T10:00 to 2025-03-01T11:50";
+    createCommand.execute(command,calendar);
+
+    assertEquals(calendar.getAllCalendarEvents().size(),2);
+  }
+
+  @Test
+  public void validateRecurringEventCount() throws Exception {
+
+    ICalendar calendar = new Calendar();
+    command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
+            "repeats TW for 10 times";
+    createCommand.execute(command,calendar);
+
+    assertEquals( calendar.getAllCalendarEvents().size(),10);
+  }
+
+  @Test
+  public void validateRecurringEventCount2() throws Exception {
+
+    ICalendar calendar = new Calendar();
+    command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
+            "repeats TW for 0 times";
+    createCommand.execute(command,calendar);
+
+    assertEquals( calendar.getAllCalendarEvents().size(),0);
+  }
+  @Test
+  public void autoDeclineEnable() throws Exception {
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("the event conflicts with another event");
+
+    ICalendar calendar = new Calendar();
+    command = "event \"Single Event\" from 2025-03-11T01:00 to 2025-03-11T02:00";
+    createCommand.execute(command,calendar);
+
+    command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
+            "repeats TW for 5 times";
+    createCommand.execute(command,calendar);
+
+    view.viewEvents(calendar.getAllCalendarEvents());
+
+  }
+
+
+  @Test
+  public void recEventStartBeforeEnd() throws Exception {
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("end date cannot be before start date");
+
+    ICalendar calendar = new Calendar();
+
+    command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T00:55 " +
+            "repeats TW for 5 times";
+    createCommand.execute(command,calendar);
+
   }
 
 

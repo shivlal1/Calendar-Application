@@ -88,14 +88,6 @@ public class Calendar implements ICalendar {
     return eventDetails;
   }
 
-  /**
-   * This method all events in the calendar to the console.
-   */
-  public void printEvents() {
-    for (Event event : calendarStorage) {
-      System.out.println(event);
-    }
-  }
 
   /**
    * Sets a property of an event to a new value.
@@ -132,7 +124,7 @@ public class Calendar implements ICalendar {
   /**
    * Updates the start date of an event.
    *
-   * @param event the event we need to update.
+   * @param event    the event we need to update.
    * @param newValue the new value which we want to give for updating.
    * @throws Exception exception if invalid start or end time is given.
    */
@@ -149,6 +141,8 @@ public class Calendar implements ICalendar {
       if (!(newDate.toLocalDate().equals(event.endDate.toLocalDate())
               && newDate.isBefore(event.endDate))) {
         throw new Exception("invalid date for recurring event");
+      }else{
+        event.startDate = newDate;
       }
     }
   }
@@ -395,11 +389,9 @@ public class Calendar implements ICalendar {
 
     List<Event> allEvents = event.generateEventsForCalendar();
 
-    if (event.isAutoDeclineEnabled()) {
-      putGeneratedEventsIntoCalendar(allEvents, true);
-    } else {
+
       putGeneratedEventsIntoCalendar(allEvents, (Boolean) allMetaDeta.get("autoDecline"));
-    }
+
   }
 
   /**

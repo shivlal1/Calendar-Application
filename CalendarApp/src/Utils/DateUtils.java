@@ -13,8 +13,8 @@ public class DateUtils {
   private static final DateTimeFormatter csvDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
   private static final DateTimeFormatter csvTimeFormat = DateTimeFormatter.ofPattern("hh:mm a");
 
-  private DateUtils() {
-    throw new UnsupportedOperationException("Utility class should not be instantiated");
+  public DateUtils() {
+    throw new UnsupportedOperationException("Date Utility cannot be instantiated");
   }
 
   /**

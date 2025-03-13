@@ -62,10 +62,10 @@ public class ConsoleView implements View {
    * @param status The status to display, indicating if the user is busy or not.
    */
   public void viewStatus(boolean status) {
-    if(status){
-      System.out.println("status : available");
-    }else{
+    if (status) {
       System.out.println("status : busy");
+    } else {
+      System.out.println("status : available");
     }
   }
 }

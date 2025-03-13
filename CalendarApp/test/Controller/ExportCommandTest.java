@@ -1,7 +1,9 @@
 package controller;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import model.Calendar;
 import model.ICalendar;
@@ -21,64 +23,67 @@ public class ExportCommandTest {
     exportCommand = new ExportCommand();
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void testProperFileName() throws Exception {
-    try {
       command = "cal filename.csv";
       exportCommand.execute(command, cal);
-    } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command");
-    }
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void testProperFileName2() throws Exception {
-    try {
       command = "cal thisisaverylongfilenamethatistobeadded.csv";
       exportCommand.execute(command, cal);
-    } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command");
-    }
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void testMissingExportCal() throws Exception {
-    try {
       command = "filename.csv";
       exportCommand.execute(command, cal);
-    } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Missing/Misplaced cal keyword");
-    }
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void testMissingFileName() throws Exception {
-    try {
       command = "cal";
       exportCommand.execute(command, cal);
-    } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Error in fileName");
-    }
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void testInvalidFileType() throws Exception {
-    try {
       command = "cal filename.png";
       exportCommand.execute(command, cal);
-    } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Error in fileName");
-    }
+  }
+
+  @Test(expected = Exception.class)
+  public void testIncorrectFileNameWithExtraWords() throws Exception {
+      command = "cal filename.csv hello there";
+      exportCommand.execute(command, cal);
+  }
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public void emptyCommand() throws Exception {
+    CalendarController controler = new CalendarController();
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("Invalid Command");
+    ICalendar calendar = new Calendar();
+
+    String command = "export cal";
+    controler.execute(command, calendar);
   }
 
   @Test
-  public void testIncorrectFileNameWithExtraWords() throws Exception {
-    try {
-      command = "cal filename.csv hello there";
-      exportCommand.execute(command, cal);
-    } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Error in fileName");
-    }
+  public void emptyCommand2() throws Exception {
+    CalendarController controler = new CalendarController();
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("Invalid Command");
+    ICalendar calendar = new Calendar();
+
+    String command = "print events";
+    controler.execute(command, calendar);
   }
 
 }

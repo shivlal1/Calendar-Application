@@ -5,15 +5,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.List;
-import java.util.Map;
-
 import model.Calendar;
 import model.ICalendar;
 import view.ConsoleView;
 import view.View;
-
-import static org.junit.Assert.*;
 
 public class CalendarControllerTest {
 
@@ -22,7 +17,7 @@ public class CalendarControllerTest {
   View view;
 
   @Before
-  public void init(){
+  public void init() {
     controler = new CalendarController();
     view = new ConsoleView();
 
@@ -31,7 +26,6 @@ public class CalendarControllerTest {
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
-
 
 
   @Test
@@ -43,19 +37,19 @@ public class CalendarControllerTest {
     ICalendar calendar = new Calendar();
 
     String command = "create event  \"multi Day@123 Event\" from 2025-09-20T12:00 to 2025-09-25T13:00";
-    controler.execute(command,calendar);
+    controler.execute(command, calendar);
 
     command = "edit events name  \"multi Day@123 Event\" \"Hello\"";
-    controler.execute(command,calendar);
+    controler.execute(command, calendar);
 
     command = "print events on \"2025-09-20\"";
-    controler.execute(command,calendar);
+    controler.execute(command, calendar);
 
     command = "show status on 2025-09-20T12:00";
-    controler.execute(command,calendar);
+    controler.execute(command, calendar);
 
     command = "InvalidStart status on 2025-09-20T12:00";
-    controler.execute(command,calendar);
+    controler.execute(command, calendar);
 
   }
 
@@ -68,8 +62,9 @@ public class CalendarControllerTest {
     ICalendar calendar = new Calendar();
 
     String command = "";
-    controler.execute(command,calendar);
+    controler.execute(command, calendar);
   }
+
   @Test
   public void emptyCreate() throws Exception {
 
@@ -78,7 +73,7 @@ public class CalendarControllerTest {
     ICalendar calendar = new Calendar();
 
     String command = "create";
-    controler.execute(command,calendar);
+    controler.execute(command, calendar);
   }
 
 //  @Test

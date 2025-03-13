@@ -12,6 +12,9 @@ import java.util.Map;
  */
 public class CalendarCsvExporter {
 
+  private static final String header = "Subject, Start Date, Start Time, End Date, End Time, " +
+          "All Day Event, Description, Location, Private\n";
+
   /**
    * Exports a list of events to a CSV file with the specified file name.
    *
@@ -21,12 +24,15 @@ public class CalendarCsvExporter {
    * @throws Exception If an error occurs during file writing.
    */
   public String export(List<Map<String, Object>> eventList, String fileName) throws Exception {
-    System.out.println("file " + fileName);
+
+    if(eventList.size()==0){
+      throw new Exception("Empty Events list");
+    }
+
     String absolutePath = Paths.get(fileName).toAbsolutePath().toString();
 
     try (FileWriter writer = new FileWriter(absolutePath)) {
-      writer.write("Subject, Start Date, Start Time, End Date, End Time, " +
-              "All Day Event, Description, Location, Private\n");
+      writer.write(header);
 
       for (Map<String, Object> event : eventList) {
         String subject = (String) event.get("subject");
@@ -49,7 +55,7 @@ public class CalendarCsvExporter {
       return absolutePath;
 
     } catch (Exception e) {
-      throw new Exception(e);
+      throw new Exception("Not able to create file");
     }
   }
 
