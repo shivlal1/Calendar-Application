@@ -85,11 +85,22 @@ public class PrintCommandTest {
   }
 
 
-  public String getEventStringOnADate(String date, ICalendar calendar) {
+  public String getEventStringOnADate(String date, ICalendar calendar,String endDate) {
     String onDate = DateUtils.changeDateToDateTime(date);
-    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
     Map<String, Object> metaData = new HashMap<>();
-    metaData.put("localStartTime", newOnDate);
+
+    if(endDate==null){
+      LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
+      metaData.put("localStartTime", newOnDate);
+    }
+    else {
+
+      LocalDateTime dateT = DateUtils.pareStringToLocalDateTime(date);
+      metaData.put("localStartTime", dateT);
+
+      LocalDateTime endDateT = DateUtils.pareStringToLocalDateTime(endDate);
+      metaData.put("localEndTime", endDateT);
+    }
     List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
     String actualOutput = getViewCalendarOutput(events);
     return actualOutput;
@@ -123,38 +134,74 @@ public class PrintCommandTest {
     command = "event \"Event 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
     createCommand.execute(command, calendar);
 
-    String eventsOnDate = getEventStringOnADate("2025-02-01",calendar);
+    String eventsOnDate = getEventStringOnADate("2025-02-01",calendar,null);
 
     assertEquals(eventsOnDate, "");
   }
 
   @Test
-  public void printEventsOn() throws Exception {
+  public void printEventsFromTo() throws Exception {
     ICalendar calendar = new Calendar();
+
+    command = "event \"Recurring Event Match\" from 2025-03-02T09:00 to  2025-03-02T10:00 " +
+            "repeats U for 2 times";
+    createCommand.execute(command, calendar);
 
     command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
     createCommand.execute(command, calendar);
-    command = "event \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    command = "event \"Match 1\" from 2025-03-02T09:00 to 2025-03-02T10:00";
     createCommand.execute(command, calendar);
-    command = "event \"Event 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
-    createCommand.execute(command, calendar);
-
-
-    command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
-            "repeats TW for 2 times";
+    command = "event \"Match 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
     createCommand.execute(command, calendar);
 
-    String event1 = "• Subject : Event 1,Start date : 2025-03-01,Start time : 09:00," +
-            "End date : 2025-03-05,End time : 10:00,isPublic : false\n";
-    String event2 ="• Subject : Event 1,Start date : 2025-03-02,Start time : 09:00," +
-            "End date : 2025-03-02,End time : 10:00,isPublic : false\n";
-    String event3="• Subject : Event 2,Start date : 2025-03-02,Start time : 09:00," +
-            "End date : 2025-03-02,End time : 10:00,isPublic : false\n";
-    String eventsOnDate = getEventStringOnADate("2025-03-02",calendar);
-    assertEquals(event1+event2+event3,eventsOnDate);
+    String eventsOnDate = getEventStringOnADate("2025-03-02T09:00",calendar,"2025-03-02T10:00");
+    String event1 = "• Subject : Recurring Event Match,Start date : 2025-03-02,Start time : 09:00,"
+            +"End date : 2025-03-02,End time : 10:00,isPublic : false\n";
+    String event2 ="• Subject : Match 1,Start date : 2025-03-02,Start time : 09:00,End date : 2025-03-02,"
+            +"End time : 10:00,isPublic : false\n";
+    String event3 = "• Subject : Match 2,Start date : 2025-03-02,Start time : 09:00,"
+           + "End date : 2025-03-02,End time : 10:00,isPublic : false\n";
 
-    //System.out.println("events \n"+eventsOnDate);
+    assertEquals(eventsOnDate,event1+event2+event3);
   }
 
+  @Test
+  public void printEventsFromToWithNoMatchButSameTime() throws Exception {
+    ICalendar calendar = new Calendar();
 
+    command = "event \"Recurring Event Match\" from 2025-03-02T09:00 to  2025-03-02T10:00 " +
+            "repeats U for 2 times";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Match 1\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Match 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+
+    String eventsOnDate = getEventStringOnADate("2025-03-10T09:00",calendar,"2025-03-10T10:00");
+
+    assertEquals(eventsOnDate,"");
+  }
+
+  @Test
+  public void printEventsFromToWithNoMatchButDifferentDate() throws Exception {
+    ICalendar calendar = new Calendar();
+
+    command = "event \"Recurring Event Match\" from 2025-03-02T09:00 to  2025-03-02T10:00 " +
+            "repeats U for 2 times";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Match 1\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Match 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+
+    String eventsOnDate = getEventStringOnADate("2025-03-02T19:00",calendar,"2025-03-02T20:00");
+
+    assertEquals(eventsOnDate,"");
+  }
 }
