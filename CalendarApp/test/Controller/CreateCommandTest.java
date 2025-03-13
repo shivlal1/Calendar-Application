@@ -747,7 +747,7 @@ public class CreateCommandTest {
     List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
     String actualOutput = getViewCalendarOutput(events);
     String expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-11,Start time : 01:00," +
-            "End date : 2025-03-11,End time : 02:00\n";
+            "End date : 2025-03-11,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
 
 
@@ -758,7 +758,7 @@ public class CreateCommandTest {
     events = calendar.getMatchingEvents(metaData);
     actualOutput = getViewCalendarOutput(events);
     expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-12,Start time : 01:00," +
-            "End date : 2025-03-12,End time : 02:00\n";
+            "End date : 2025-03-12,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
 
   }
@@ -783,14 +783,14 @@ public class CreateCommandTest {
     // check whether the first event is added properly
     String actualOutput = getEventStringOnADate("2025-03-12", calendar);
     String expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-12,Start time : 01:00," +
-            "End date : 2025-03-12,End time : 02:00\n";
+            "End date : 2025-03-12,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-12T01:05")), true);
 
     // check whether the second event is added properly
     actualOutput = getEventStringOnADate("2025-03-13", calendar);
     expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-13,Start time : 01:00," +
-            "End date : 2025-03-13,End time : 02:00\n";
+            "End date : 2025-03-13,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-13T01:00")), true);
 
@@ -798,7 +798,7 @@ public class CreateCommandTest {
     // check whether the third event is added properly
     actualOutput = getEventStringOnADate("2025-03-14", calendar);
     expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-14,Start time : 01:00," +
-            "End date : 2025-03-14,End time : 02:00\n";
+            "End date : 2025-03-14,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-14T01:30")), true);
 
@@ -806,7 +806,7 @@ public class CreateCommandTest {
     // check whether the fourth event is added properly
     actualOutput = getEventStringOnADate("2025-03-15", calendar);
     expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-15,Start time : 01:00," +
-            "End date : 2025-03-15,End time : 02:00\n";
+            "End date : 2025-03-15,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-15T02:05")), false);
 
@@ -814,7 +814,7 @@ public class CreateCommandTest {
     // check whether the fifth event is added properly
     actualOutput = getEventStringOnADate("2025-03-16", calendar);
     expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-16,Start time : 01:00," +
-            "End date : 2025-03-16,End time : 02:00\n";
+            "End date : 2025-03-16,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-16T02:00")), true);
 
@@ -822,7 +822,7 @@ public class CreateCommandTest {
     // check whether the sixth event is added properly
     actualOutput = getEventStringOnADate("2025-03-17", calendar);
     expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-17,Start time : 01:00," +
-            "End date : 2025-03-17,End time : 02:00\n";
+            "End date : 2025-03-17,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-17T01:00")), true);
 
@@ -830,7 +830,7 @@ public class CreateCommandTest {
     // check whether the seventh event is added properly
     actualOutput = getEventStringOnADate("2025-03-18", calendar);
     expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-18,Start time : 01:00," +
-            "End date : 2025-03-18,End time : 02:00\n";
+            "End date : 2025-03-18,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-16T02:00")), true);
 
@@ -874,14 +874,14 @@ public class CreateCommandTest {
     // check whether the first event is added properly
     String actualOutput = getEventStringOnADate("2025-03-12", calendar);
     String expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-12,Start time : 01:00," +
-            "End date : 2025-03-12,End time : 02:00\n";
+            "End date : 2025-03-12,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-12T01:05")), true);
 
     // check whether the second event is added properly
     actualOutput = getEventStringOnADate("2025-03-13", calendar);
     expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-13,Start time : 01:00," +
-            "End date : 2025-03-13,End time : 02:00\n";
+            "End date : 2025-03-13,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-13T01:00")), true);
 
@@ -898,14 +898,14 @@ public class CreateCommandTest {
     // check whether the first event is added properly
     String actualOutput = getEventStringOnADate("2025-03-13", calendar);
     String expectedEvent = "• Subject : Recurring Test,Start date : 2025-03-13,Start time : 01:00," +
-            "End date : 2025-03-13,End time : 02:00\n";
+            "End date : 2025-03-13,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-13T01:05")), true);
 
     // check whether the second event is added properly
     actualOutput = getEventStringOnADate("2025-03-20", calendar);
     expectedEvent = "• Subject : Recurring Test,Start date : 2025-03-20,Start time : 01:00," +
-            "End date : 2025-03-20,End time : 02:00\n";
+            "End date : 2025-03-20,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-20T01:00")), true);
 
@@ -923,7 +923,7 @@ public class CreateCommandTest {
     // check whether the first event is added properly
     String actualOutput = getEventStringOnADate("2025-03-13", calendar);
     String expectedEvent = "• Subject : Recurring Test,Start date : 2025-03-13,Start time : 01:00," +
-            "End date : 2025-03-13,End time : 02:00\n";
+            "End date : 2025-03-13,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-13T01:05")), true);
   }
@@ -953,7 +953,7 @@ public class CreateCommandTest {
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-05-12T01:05")), true);
     String actualOutput = getEventStringOnADate("2025-05-12", calendar);
     String expectedEvent = "• Subject : Single Event,Start date : 2025-05-12,Start time : 00:00," +
-            "End date : 2025-05-12,End time : 23:59\n";
+            "End date : 2025-05-12,End time : 23:59,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.getAllCalendarEvents().size(), 1);
 
@@ -969,12 +969,12 @@ public class CreateCommandTest {
 
     String actualOutput = getEventStringOnADate("2025-03-17", calendar);
     String expectedEvent = "• Subject : All Day,Start date : 2025-03-17,Start time : 00:00," +
-            "End date : 2025-03-17,End time : 23:59\n";
+            "End date : 2025-03-17,End time : 23:59,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
 
     actualOutput = getEventStringOnADate("2025-03-18", calendar);
     expectedEvent = "• Subject : All Day,Start date : 2025-03-18,Start time : 00:00," +
-            "End date : 2025-03-18,End time : 23:59\n";
+            "End date : 2025-03-18,End time : 23:59,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
 
     assertEquals(calendar.getAllCalendarEvents().size(), 2);
@@ -991,12 +991,12 @@ public class CreateCommandTest {
 
     String actualOutput = getEventStringOnADate("2025-03-17", calendar);
     String expectedEvent = "• Subject : All Day,Start date : 2025-03-17,Start time : 00:00," +
-            "End date : 2025-03-17,End time : 23:59\n";
+            "End date : 2025-03-17,End time : 23:59,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
 
     actualOutput = getEventStringOnADate("2025-03-18", calendar);
     expectedEvent = "• Subject : All Day,Start date : 2025-03-18,Start time : 00:00," +
-            "End date : 2025-03-18,End time : 23:59\n";
+            "End date : 2025-03-18,End time : 23:59,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
 
     assertEquals(calendar.getAllCalendarEvents().size(), 2);
@@ -1013,7 +1013,7 @@ public class CreateCommandTest {
 
     String actualOutput = getEventStringOnADate("2025-03-01", calendar);
     String expectedEvent = "• Subject : SingleEvent,Start date : 2025-03-01,Start time : 09:00," +
-            "End date : 2025-03-01,End time : 10:00\n";
+            "End date : 2025-03-01,End time : 10:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
 
     // The below event will not be added as it conflicts with the above added event
@@ -1029,8 +1029,8 @@ public class CreateCommandTest {
     command = "event \"SingleEvent2\" from 2025-03-01T09:05 to 2025-03-01T10:00";
     createCommand.execute(command, calendar);
     actualOutput = getEventStringOnADate("2025-03-01", calendar);
-     expectedEvent = expectedEvent +"• Subject : SingleEvent2,Start date : 2025-03-01,Start time : 09:05," +
-            "End date : 2025-03-01,End time : 10:00\n";
+    expectedEvent = expectedEvent + "• Subject : SingleEvent2,Start date : 2025-03-01,Start time : 09:05," +
+            "End date : 2025-03-01,End time : 10:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.getAllCalendarEvents().size(), 2);
 
@@ -1046,15 +1046,15 @@ public class CreateCommandTest {
 
     String actualOutput = getEventStringOnADate("2025-03-01", calendar);
     String expectedEvent = "• Subject : SingleEvent,Start date : 2025-03-01,Start time : 09:00," +
-            "End date : 2025-03-01,End time : 10:00\n";
+            "End date : 2025-03-01,End time : 10:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
 
     command = "event --autoDecline \"Recurring Event\" from 2025-03-01T09:00 to 2025-03-01T10:00 " +
             "repeats SU for 7 times";
-    try{
+    try {
       createCommand.execute(command, calendar);
-    }catch (Exception e){
-      assertEquals(e.getMessage(),"the event conflicts with another event");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "the event conflicts with another event");
     }
 
     // check calendar size again to ensure no new events are added
@@ -1074,14 +1074,14 @@ public class CreateCommandTest {
 
     String actualOutput = getEventStringOnADate("2025-03-01", calendar);
     String expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-01,Start time : 09:00," +
-            "End date : 2025-03-01,End time : 10:00\n";
+            "End date : 2025-03-01,End time : 10:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
 
     command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
-    try{
+    try {
       createCommand.execute(command, calendar);
-    }catch (Exception e){
-      assertEquals(e.getMessage(),"the event conflicts with another event");
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), "the event conflicts with another event");
     }
 
     // check calendar size again to ensure the single event is not adde

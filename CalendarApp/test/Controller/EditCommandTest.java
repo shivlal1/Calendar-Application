@@ -1,7 +1,9 @@
 package Controller;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -16,7 +18,6 @@ import Utils.DateUtils;
 import view.ConsoleView;
 import view.View;
 
-import static Utils.DateUtils.pareStringToLocalDateTime;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -231,8 +232,6 @@ public class EditCommandTest {
     }
   }
 
-
-
   public String getViewCalendarOutput(List<Map<String, Object>> events) {
     PrintStream originalOut = System.out;
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -246,10 +245,6 @@ public class EditCommandTest {
     String filteredOutput = capturedOutput.substring(captureStartIndex);
     return filteredOutput;
   }
-
-
-
-
 
   public String getEventStringOnADate(String date, ICalendar calendar) {
     String onDate = DateUtils.changeDateToDateTime(date);
@@ -282,15 +277,15 @@ public class EditCommandTest {
     //calendar.printEvents();
     //view.viewEvents( calendar.getAllCalendarEvents());
 
-    String actualOutput = getViewCalendarOutput( calendar.getAllCalendarEvents());
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
     String event1 = "• Subject : New Name,Start date : 2025-03-01,Start time : 09:00," +
-            "End date : 2025-03-01,End time : 10:00\n";
+            "End date : 2025-03-01,End time : 10:00,isPublic : false\n";
     String event2 = "• Subject : Hello,Start date : 2025-05-07,Start time : 11:05," +
-            "End date : 2025-05-09,End time : 12:00\n";
+            "End date : 2025-05-09,End time : 12:00,isPublic : false\n";
     String event3 = "• Subject : New Name,Start date : 2025-05-05,Start time : 11:00," +
-            "End date : 2025-05-06,End time : 12:00\n";
+            "End date : 2025-05-06,End time : 12:00,isPublic : false\n";
 
-    assertEquals(event1+event2+event3, actualOutput);
+    assertEquals(event1 + event2 + event3, actualOutput);
 
   }
 
@@ -315,13 +310,16 @@ public class EditCommandTest {
     command = "events name \"Event\" \"New Name\"";
     editCommand.execute(command, calendar);
 
-    String actualOutput = getViewCalendarOutput( calendar.getAllCalendarEvents() );
-    String event1 = "• Subject : no update,Start date : 2025-03-15,Start time : 01:00,End date : 2025-03-15,End time : 02:00\n";
-    String event2 = "• Subject : New Name,Start date : 2025-03-12,Start time : 01:00,End date : 2025-03-12,End time : 02:00\n";
-    String event3 = "• Subject : New Name,Start date : 2025-03-01,Start time : 09:00,End date : 2025-03-01,End time : 10:00\n";
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
+    String event1 = "• Subject : no update,Start date : 2025-03-15,Start time : 01:00," +
+            "End date : 2025-03-15,End time : 02:00,isPublic : false\n";
+    String event2 = "• Subject : New Name,Start date : 2025-03-12,Start time : 01:00," +
+            "End date : 2025-03-12,End time : 02:00,isPublic : false\n";
+    String event3 = "• Subject : New Name,Start date : 2025-03-01,Start time : 09:00," +
+            "End date : 2025-03-01,End time : 10:00,isPublic : false\n";
     // check whether the first event is added properly
 
-    assertEquals(event1+event2+event3, actualOutput);
+    assertEquals(event1 + event2 + event3, actualOutput);
 
   }
 
@@ -342,15 +340,15 @@ public class EditCommandTest {
     command = "events location \"Event\" \"Snell Library\"";
     editCommand.execute(command, calendar);
 
-    String actualOutput = getViewCalendarOutput( calendar.getAllCalendarEvents());
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
     String event1 = "• Subject : Event,Start date : 2025-03-01,Start time : 09:00," +
-            "End date : 2025-03-01,End time : 10:00,location : Snell Library\n";
+            "End date : 2025-03-01,End time : 10:00,location : Snell Library,isPublic : false\n";
     String event2 = "• Subject : Hello,Start date : 2025-05-07,Start time : 11:05," +
-            "End date : 2025-05-09,End time : 12:00\n";
+            "End date : 2025-05-09,End time : 12:00,isPublic : false\n";
     String event3 = "• Subject : Event,Start date : 2025-05-05,Start time : 11:00," +
-            "End date : 2025-05-06,End time : 12:00,location : Snell Library\n";
+            "End date : 2025-05-06,End time : 12:00,location : Snell Library,isPublic : false\n";
 
-    assertEquals(event1+event2+event3, actualOutput);
+    assertEquals(event1 + event2 + event3, actualOutput);
   }
 
   @Test
@@ -378,17 +376,314 @@ public class EditCommandTest {
     command = "events description \"no update\" \"this event has no update\"";
     editCommand.execute(command, calendar);
 
-    view.viewEvents( calendar.getAllCalendarEvents() );
+    view.viewEvents(calendar.getAllCalendarEvents());
 
-    String actualOutput = getViewCalendarOutput( calendar.getAllCalendarEvents() );
-    String event1 = "• Subject : no update,Start date : 2025-03-15," +
-            "Start time : 01:00,End date : 2025-03-15,End time : 02:00\n";
-    String event2 = "• Subject : OLD Name,Start date : 2025-03-12," +
-            "Start time : 01:00,End date : 2025-03-12,End time : 02:00\n";
-    String event3 = "• Subject : OLD Name,Start date : 2025-03-01," +
-            "Start time : 09:00,End date : 2025-03-01,End time : 10:00\n";
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
+    String event1 = "• Subject : no update,Start date : 2025-03-15,Start time : 01:00," +
+            "End date : 2025-03-15,End time : 02:00,description : this event has no update,isPublic : false\n";
+    String event2 = "• Subject : OLD Name,Start date : 2025-03-12,Start time : 01:00,End date : 2025-03-12," +
+            "End time : 02:00,isPublic : false\n";
+    String event3 = "• Subject : OLD Name,Start date : 2025-03-01,Start time : 09:00,End date : 2025-03-01," +
+            "End time : 10:00,isPublic : false\n";
 
-    assertEquals(event1+event2+event3, actualOutput);
+    assertEquals(event1 + event2 + event3, actualOutput);
+  }
+
+
+  @Test
+  public void changeDatesOfRecurringEvent() throws Exception {
+    // Recurring Event creation with future until time
+    ICalendar calendar = new Calendar();
+
+    command = "event \"Annaul Mee@13?\" from 2025-03-15T01:00 to 2025-03-15T02:00 " +
+            "repeats M until 2025-03-31T06:00";
+    createCommand.execute(command, calendar);
+
+    command = "events name \"Annaul Mee@13?\" \"Annual Meeting\"";
+    editCommand.execute(command, calendar);
+
+    command = "events location \"Annual Meeting\" \"snell\"";
+    editCommand.execute(command, calendar);
+
+    command = "events description \"Annual Meeting\" \"empty event\"";
+    editCommand.execute(command, calendar);
+
+    command = "events isPublic \"Annual Meeting\" \"true\"";
+    editCommand.execute(command, calendar);
+
+    view.viewEvents(calendar.getAllCalendarEvents());
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
+    String event1 = "• Subject : Annual Meeting,Start date : 2025-03-17,Start time : 01:00," +
+            "End date : 2025-03-17,End time : 02:00,location : snell,description : empty event,isPublic : true\n";
+    String event2 = "• Subject : Annual Meeting,Start date : 2025-03-24,Start time : 01:00,End date : 2025-03-24," +
+            "End time : 02:00,location : snell,description : empty event,isPublic : true\n";
+    String event3 = "• Subject : Annual Meeting,Start date : 2025-03-31,Start time : 01:00," +
+            "End date : 2025-03-31,End time : 02:00,location : snell,description : empty event,isPublic : true\n";
+
+    assertEquals(event1 + event2 + event3, actualOutput);
+  }
+
+
+  @Test
+  public void changePropertiesOfSingleEvent() throws Exception {
+    // Recurring Event creation with future until time
+    ICalendar calendar = new Calendar();
+
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event 2\" from 2025-04-01T00:00 to 2025-04-01T23:59";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event 3\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "events startDate \"Event 1\" \"2025-03-01T06:00 \"";
+    editCommand.execute(command, calendar);
+
+    command = "events startDate \"Event 2\" \"2025-04-01T23:00\"";
+    editCommand.execute(command, calendar);
+
+    command = "events endDate \"Event 3\" \"2025-03-01T09:45\"";
+    editCommand.execute(command, calendar);
+
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
+    String event1 = "• Subject : Event 1,Start date : 2025-03-01,Start time : 06:00," +
+            "End date : 2025-03-05,End time : 10:00,isPublic : false\n";
+    String event2 = "• Subject : Event 2,Start date : 2025-04-01,Start time : 23:00," +
+            "End date : 2025-04-01,End time : 23:59,isPublic : false\n";
+    String event3 = "• Subject : Event 3,Start date : 2025-03-01,Start time : 09:00," +
+            "End date : 2025-03-01,End time : 09:45,isPublic : false\n";
+
+    assertEquals(event1 + event2 + event3, actualOutput);
+  }
+
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public void invalidStartDatesEditSingleEvent() throws Exception {
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("start date should be before end date");
+
+    ICalendar calendar = new Calendar();
+
+    //change start date  after end date
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "events startDate \"Event 1\" \"2025-03-05T10:01\"";
+    editCommand.execute(command, calendar);
+
+  }
+
+  @Test
+  public void invalidStartDatesEditSingleEventDifferentDay() throws Exception {
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("start date should be before end date");
+
+    ICalendar calendar = new Calendar();
+
+    //change start date  after end date
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "events startDate \"Event 1\" \"2025-03-06T10:01\"";
+    editCommand.execute(command, calendar);
+
+  }
+
+
+  @Test
+  public void invalidStartDatesEditRecurringEvent() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("invalid date for recurring event");
+    ICalendar calendar = new Calendar();
+
+    //change start date  after end date
+    command = "event \"Annual Meet\" from 2025-03-15T01:00 to 2025-03-15T02:00 " +
+            "repeats M until 2025-03-31T06:00";
+    createCommand.execute(command, calendar);
+
+    command = "events startDate \"Annual Meet\" \"2025-03-15T01:01\"";
+    editCommand.execute(command, calendar);
+  }
+
+  @Test
+  public void invalidEndDate() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("Single Event End date should be before start date");
+
+    ICalendar calendar = new Calendar();
+
+    //change start date  after end date
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "events endDate \"Event 1\" \"2025-02-05T10:00\"";
+    editCommand.execute(command, calendar);
+  }
+
+
+  @Test
+  public void invalidEndDatesEditRecurringEvent() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("Recurring event invalid dates");
+    ICalendar calendar = new Calendar();
+
+    //change start date  after end date
+    command = "event \"Annual Meet\" from 2025-03-15T01:00 to 2025-03-15T02:00 " +
+            "repeats M for 1 times";
+    createCommand.execute(command, calendar);
+
+    command = "events endDate \"Annual Meet\" \"2025-03-18T01:01\"";
+    editCommand.execute(command, calendar);
+  }
+
+  @Test
+  public void invalidEndDatesEditRecurringEvent2() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("Recurring event invalid dates");
+    ICalendar calendar = new Calendar();
+
+    command = "event \"Annual Meet\" from 2025-03-15T01:00 to 2025-03-15T02:00 " +
+            "repeats M for 1 times";
+    createCommand.execute(command, calendar);
+
+    command = "events endDate \"Annual Meet\" \"2025-03-17T00:59\"";
+    editCommand.execute(command, calendar);
+  }
+
+  @Test
+  public void editNonExistingPropertyName() throws Exception {
+    ICalendar calendar = new Calendar();
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("invalid property");
+
+    command = "event \"Annual Meet\" from 2025-03-15T01:00 to 2025-03-15T02:00 " +
+            "repeats M for 1 times";
+    createCommand.execute(command, calendar);
+
+    command = "events xyz \"Annual Meet\" \"2025-03-17T00:59\"";
+    editCommand.execute(command, calendar);
+  }
+
+
+  // TEST CASES FOR
+  // edit events <property> <eventName> from <dateStringTtimeString> with <NewPropertyValue>
+
+  @Test
+  public void editUsingFrom() throws Exception {
+    ICalendar calendar = new Calendar();
+
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "events name \"Event 1\" from 2025-03-02T09:00 with \"Event 2\"";
+    editCommand.execute(command, calendar);
+
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
+    System.out.println(actualOutput);
+    String event1 = "• Subject : Event 1,Start date : 2025-03-01,Start time : 09:00," +
+            "End date : 2025-03-05,End time : 10:00,isPublic : false\n";
+    String event2 = "• Subject : Event 2,Start date : 2025-03-02,Start time : 09:00," +
+            "End date : 2025-03-02,End time : 10:00,isPublic : false\n";
+
+    assertEquals(event1 + event2, actualOutput);
+  }
+
+  @Test
+  public void errorEditUsingFrom() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("start date should be before end date");
+
+    ICalendar calendar = new Calendar();
+
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "events startDate \"Event 1\" from 2025-03-02T09:00 with \"2025-04-02T10:00\"";
+    editCommand.execute(command, calendar);
+  }
+
+  // edit event <property> <eventName> from <dateStringTtimeString> to <dateStringTtimeString> with <NewPropertyValue>
+
+  @Test
+  public void editUsingFromTo() throws Exception {
+    ICalendar calendar = new Calendar();
+
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Event 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+    view.viewEvents(calendar.getAllCalendarEvents());
+    command = "events startDate \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00 with \"2025-03-02T09:15\"";
+    editCommand.execute(command, calendar);
+
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
+    String event1 = "• Subject : Event 1,Start date : 2025-03-01,Start time : 09:00," +
+            "End date : 2025-03-05,End time : 10:00,isPublic : false\n";
+    String event2 = "• Subject : Event 1,Start date : 2025-03-02,Start time : 09:15,End date : 2025-03-02," +
+            "End time : 10:00,isPublic : false\n";
+    String event3 = "• Subject : Event 2,Start date : 2025-03-02,Start time : 09:00,End date : 2025-03-02," +
+            "End time : 10:00,isPublic : false\n";
+    assertEquals(event1 + event2 + event3, actualOutput);
+  }
+
+  @Test
+  public void errorUsingUsingFromTo() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("start date should be before end date");
+
+    ICalendar calendar = new Calendar();
+
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Event 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+    view.viewEvents(calendar.getAllCalendarEvents());
+    System.out.println("done");
+    command = "events startDate \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00 with \"2025-04-02T09:00\"";
+    editCommand.execute(command, calendar);
+  }
+
+  @Test
+  public void editLocationUsingFromTo() throws Exception {
+    ICalendar calendar = new Calendar();
+
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Event 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+    view.viewEvents(calendar.getAllCalendarEvents());
+    System.out.println("done");
+    command = "events location \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00 with \"white building\"";
+    editCommand.execute(command, calendar);
+
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
+    String event1 = "• Subject : Event 1,Start date : 2025-03-01,Start time : 09:00," +
+            "End date : 2025-03-05,End time : 10:00,isPublic : false\n";
+    String event2 = "• Subject : Event 1,Start date : 2025-03-02,Start time : 09:00,End date : 2025-03-02,End time : 10:00," +
+            "location : white building,isPublic : false\n";
+    String event3 = "• Subject : Event 2,Start date : 2025-03-02,Start time : 09:00,End date : 2025-03-02," +
+            "End time : 10:00,isPublic : false\n";
+    assertEquals(event1 + event2 + event3, actualOutput);
   }
 
 }
