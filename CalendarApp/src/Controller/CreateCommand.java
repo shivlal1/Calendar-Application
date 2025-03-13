@@ -10,6 +10,10 @@ import java.util.regex.Pattern;
 import Model.ICalendar;
 import Utils.DateUtils;
 
+/**
+ * This class implements the ICommand interface and has the job for
+ * parsing and executing event creation commands in a calendar system.
+ */
 public class CreateCommand implements ICommand {
   private String subject, weekdays, forTimes;
   private String startDateTime, endDateTime, untilDateTime;
@@ -30,10 +34,19 @@ public class CreateCommand implements ICommand {
           "(?:\\s+repeats\\s+([MTWRFSU]+)\\s+(?:(?:for\\s+(\\d+)\\s+times)|" +
           "(?:until\\s+(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?))))?$";
 
+  /**
+   * This method constructs a new CreateCommand object and initializes the metadata map.
+   */
   public CreateCommand() {
     metaData = new HashMap<>();
   }
 
+  /**
+   * This methodd parses the command arguments and extracts event details.
+   *
+   * @param commandArgs the command as a string.
+   * @throws Exception if the command format is invalid.
+   */
   private void commandParser(String commandArgs) throws Exception {
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);
@@ -57,6 +70,12 @@ public class CreateCommand implements ICommand {
     setEndTime();
   }
 
+  /**
+   * This method checks for errors in the command format and provides specific error messages.
+   *
+   * @param command The command string to diagnose.
+   * @return A string describing the error in the command.
+   */
   private String diagnoseCommandError(String command) {
     if (!command.startsWith("event")) {
       return "Must start with create event";
@@ -84,6 +103,9 @@ public class CreateCommand implements ICommand {
     return "Does not match expected format.";
   }
 
+  /**
+   * This method adds the extracted values to the metadata object.
+   */
   private void addValuesInMetaDataObject() {
     metaData.put("weekdays", weekdays);
     metaData.put("forTimes", forTimes);
@@ -92,6 +114,9 @@ public class CreateCommand implements ICommand {
     metaData.put("autoDecline", autoDecline);
   }
 
+  /**
+   * This method formats the "until" time for recurring events.
+   */
   private void formatUntilTimeForRecurringEvent() {
     if (untilDateTime != null) {
       finalUntilDateTime = untilDateTime;
@@ -106,6 +131,9 @@ public class CreateCommand implements ICommand {
     }
   }
 
+  /**
+   * This method sets the end time for the event based on the start time and the type of event.
+   */
   private void setEndTime() {
     localStartDateTime = DateUtils.stringToLocalDateTime(finalStartDate);
     if (finalEndDate != null) {
@@ -116,12 +144,18 @@ public class CreateCommand implements ICommand {
     }
   }
 
+  /**
+   * This method sets the start and end time for all day events.
+   */
   private void setDatesForAllDayEvent() {
     LocalDate currentDay = localStartDateTime.toLocalDate();
     localStartDateTime = currentDay.atStartOfDay();
     localEndDateTime = currentDay.atTime(23, 59);
   }
 
+  /**
+   * This method extracts, processes and formats the date values extracted from the command.
+   */
   private void processDateValues() {
     if (startDateTime != null && endDateTime != null) {
       finalStartDate = startDateTime;
@@ -134,6 +168,14 @@ public class CreateCommand implements ICommand {
     }
   }
 
+  /**
+   * This method runs the create event command by parsing the arguments and calling the
+   * calendar's createEvent method.
+   *
+   * @param commandArgs the command arguments in a String format.
+   * @param calendar    the ICalendar object to create the event in.
+   * @throws Exception if there's an error while creating the event.
+   */
   @Override
   public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);

@@ -19,6 +19,9 @@ import view.View;
 import static Utils.DateUtils.pareStringToLocalDateTime;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * A unit test for the EditCommand class.
+ */
 public class EditCommandTest {
 
   ICommand editCommand;

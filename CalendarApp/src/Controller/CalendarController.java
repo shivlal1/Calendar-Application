@@ -5,11 +5,18 @@ import java.util.Map;
 
 import Model.ICalendar;
 
-
+/**
+ * The CalendarController class implements the ICommand interface and manages
+ * the execution of various calendar-related commands.
+ */
 public class CalendarController implements ICommand {
 
   Map<String, ICommand> commandMap;
 
+  /**
+   * Constructs a new CalendarController and initializes the commandMap with
+   * various calendar-related commands.
+   */
   public CalendarController() {
     commandMap = new HashMap<>();
     commandMap.put("create", new CreateCommand());
@@ -20,6 +27,14 @@ public class CalendarController implements ICommand {
   }
 
 
+  /**
+   * This method splits a given string into two parts, the first word and the rest of the string.
+   *
+   * @param s The input string to be split.
+   * @return An array of two strings, where the first element is the first word
+   * and the second element is the rest of the string. If there's no space
+   * in the input string, the second element will be an empty string.
+   */
   private String[] splitString(String s) {
     int firstSpaceIndex = s.indexOf(" ");
     if (firstSpaceIndex == -1) {
@@ -30,6 +45,13 @@ public class CalendarController implements ICommand {
     return new String[]{firstPart, secondPart};
   }
 
+  /**
+   * This method executes the given command with the provided arguments on the specified calendar.
+   *
+   * @param commandArgs the command and its arguments as a single string.
+   * @param calendar    the object on which the command will be executed.
+   * @throws Exception if at all an error occurs during the command execution.
+   */
   @Override
   public void execute(String commandArgs, ICalendar calendar) throws Exception {
     System.out.println("Command being processed: " + commandArgs);

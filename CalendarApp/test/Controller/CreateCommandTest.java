@@ -19,6 +19,10 @@ import view.View;
 import static Utils.DateUtils.pareStringToLocalDateTime;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * A unit test for the CreateCommand class.
+ */
+
 public class CreateCommandTest {
   ICommand createCommand;
   ICommand editCommand;

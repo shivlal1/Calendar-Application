@@ -6,8 +6,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The CalendarCsvExporter class is responsible for exporting calendar events to a CSV file.
+ * It formats event details into a CSV-compatible format and writes them to the specified file.
+ */
 public class CalendarCsvExporter {
 
+  /**
+   * Exports a list of events to a CSV file with the specified file name.
+   *
+   * @param eventList The list of events to export, where each event is represented as a map.
+   * @param fileName  The name of the CSV file to create.
+   * @return The absolute path of the exported CSV file.
+   * @throws Exception If an error occurs during file writing.
+   */
   public String export(List<Map<String, Object>> eventList, String fileName) throws Exception {
     System.out.println("file " + fileName);
     String absolutePath = Paths.get(fileName).toAbsolutePath().toString();
@@ -41,6 +53,11 @@ public class CalendarCsvExporter {
     }
   }
 
+  /**
+   * Sets the "All Day Event" value for events. Currently always returns false.
+   *
+   * @return false, indicating that events are not all-day by default.
+   */
   private boolean setIsAllDayValue() {
     return false;
   }
