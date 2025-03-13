@@ -16,6 +16,7 @@ public interface View {
    */
   public void viewMessage(String message);
 
+
   /**
    * Displays a list of events.
    *

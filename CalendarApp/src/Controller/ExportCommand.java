@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 import Model.ICalendar;
 import Utils.CalendarCsvExporter;
+import view.ConsoleView;
+import view.View;
 
 /**
  * This class implements the ICommand interface and performs
@@ -47,7 +49,7 @@ public class ExportCommand implements ICommand {
     if (!matcher.matches()) {
       throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
-    String fileName = matcher.group(1);
+    fileName = matcher.group(1);
     System.out.println("filename " + fileName);
   }
 
@@ -58,10 +60,11 @@ public class ExportCommand implements ICommand {
    * @throws Exception if an error occurs during the export process.
    */
   private void exportCommandUtil(ICalendar calendar) throws Exception {
-    // String filePath = calendar.exportCalendarAndGetFilePath();
     List<Map<String, Object>> events = calendar.getAllCalendarEvents();
     CalendarCsvExporter exporter = new CalendarCsvExporter();
     String filePath = exporter.export(events, fileName);
+    View displayView = new ConsoleView();
+    displayView.viewMessage("filePath " + filePath);
 
   }
 

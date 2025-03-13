@@ -246,6 +246,7 @@ public class Calendar implements ICalendar {
     for (Event event : calendarStorage) {
       if (isMatchingEvent(event, start, end, eventName)) {
         setPropertyValue(property, newValue, event);
+        found = true;
       }
     }
 

@@ -3,9 +3,20 @@ package Controller;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import Model.Calendar;
 import Model.ICalendar;
+import Utils.DateUtils;
+import view.ConsoleView;
+import view.View;
 
+import static Utils.DateUtils.pareStringToLocalDateTime;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -14,13 +25,24 @@ import static org.junit.Assert.assertEquals;
 public class EditCommandTest {
 
   ICommand editCommand;
-  ICalendar cal = new Calendar();
+  ICalendar cal;
   String command;
+
+  ICommand createCommand;
+  ICommand printCommand;
+  ICommand showStatusCommand;
+  View view;
 
   @Before
   public void init() {
+    createCommand = new CreateCommand();
     editCommand = new EditCommand();
+    printCommand = new PrintCommand();
+    showStatusCommand = new ShowStatusCommand();
+    view = new ConsoleView();
+    cal = new Calendar();
   }
+
 
 //  @Test
 //  public void testSimpleCommand() throws Exception {
@@ -72,7 +94,8 @@ public class EditCommandTest {
       command = "\"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "Should start with 'edit event(s)' or it is Missing 'edit event(s)'");
+      String errorMsg = "Invalid Command Should start with 'edit event(s)' or it is Missing 'edit event(s)'";
+      assertEquals(e.getMessage(), errorMsg);
     }
   }
 
@@ -82,7 +105,8 @@ public class EditCommandTest {
       command = "event \"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Missing 'eventName' or Property is missing");
+      String errorMsg = "Invalid Command Missing 'eventName' or Property is missing or incorrectly placed";
+      assertEquals(e.getMessage(), errorMsg);
     }
   }
 
@@ -207,4 +231,95 @@ public class EditCommandTest {
     }
   }
 
+
+
+  public String getViewCalendarOutput(List<Map<String, Object>> events) {
+    PrintStream originalOut = System.out;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    PrintStream customOut = new PrintStream(outputStream);
+    System.setOut(customOut);
+    customOut.flush();
+    int captureStartIndex = outputStream.size();
+    view.viewEvents(events);
+    System.setOut(originalOut);
+    String capturedOutput = outputStream.toString();
+    String filteredOutput = capturedOutput.substring(captureStartIndex);
+    return filteredOutput;
+  }
+
+
+
+
+
+  public String getEventStringOnADate(String date, ICalendar calendar) {
+    String onDate = DateUtils.changeDateToDateTime(date);
+    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
+    Map<String, Object> metaData = new HashMap<>();
+    metaData.put("localStartTime", newOnDate);
+    List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
+    String actualOutput = getViewCalendarOutput(events);
+    return actualOutput;
+  }
+
+//
+//  @Test
+//  public void editSingleEventNameOnlySingleEvent() throws Exception {
+//    // Recurring Event creation with future until time
+//    ICalendar calendar = new Calendar();
+//    command = "event \"Event\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+//    createCommand.execute(command, calendar);
+//
+//    command = "event \"Hello\" from 2025-05-07T11:00 to 2025-05-07T12:00";
+//    createCommand.execute(command, calendar);
+//
+//    command = "event \"Event\" from 2025-05-05T11:00 to 2025-05-06T12:00";
+//    createCommand.execute(command, calendar);
+//
+//    //change events with name "Event" to "New Name"
+//    command = "events name \"Event\" \"New Name\"";
+//    editCommand.execute(command, calendar);
+//
+//    view.viewEvents( calendar.getAllCalendarEvents());
+//
+//    // check whether the first event is added properly
+//    String actualOutput = getEventStringOnADate("2025-03-01", calendar);
+//    actualOutput = actualOutput + getEventStringOnADate("2025-03-01", calendar);
+//
+//    assertEquals("", actualOutput);
+//    assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-13T01:05")), true);
+//
+//  }
+//
+//  @Test
+//  public void editEventNameOnlyRecurring() throws Exception {
+//    // Recurring Event creation with future until time
+//    ICalendar calendar = new Calendar();
+//    command = "event \"Event\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+//    createCommand.execute(command, calendar);
+//
+//    command = "event \"Hello\" from 2025-05-07T11:00 to 2025-05-07T12:00";
+//    createCommand.execute(command, calendar);
+//
+//    command = "event \"Event\" from 2025-05-05T11:00 to 2025-05-06T12:00";
+//    createCommand.execute(command, calendar);
+//
+//    command = "event \"Event\" from 2025-03-12T01:00 to 2025-03-12T02:00 " +
+//            "repeats W until 2025-03-12T06:00";
+//    createCommand.execute(command, calendar);
+//
+//    //change events with name "Event" to "New Name"
+//
+//    command = "events name \"Event\" \"New Name\"";
+//    editCommand.execute(command, calendar);
+//
+//    getViewCalendarOutput( calendar.getAllCalendarEvents() );
+//
+//    // check whether the first event is added properly
+//    String actualOutput = getEventStringOnADate("2025-03-01", calendar);
+//    actualOutput = actualOutput + getEventStringOnADate("2025-03-01", calendar);
+//
+//    assertEquals("", actualOutput);
+//    assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-13T01:05")), true);
+//
+//  }
 }

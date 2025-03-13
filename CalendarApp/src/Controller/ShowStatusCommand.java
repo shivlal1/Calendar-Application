@@ -62,7 +62,7 @@ public class ShowStatusCommand implements ICommand {
   private void printCommandUtil(ICalendar calendar) {
     boolean isBusy = calendar.isUserBusy(localOnDate);
     ConsoleView view = new ConsoleView();
-    view.showStatusInConsole(isBusy);
+    view.viewStatus(isBusy);
   }
 
   /**
