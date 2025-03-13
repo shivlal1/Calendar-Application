@@ -85,7 +85,14 @@ public class PrintCommandTest {
   }
 
 
-  public String getEventStringOnADate(String date, ICalendar calendar,String endDate) {
+  /**
+   * A method to get the event on a given date.
+   *
+   * @param date     the date given.
+   * @param calendar the calendar object.
+   * @return the processed output.
+   */
+  public String getEventStringOnADate(String date, ICalendar calendar) {
     String onDate = DateUtils.changeDateToDateTime(date);
     Map<String, Object> metaData = new HashMap<>();
 
@@ -106,6 +113,12 @@ public class PrintCommandTest {
     return actualOutput;
   }
 
+  /**
+   * A method to get the calendar output events after being processed.
+   *
+   * @param events the list of events provided.
+   * @return the processed output.
+   */
   public String getViewCalendarOutput(List<Map<String, Object>> events) {
     PrintStream originalOut = System.out;
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -135,7 +148,6 @@ public class PrintCommandTest {
     createCommand.execute(command, calendar);
 
     String eventsOnDate = getEventStringOnADate("2025-02-01",calendar,null);
-
     assertEquals(eventsOnDate, "");
   }
 
@@ -181,7 +193,6 @@ public class PrintCommandTest {
     createCommand.execute(command, calendar);
 
     String eventsOnDate = getEventStringOnADate("2025-03-10T09:00",calendar,"2025-03-10T10:00");
-
     assertEquals(eventsOnDate,"");
   }
 

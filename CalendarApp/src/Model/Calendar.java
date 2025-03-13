@@ -48,7 +48,8 @@ public class Calendar implements ICalendar {
    * @param autoDecline Whether to auto-decline if conflicts are found.
    * @throws Exception If auto-decline is enabled and conflicts exist.
    */
-  private void putGeneratedEventsIntoCalendar(List<Event> events, boolean autoDecline) throws Exception {
+  private void putGeneratedEventsIntoCalendar(List<Event> events, boolean autoDecline)
+          throws Exception {
     if (autoDecline && hasConflicts(events)) {
       throw new Exception("the event conflicts with another event");
     }
@@ -131,8 +132,8 @@ public class Calendar implements ICalendar {
   /**
    * Updates the start date of an event.
    *
-   * @param event
-   * @param newValue
+   * @param event the event we need to update.
+   * @param newValue the new value which we want to give for updating.
    * @throws Exception exception if invalid start or end time is given.
    */
   private void updateStartDate(Event event, String newValue) throws Exception {
@@ -145,13 +146,11 @@ public class Calendar implements ICalendar {
         throw new Exception("start date should be before end date");
       }
     } else {
-      if (newDate.toLocalDate().equals(event.endDate.toLocalDate()) && newDate.isBefore(event.endDate)) {
-
-      } else {
+      if (!(newDate.toLocalDate().equals(event.endDate.toLocalDate())
+              && newDate.isBefore(event.endDate))) {
         throw new Exception("invalid date for recurring event");
       }
     }
-
   }
 
   /**
@@ -163,8 +162,8 @@ public class Calendar implements ICalendar {
   private void updateEndDate(Event event, String newValue) throws Exception {
     LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
 
-    if ((event.canBeEditedToDifferentDay() && newDate.isAfter(event.startDate)) ||
-            newDate.toLocalDate().equals(event.startDate.toLocalDate())) {
+    if ((event.canBeEditedToDifferentDay() && newDate.isAfter(event.startDate))
+            || newDate.toLocalDate().equals(event.startDate.toLocalDate())) {
       event.endDate = (newDate);
     }
 
@@ -175,8 +174,8 @@ public class Calendar implements ICalendar {
         throw new Exception("Single Event End date should be before start date");
       }
     } else {
-      if (newDate.toLocalDate().equals(event.endDate.toLocalDate()) &&
-              newDate.isAfter(event.startDate)) {
+      if (newDate.toLocalDate().equals(event.endDate.toLocalDate())
+              && newDate.isAfter(event.startDate)) {
         event.endDate = newDate;
       } else {
         throw new Exception("Recurring event invalid dates");
@@ -251,9 +250,9 @@ public class Calendar implements ICalendar {
    */
   private boolean isMatchingEvent(Event event, LocalDateTime start, LocalDateTime end,
                                   String eventName) {
-    return (event.subject.equals(eventName) &&
-            (start == null || event.startDate.equals(start)) &&
-            (end == null || event.endDate.equals(end)));
+    return (event.subject.equals(eventName)
+            && (start == null || event.startDate.equals(start))
+            && (end == null || event.endDate.equals(end)));
   }
 
   /**
@@ -291,7 +290,8 @@ public class Calendar implements ICalendar {
     List<Map<String, Object>> eventDetailsList = new ArrayList<>();
     LocalDateTime startDateTime = (LocalDateTime) allMetaDeta.get("localStartTime");
     if (isStartToEndDatePrintCommand(allMetaDeta)) {
-      eventDetailsList = getEventsInBetween(startDateTime, (LocalDateTime) allMetaDeta.get("localEndTime"));
+      eventDetailsList = getEventsInBetween(startDateTime,
+              (LocalDateTime) allMetaDeta.get("localEndTime"));
     } else if (isOnDatePrintCommand(allMetaDeta)) {
       eventDetailsList = getEventsOnDate(startDateTime);
     }
@@ -350,8 +350,8 @@ public class Calendar implements ICalendar {
       LocalDate startDate = event.startDate.toLocalDate();
       LocalDate endDate = event.endDate.toLocalDate();
 
-      if (startDate.equals(localOnDate) ||
-              localOnDate.isAfter(startDate) && localOnDate.isBefore(endDate)) {
+      if (startDate.equals(localOnDate)
+              || localOnDate.isAfter(startDate) && localOnDate.isBefore(endDate)) {
         events.add(getEventInMap(event));
       }
     }
