@@ -1,4 +1,4 @@
-# Virtual Calendar Application
+# Calendar Application
 
 ## Introduction
 
