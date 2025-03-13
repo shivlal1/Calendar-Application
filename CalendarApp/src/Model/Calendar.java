@@ -103,7 +103,7 @@ public class Calendar implements ICalendar {
    * @param newValue The new value for the property.
    * @param event    The event to update.
    */
-  private void setPropertyValue(String property, String newValue, Event event) {
+  private void setPropertyValue(String property, String newValue, Event event) throws Exception {
     switch (property) {
       case "name":
         event.subject = newValue;
@@ -124,23 +124,34 @@ public class Calendar implements ICalendar {
         event.description = (newValue);
         break;
       default:
-        System.out.println("No such property!");
+        throw new Exception("invalid property");
     }
   }
 
   /**
    * Updates the start date of an event.
    *
-   * @param event    The event to update.
-   * @param newValue The new start date as a string.
+   * @param event
+   * @param newValue
+   * @throws Exception exception if invalid start or end time is given.
    */
-  private void updateStartDate(Event event, String newValue) {
+  private void updateStartDate(Event event, String newValue) throws Exception {
     LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
 
-    if ((event.canBeEditedToDifferentDay() && newDate.isBefore(event.endDate)) ||
-            newDate.toLocalDate().equals(event.endDate.toLocalDate())) {
-      event.startDate = (newDate);
+    if (event.canBeEditedToDifferentDay()) {
+      if (newDate.isBefore(event.endDate)) {
+        event.startDate = newDate;
+      } else {
+        throw new Exception("start date should be before end date");
+      }
+    } else {
+      if (newDate.toLocalDate().equals(event.endDate.toLocalDate()) && newDate.isBefore(event.endDate)) {
+
+      } else {
+        throw new Exception("invalid date for recurring event");
+      }
     }
+
   }
 
   /**
@@ -149,12 +160,27 @@ public class Calendar implements ICalendar {
    * @param event    The event to update.
    * @param newValue The new end date as a string.
    */
-  private void updateEndDate(Event event, String newValue) {
+  private void updateEndDate(Event event, String newValue) throws Exception {
     LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
 
     if ((event.canBeEditedToDifferentDay() && newDate.isAfter(event.startDate)) ||
             newDate.toLocalDate().equals(event.startDate.toLocalDate())) {
       event.endDate = (newDate);
+    }
+
+    if (event.canBeEditedToDifferentDay()) {
+      if (newDate.isAfter(event.startDate)) {
+        event.endDate = (newDate);
+      } else {
+        throw new Exception("Single Event End date should be before start date");
+      }
+    } else {
+      if (newDate.toLocalDate().equals(event.endDate.toLocalDate()) &&
+              newDate.isAfter(event.startDate)) {
+        event.endDate = newDate;
+      } else {
+        throw new Exception("Recurring event invalid dates");
+      }
     }
   }
 

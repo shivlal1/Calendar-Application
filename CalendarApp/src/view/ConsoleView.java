@@ -44,7 +44,11 @@ public class ConsoleView implements View {
         bulletEvent.append("location : " + event.get("location") + ",");
       }
       if (event.get("description") != null) {
-        bulletEvent.append("Location : " + event.get("location") + ",");
+        bulletEvent.append("description : " + event.get("description") + ",");
+      }
+
+      if (event.get("isPublic") != null) {
+        bulletEvent.append("isPublic : " + (Boolean) event.get("isPublic") + ",");
       }
       bulletEvent.deleteCharAt(bulletEvent.length() - 1);
 
