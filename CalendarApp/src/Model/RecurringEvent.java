@@ -1,4 +1,4 @@
-package Model;
+package model;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import Utils.DateUtils;
+import utils.DateUtils;
 
 /**
  * This class extends the Event class and represents events that recur over time.

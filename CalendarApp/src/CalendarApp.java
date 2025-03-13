@@ -3,9 +3,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
-import Controller.CalendarController;
-import Model.Calendar;
-import Model.ICalendar;
+import controller.CalendarController;
+import model.Calendar;
+import model.ICalendar;
 import view.ConsoleView;
 
 /**

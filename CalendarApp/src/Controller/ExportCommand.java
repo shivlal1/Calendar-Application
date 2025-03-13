@@ -1,12 +1,12 @@
-package Controller;
+package controller;
 
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Model.ICalendar;
-import Utils.CalendarCsvExporter;
+import model.ICalendar;
+import utils.CalendarCsvExporter;
 import view.ConsoleView;
 import view.View;
 

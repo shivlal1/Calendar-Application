@@ -1,9 +1,9 @@
-package Controller;
+package controller;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import Model.ICalendar;
+import model.ICalendar;
 
 /**
  * The CalendarController class implements the ICommand interface and manages

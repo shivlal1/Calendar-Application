@@ -1,4 +1,4 @@
-package Controller;
+package controller;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,13 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import Model.Calendar;
-import Model.ICalendar;
-import Utils.DateUtils;
+import model.Calendar;
+import model.ICalendar;
+import utils.DateUtils;
 import view.ConsoleView;
 import view.View;
 
-import static Utils.DateUtils.pareStringToLocalDateTime;
+import static utils.DateUtils.pareStringToLocalDateTime;
 import static org.junit.Assert.assertEquals;
 
 /**

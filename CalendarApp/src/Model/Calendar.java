@@ -1,4 +1,4 @@
-package Model;
+package model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import Utils.DateUtils;
+import utils.DateUtils;
 
 /**
  * The calendar class implements the ICalendar interface and provides functionality
