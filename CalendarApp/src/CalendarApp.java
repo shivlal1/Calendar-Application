@@ -74,7 +74,7 @@ public class CalendarApp {
    * @param args Command-line arguments.
    * @return true if the arguments start with '--mode' else, false.
    */
-  private static boolean isArgsStartingWithMode(String args[]) {
+  private static boolean isArgsStartingWithMode(String[] args) {
     return args[0].equalsIgnoreCase("--mode");
   }
 
@@ -84,7 +84,7 @@ public class CalendarApp {
    * @param args Command-line arguments.
    * @return true if the mode is 'interactive' else, false.
    */
-  private static boolean isInteractiveMode(String args[]) {
+  private static boolean isInteractiveMode(String[] args) {
     return args[1].toLowerCase().equals("interactive");
   }
 
@@ -94,7 +94,7 @@ public class CalendarApp {
    * @param args Command-line arguments.
    * @return true if the mode is 'headless' else, false.
    */
-  private static boolean isHeadlessMode(String args[]) {
+  private static boolean isHeadlessMode(String[] args) {
     return args[1].toLowerCase().equals("headless");
   }
 

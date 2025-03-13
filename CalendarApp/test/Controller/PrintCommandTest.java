@@ -84,7 +84,13 @@ public class PrintCommandTest {
     cmd.execute(command, cal);
   }
 
-
+  /**
+   * A method to get the event on a given date.
+   *
+   * @param date     the date given.
+   * @param calendar the calendar object.
+   * @return the processed output.
+   */
   public String getEventStringOnADate(String date, ICalendar calendar) {
     String onDate = DateUtils.changeDateToDateTime(date);
     LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -95,6 +101,12 @@ public class PrintCommandTest {
     return actualOutput;
   }
 
+  /**
+   * A method to get the calendar output events after being processed.
+   *
+   * @param events the list of events provided.
+   * @return the processed output.
+   */
   public String getViewCalendarOutput(List<Map<String, Object>> events) {
     PrintStream originalOut = System.out;
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -123,7 +135,7 @@ public class PrintCommandTest {
     command = "event \"Event 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
     createCommand.execute(command, calendar);
 
-    String eventsOnDate = getEventStringOnADate("2025-02-01",calendar);
+    String eventsOnDate = getEventStringOnADate("2025-02-01", calendar);
 
     assertEquals(eventsOnDate, "");
   }
@@ -146,12 +158,12 @@ public class PrintCommandTest {
 
     String event1 = "• Subject : Event 1,Start date : 2025-03-01,Start time : 09:00," +
             "End date : 2025-03-05,End time : 10:00,isPublic : false\n";
-    String event2 ="• Subject : Event 1,Start date : 2025-03-02,Start time : 09:00," +
+    String event2 = "• Subject : Event 1,Start date : 2025-03-02,Start time : 09:00," +
             "End date : 2025-03-02,End time : 10:00,isPublic : false\n";
-    String event3="• Subject : Event 2,Start date : 2025-03-02,Start time : 09:00," +
+    String event3 = "• Subject : Event 2,Start date : 2025-03-02,Start time : 09:00," +
             "End date : 2025-03-02,End time : 10:00,isPublic : false\n";
-    String eventsOnDate = getEventStringOnADate("2025-03-02",calendar);
-    assertEquals(event1+event2+event3,eventsOnDate);
+    String eventsOnDate = getEventStringOnADate("2025-03-02", calendar);
+    assertEquals(event1 + event2 + event3, eventsOnDate);
 
     //System.out.println("events \n"+eventsOnDate);
   }
