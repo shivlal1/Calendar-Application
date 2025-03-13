@@ -54,13 +54,13 @@ public class CalendarController implements ICommand {
    */
   @Override
   public void execute(String commandArgs, ICalendar calendar) throws Exception {
-    System.out.println("Command being processed: " + commandArgs);
     String[] result = splitString(commandArgs);
     ICommand command = commandMap.get(result[0]);
     if (command != null) {
       command.execute(result[1], calendar);
     } else {
-      System.out.println("Invalid command: " + result[0]);
+      throw new Exception("command should start with only create,edit,print,show,status");
+
     }
   }
 }

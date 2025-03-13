@@ -20,23 +20,6 @@ public class ExportCommand implements ICommand {
   private Matcher matcher;
 
   /**
-   * This method validates the  errors in the export command format and provides the
-   * corresponding specific error messages.
-   *
-   * @param command the command string to diagnose.
-   * @return a string describing the error in the command format.
-   */
-  private String diagnoseCommandError(String command) {
-    if (!command.startsWith("cal")) {
-      return "Missing/Misplaced cal keyword";
-    }
-    if (!command.endsWith(".csv")) {
-      return "Error in fileName";
-    }
-    return "Invalid Command";
-  }
-
-  /**
    * This method parses the command arguments to extract the CSV file name.
    *
    * @param commandArgs the command arguments in String format.
@@ -47,10 +30,9 @@ public class ExportCommand implements ICommand {
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {
-      throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
+      throw new Exception("Invalid Command ");
     }
     fileName = matcher.group(1);
-    System.out.println("filename " + fileName);
   }
 
   /**
@@ -64,7 +46,7 @@ public class ExportCommand implements ICommand {
     CalendarCsvExporter exporter = new CalendarCsvExporter();
     String filePath = exporter.export(events, fileName);
     View displayView = new ConsoleView();
-    displayView.viewMessage("filePath " + filePath);
+    displayView.viewMessage("Absolute Path " + filePath);
 
   }
 

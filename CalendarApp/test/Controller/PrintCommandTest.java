@@ -92,15 +92,14 @@ public class PrintCommandTest {
    * @param calendar the calendar object.
    * @return the processed output.
    */
-  public String getEventStringOnADate(String date, ICalendar calendar) {
+  public String getEventStringOnADate(String date, ICalendar calendar, String endDate) {
     String onDate = DateUtils.changeDateToDateTime(date);
     Map<String, Object> metaData = new HashMap<>();
 
-    if(endDate==null){
+    if (endDate == null) {
       LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
       metaData.put("localStartTime", newOnDate);
-    }
-    else {
+    } else {
 
       LocalDateTime dateT = DateUtils.pareStringToLocalDateTime(date);
       metaData.put("localStartTime", dateT);
@@ -147,7 +146,7 @@ public class PrintCommandTest {
     command = "event \"Event 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
     createCommand.execute(command, calendar);
 
-    String eventsOnDate = getEventStringOnADate("2025-02-01",calendar,null);
+    String eventsOnDate = getEventStringOnADate("2025-02-01", calendar, null);
     assertEquals(eventsOnDate, "");
   }
 
@@ -166,15 +165,15 @@ public class PrintCommandTest {
     command = "event \"Match 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
     createCommand.execute(command, calendar);
 
-    String eventsOnDate = getEventStringOnADate("2025-03-02T09:00",calendar,"2025-03-02T10:00");
+    String eventsOnDate = getEventStringOnADate("2025-03-02T09:00", calendar, "2025-03-02T10:00");
     String event1 = "• Subject : Recurring Event Match,Start date : 2025-03-02,Start time : 09:00,"
-            +"End date : 2025-03-02,End time : 10:00,isPublic : false\n";
-    String event2 ="• Subject : Match 1,Start date : 2025-03-02,Start time : 09:00,End date : 2025-03-02,"
-            +"End time : 10:00,isPublic : false\n";
+            + "End date : 2025-03-02,End time : 10:00,isPublic : false\n";
+    String event2 = "• Subject : Match 1,Start date : 2025-03-02,Start time : 09:00,End date : 2025-03-02,"
+            + "End time : 10:00,isPublic : false\n";
     String event3 = "• Subject : Match 2,Start date : 2025-03-02,Start time : 09:00,"
-           + "End date : 2025-03-02,End time : 10:00,isPublic : false\n";
+            + "End date : 2025-03-02,End time : 10:00,isPublic : false\n";
 
-    assertEquals(eventsOnDate,event1+event2+event3);
+    assertEquals(eventsOnDate, event1 + event2 + event3);
   }
 
   @Test
@@ -192,8 +191,8 @@ public class PrintCommandTest {
     command = "event \"Match 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
     createCommand.execute(command, calendar);
 
-    String eventsOnDate = getEventStringOnADate("2025-03-10T09:00",calendar,"2025-03-10T10:00");
-    assertEquals(eventsOnDate,"");
+    String eventsOnDate = getEventStringOnADate("2025-03-10T09:00", calendar, "2025-03-10T10:00");
+    assertEquals(eventsOnDate, "");
   }
 
   @Test
@@ -211,8 +210,8 @@ public class PrintCommandTest {
     command = "event \"Match 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
     createCommand.execute(command, calendar);
 
-    String eventsOnDate = getEventStringOnADate("2025-03-02T19:00",calendar,"2025-03-02T20:00");
+    String eventsOnDate = getEventStringOnADate("2025-03-02T19:00", calendar, "2025-03-02T20:00");
 
-    assertEquals(eventsOnDate,"");
+    assertEquals(eventsOnDate, "");
   }
 }
