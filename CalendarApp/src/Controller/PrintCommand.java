@@ -12,6 +12,10 @@ import Model.ICalendar;
 import Utils.DateUtils;
 import view.ConsoleView;
 
+/**
+ * This class implements the ICommand interface and is responsible for
+ * printing events within a specified time range from a calendar.
+ */
 public class PrintCommand implements ICommand {
   private String startDate, endDate;
   private LocalDateTime localStart, localEnd;
@@ -24,10 +28,19 @@ public class PrintCommand implements ICommand {
           "to \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\"|" +
           "on \"(\\d{4}-\\d{2}-\\d{2})\")$";
 
+  /**
+   * This method creates a new object and initializes the metadata map.
+   */
   public PrintCommand() {
     metaData = new HashMap<>();
   }
 
+  /**
+   * This method validates errors in the print command format and provides specific error messages.
+   *
+   * @param command the command string to diagnose.
+   * @return a string describing the error in the command format.
+   */
   private String diagnoseCommandError(String command) {
     if (!command.startsWith("events"))
       return "Missing events";
@@ -49,6 +62,12 @@ public class PrintCommand implements ICommand {
     return "Invalid command: Does not match expected format.";
   }
 
+  /**
+   * This method parses the command arguments to extract the date range for printing events.
+   *
+   * @param commandArgs The command arguments as a string.
+   * @throws Exception if the command format is invalid or missing required fields.
+   */
   private void commandParser(String commandArgs) throws Exception {
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);
@@ -69,17 +88,33 @@ public class PrintCommand implements ICommand {
     addValuesInMetaDataObject();
   }
 
+  /**
+   * This method adds the parsed value to the metadata map for event filtering.
+   */
   private void addValuesInMetaDataObject() {
     metaData.put("localStartTime", localStart);
     metaData.put("localEndTime", localEnd);
   }
 
+  /**
+   * This method handles printing events based on the parsed metadata.
+   *
+   * @param calendar The ICalendar object containing events to be printed.
+   */
   private void printCommandUtil(ICalendar calendar) {
     List<Map<String, Object>> eventDetails = calendar.getMatchingEvents(metaData);
     ConsoleView v = new ConsoleView();
     v.viewEvents(eventDetails);
   }
 
+  /**
+   * This method executes the print command by parsing the arguments and displaying
+   * events within the specified time range.
+   *
+   * @param commandArgs the command arguments as a string, including date range.
+   * @param calendar    the ICalendar object containing events to be printed.
+   * @throws Exception if there's an error in parsing or printing events.
+   */
   @Override
   public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);
