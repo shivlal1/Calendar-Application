@@ -44,58 +44,14 @@ public class EditCommandTest {
     cal = new Calendar();
   }
 
-
-//  @Test
-//  public void testSimpleCommand() throws Exception {
-//    String command = "event \"International Conference\" from 2025-03-01T09:00 to 2025-03-03T13:00";
-//    ACalendar cal = new Calendar();
-//    ICommand createCommand = new CreateCommand();
-//    createCommand.execute(command, cal);
-//    //cal.printEvents();
-//
-//    //            "edit event name \"Annual Meeting\" from 2025-03-01T09:00:00 to 2025-03-01T10:00:00 with \"Weekly Meeting\"",
-
-  /// /            "edit events public \"Annual Meeting\" from 2025-03-01T09:00:00 with \"true\""
-  /// /            "edit events name \"Annual Meeting\" \"Weekly Meeting\""
-//
-//    command = "event name \"International Conference\" from 2025-03-01T09:00 to 2025-03-03T13:00 with \"Weekly Meeting\"";
-//    ICommand editCommand = new EditCommand();
-//    editCommand.execute(command, cal);
-//    cal.printEvents();
-//  }
-//
-//
-//  @Test
-//  public void recurringEvent52() throws Exception {
-//
-//    String command = "event \"International Conference\" from 2025-04-05T09:45 to 2025-04-05T10:00";
-//    //String command = "event \"International Conference\" from 2025-03-01T09:00:00 to 2025-03-05T13:00:00";
-//
-//    ACalendar cal = new Calendar();
-//    ICommand createCommand = new CreateCommand();
-//    createCommand.execute(command, cal);
-//    //cal.printEvents();
-//
-//    //command = "event --autoDecline \"NN\" from 2025-04-28T09:00:00 to 2025-04-28T10:00:00 repeats MTW until 2025-06-28T09:00:00";
-//    command = "event --autoDecline \"N \" from 2025-04-28T09:00 to 2025-04-28T10:00 repeats MTW for 5 times";
-//    createCommand.execute(command, cal);
-//    // cal.printEvents();
-//
-//    command = "events name \"N \" \"Weekly Meeting\"";
-//    ICommand editCommand = new EditCommand();
-//    editCommand.execute(command, cal);
-//    cal.printEvents();
-//
-//    //"print events from \"2025-03-01T09:00:00\" to \"2025-03-03T13:00:00\"",
-//
-//  }
   @Test
   public void missingEditEvent() throws Exception {
     try {
       command = "\"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
-      String errorMsg = "Invalid Command Should start with 'edit event(s)' or it is Missing 'edit event(s)'";
+      String errorMsg = "Invalid Command Should start with 'edit event(s)' or it is Missing " +
+              "'edit event(s)'";
       assertEquals(e.getMessage(), errorMsg);
     }
   }
@@ -103,10 +59,12 @@ public class EditCommandTest {
   @Test
   public void missingNameOrProperty() throws Exception {
     try {
-      command = "event \"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
+      command = "event \"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 with " +
+              "\"Weekly Meeting\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
-      String errorMsg = "Invalid Command Missing 'eventName' or Property is missing or incorrectly placed";
+      String errorMsg = "Invalid Command Missing 'eventName' or Property is missing or " +
+              "incorrectly placed";
       assertEquals(e.getMessage(), errorMsg);
     }
   }
@@ -114,7 +72,8 @@ public class EditCommandTest {
   @Test
   public void missingFromTo() throws Exception {
     try {
-      command = "event name \"Meeting\" 2025-03-01T09:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
+      command = "event name \"Meeting\" 2025-03-01T09:00 to 2025-03-01T10:00 with " +
+              "\"Weekly Meeting\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
       assertEquals(e.getMessage(), "Invalid Command Missing From");
@@ -124,7 +83,8 @@ public class EditCommandTest {
   @Test
   public void missingTo() throws Exception {
     try {
-      command = "event name \"Meeting\" from 2025-03-01T09:00 2025-03-01T10:00 with \"Weekly Meeting\"";
+      command = "event name \"Meeting\" from 2025-03-01T09:00 2025-03-01T10:00 with " +
+              "\"Weekly Meeting\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
       assertEquals(e.getMessage(), "Invalid Command Missing To");
@@ -137,14 +97,16 @@ public class EditCommandTest {
       command = "event name \"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 with";
       editCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Missing or incorrect 'newValue' format (Expected: with \"NewValue\")");
+      assertEquals(e.getMessage(), "Invalid Command Missing or incorrect 'newValue' " +
+              "format (Expected: with \"NewValue\")");
     }
   }
 
   @Test
   public void missingWith() throws Exception {
     try {
-      command = "event name \"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 \"Weekly Meeting\"";
+      command = "event name \"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 " +
+              "\"Weekly Meeting\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
       assertEquals(e.getMessage(), "Invalid Command Missing With");
@@ -154,50 +116,60 @@ public class EditCommandTest {
   @Test
   public void incorrectDateFormat() throws Exception {
     try {
-      command = "event name \"Meeting\" from 2025-03-0109:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
+      command = "event name \"Meeting\" from 2025-03-0109:00 to 2025-03-01T10:00 with " +
+              "\"Weekly Meeting\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match expected format.");
+      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not " +
+              "match expected format.");
     }
   }
 
   @Test
   public void testExtraWords() throws Exception {
     try {
-      command = "event name \"Meeting\" from 2025-03-0109:00 to 2025-03-01T10:00 with \"Weekly Meeting\" hello there";
+      command = "event name \"Meeting\" from 2025-03-0109:00 to 2025-03-01T10:00 with " +
+              "\"Weekly Meeting\" hello there";
       editCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match expected format.");
+      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match " +
+              "expected format.");
     }
   }
 
   @Test
   public void testExtraWordsBeforeCommand() throws Exception {
     try {
-      command = "Hello there event name \"Meeting\" from 2025-03-0109:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
+      command = "Hello there event name \"Meeting\" from 2025-03-0109:00 to 2025-03-01T10:00 " +
+              "with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Should start with 'edit event(s)' or it is Missing 'edit event(s)'");
+      assertEquals(e.getMessage(), "Invalid Command Should start with 'edit event(s)' " +
+              "or it is Missing 'edit event(s)'");
     }
   }
 
   @Test
   public void testDuplicateKeywords() throws Exception {
     try {
-      command = "event name \"Meeting\" from from 2025-03-0109:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
+      command = "event name \"Meeting\" from from 2025-03-0109:00 to 2025-03-01T10:00 with " +
+              "\"Weekly Meeting\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match expected format.");
+      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not " +
+              "match expected format.");
     }
   }
 
   @Test
   public void testDuplicateKeywords2() throws Exception {
     try {
-      command = "event name \"Meeting\" from from 2025-03-0109:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
+      command = "event name \"Meeting\" from from 2025-03-0109:00 to 2025-03-01T10:00 " +
+              "with \"Weekly Meeting\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match expected format.");
+      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match " +
+              "expected format.");
     }
   }
 
@@ -207,7 +179,8 @@ public class EditCommandTest {
       command = "event name \"Meeting\" from from 2025-03-0109:00 to 2025-03-01T10:00 with \"\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match expected format.");
+      assertEquals(e.getMessage(), "Invalid Command Invalid command: Does not match " +
+              "expected format.");
     }
   }
 
@@ -215,7 +188,8 @@ public class EditCommandTest {
   public void testCaseSensitive() throws Exception {
 
     try {
-      command = "EVENT LOCATION BIRTHDAYPARTY FROM 2024-05-12T14:00 TO 2024-05-12T16:00 WITH JOHN’S HOUSE";
+      command = "EVENT LOCATION BIRTHDAYPARTY FROM 2024-05-12T14:00 TO 2024-05-12T16:00 WITH" +
+              " JOHN’S HOUSE";
       editCommand.execute(command, cal);
     } catch (Exception e) {
       assertEquals(e.getMessage(), "Invalid Command Command should be lower case.");
@@ -225,10 +199,12 @@ public class EditCommandTest {
   @Test
   public void testIncorrectOrderOfArguments() throws Exception {
     try {
-      command = "event \"Meeting\" name from 2025-03-0109:00 to 2025-03-01T10:00 with \"Weekly Meeting\"";
+      command = "event \"Meeting\" name from 2025-03-0109:00 to 2025-03-01T10:00 with " +
+              "\"Weekly Meeting\"";
       editCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Missing 'eventName' or Property is missing or incorrectly placed");
+      assertEquals(e.getMessage(), "Invalid Command Missing 'eventName' or Property is " +
+              "missing or incorrectly placed");
     }
   }
 
@@ -380,10 +356,13 @@ public class EditCommandTest {
 
     String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
     String event1 = "• Subject : no update,Start date : 2025-03-15,Start time : 01:00," +
-            "End date : 2025-03-15,End time : 02:00,description : this event has no update,isPublic : false\n";
-    String event2 = "• Subject : OLD Name,Start date : 2025-03-12,Start time : 01:00,End date : 2025-03-12," +
+            "End date : 2025-03-15,End time : 02:00,description : this event has no update" +
+            ",isPublic : false\n";
+    String event2 = "• Subject : OLD Name,Start date : 2025-03-12,Start time : 01:00,End date " +
+            ": 2025-03-12," +
             "End time : 02:00,isPublic : false\n";
-    String event3 = "• Subject : OLD Name,Start date : 2025-03-01,Start time : 09:00,End date : 2025-03-01," +
+    String event3 = "• Subject : OLD Name,Start date : 2025-03-01,Start time : 09:00,End date" +
+            " : 2025-03-01," +
             "End time : 10:00,isPublic : false\n";
 
     assertEquals(event1 + event2 + event3, actualOutput);
@@ -414,11 +393,14 @@ public class EditCommandTest {
     view.viewEvents(calendar.getAllCalendarEvents());
     String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
     String event1 = "• Subject : Annual Meeting,Start date : 2025-03-17,Start time : 01:00," +
-            "End date : 2025-03-17,End time : 02:00,location : snell,description : empty event,isPublic : true\n";
-    String event2 = "• Subject : Annual Meeting,Start date : 2025-03-24,Start time : 01:00,End date : 2025-03-24," +
+            "End date : 2025-03-17,End time : 02:00,location : snell,description : empty event," +
+            "isPublic : true\n";
+    String event2 = "• Subject : Annual Meeting,Start date : 2025-03-24,Start time : 01:00," +
+            "End date : 2025-03-24," +
             "End time : 02:00,location : snell,description : empty event,isPublic : true\n";
     String event3 = "• Subject : Annual Meeting,Start date : 2025-03-31,Start time : 01:00," +
-            "End date : 2025-03-31,End time : 02:00,location : snell,description : empty event,isPublic : true\n";
+            "End date : 2025-03-31,End time : 02:00,location : snell,description : empty event," +
+            "isPublic : true\n";
 
     assertEquals(event1 + event2 + event3, actualOutput);
   }
@@ -616,7 +598,8 @@ public class EditCommandTest {
     editCommand.execute(command, calendar);
   }
 
-  // edit event <property> <eventName> from <dateStringTtimeString> to <dateStringTtimeString> with <NewPropertyValue>
+  // edit event <property> <eventName> from <dateStringTtimeString> to <dateStringTtimeString>
+  // with <NewPropertyValue>
 
   @Test
   public void editUsingFromTo() throws Exception {
@@ -629,16 +612,17 @@ public class EditCommandTest {
     command = "event \"Event 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
     createCommand.execute(command, calendar);
     view.viewEvents(calendar.getAllCalendarEvents());
-    command = "events startDate \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00 with \"2025-03-02T09:15\"";
+    command = "events startDate \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00 with " +
+            "\"2025-03-02T09:15\"";
     editCommand.execute(command, calendar);
 
     String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
     String event1 = "• Subject : Event 1,Start date : 2025-03-01,Start time : 09:00," +
             "End date : 2025-03-05,End time : 10:00,isPublic : false\n";
-    String event2 = "• Subject : Event 1,Start date : 2025-03-02,Start time : 09:15,End date : 2025-03-02," +
-            "End time : 10:00,isPublic : false\n";
-    String event3 = "• Subject : Event 2,Start date : 2025-03-02,Start time : 09:00,End date : 2025-03-02," +
-            "End time : 10:00,isPublic : false\n";
+    String event2 = "• Subject : Event 1,Start date : 2025-03-02,Start time : 09:15,End date : " +
+            "2025-03-02," + "End time : 10:00,isPublic : false\n";
+    String event3 = "• Subject : Event 2,Start date : 2025-03-02,Start time : 09:00,End date : " +
+            "2025-03-02," + "End time : 10:00,isPublic : false\n";
     assertEquals(event1 + event2 + event3, actualOutput);
   }
 
@@ -657,7 +641,8 @@ public class EditCommandTest {
     createCommand.execute(command, calendar);
     view.viewEvents(calendar.getAllCalendarEvents());
     System.out.println("done");
-    command = "events startDate \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00 with \"2025-04-02T09:00\"";
+    command = "events startDate \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00 with " +
+            "\"2025-04-02T09:00\"";
     editCommand.execute(command, calendar);
   }
 
@@ -673,16 +658,17 @@ public class EditCommandTest {
     createCommand.execute(command, calendar);
     view.viewEvents(calendar.getAllCalendarEvents());
     System.out.println("done");
-    command = "events location \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00 with \"white building\"";
+    command = "events location \"Event 1\" from 2025-03-02T09:00 to 2025-03-02T10:00 with " +
+            "\"white building\"";
     editCommand.execute(command, calendar);
 
     String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
     String event1 = "• Subject : Event 1,Start date : 2025-03-01,Start time : 09:00," +
             "End date : 2025-03-05,End time : 10:00,isPublic : false\n";
-    String event2 = "• Subject : Event 1,Start date : 2025-03-02,Start time : 09:00,End date : 2025-03-02,End time : 10:00," +
-            "location : white building,isPublic : false\n";
-    String event3 = "• Subject : Event 2,Start date : 2025-03-02,Start time : 09:00,End date : 2025-03-02," +
-            "End time : 10:00,isPublic : false\n";
+    String event2 = "• Subject : Event 1,Start date : 2025-03-02,Start time : 09:00,End date : " +
+            "2025-03-02,End time : 10:00," + "location : white building,isPublic : false\n";
+    String event3 = "• Subject : Event 2,Start date : 2025-03-02,Start time : 09:00,End date :" +
+            " 2025-03-02," + "End time : 10:00,isPublic : false\n";
     assertEquals(event1 + event2 + event3, actualOutput);
   }
 

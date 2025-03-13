@@ -58,7 +58,8 @@ public class CreateCommandTest {
       command = "event \"Meeting\" from 2025-03-01T09:00 to 2025-03-01T10:00 --autoDecline";
       createCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "error :--autoDecline must appear immediately after create event");
+      assertEquals(e.getMessage(),
+              "error :--autoDecline must appear immediately after create event");
     }
   }
 
@@ -169,7 +170,8 @@ public class CreateCommandTest {
       command = "event \"Hello\"  from 2025-03-01T10:00 to 2025-03-01T11:00 repeats MT";
       createCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "error :'repeats' must be followed by 'for <N> times' or 'until <date>'.");
+      assertEquals(e.getMessage(),
+              "error :'repeats' must be followed by 'for <N> times' or 'until <date>'.");
     }
   }
 
@@ -257,7 +259,8 @@ public class CreateCommandTest {
       command = "event \"Hello\" on 2025-03-01 repeats MT\n";
       createCommand.execute(command, cal);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "error :'repeats' must be followed by 'for <N> times' or 'until <date>'.");
+      assertEquals(e.getMessage(),
+              "error :'repeats' must be followed by 'for <N> times' or 'until <date>'.");
     }
   }
 
@@ -368,7 +371,8 @@ public class CreateCommandTest {
       command = "event \"Checkup\" from 2025-13-05T10:00 to 2025-13-05T11:00";
       createCommand.execute(command, cal);
     } catch (Exception e) {
-      String msg = "Text '2025-13-05 10:00' could not be parsed: Invalid value for MonthOfYear (valid values 1 - 12): 13";
+      String msg = "Text '2025-13-05 10:00' could not be parsed: Invalid value for " +
+              "MonthOfYear (valid values 1 - 12): 13";
       assertEquals(e.getMessage(), msg);
     }
   }
@@ -379,7 +383,8 @@ public class CreateCommandTest {
       command = "event \"Checkup\" from 2025-02-33T10:00 to 2025-02-31T11:00";
       createCommand.execute(command, cal);
     } catch (Exception e) {
-      String msg = "Text '2025-02-33 10:00' could not be parsed: Invalid value for DayOfMonth (valid values 1 - 28/31): 33";
+      String msg = "Text '2025-02-33 10:00' could not be parsed: " +
+              "Invalid value for DayOfMonth (valid values 1 - 28/31): 33";
       assertEquals(e.getMessage(), msg);
     }
   }
@@ -420,7 +425,8 @@ public class CreateCommandTest {
   @Test
   public void weekdayError() throws Exception {
     try {
-      command = "event \"Gym\" from 2025-06-01T07:00 to 2025-06-01T08:00 repeats Monday for 5 times";
+      command = "event \"Gym\" from 2025-06-01T07:00 to 2025-06-01T08:00 repeats Monday " +
+              "for 5 times";
       createCommand.execute(command, cal);
     } catch (Exception e) {
       String msg = "error :Does not match expected format.";
@@ -716,6 +722,12 @@ public class CreateCommandTest {
 
   }
 
+  /**
+   * A method to check out the output of the calendar events.
+   *
+   * @param events the events in the calendar
+   * @return the processed output.
+   */
   public String getViewCalendarOutput(List<Map<String, Object>> events) {
     PrintStream originalOut = System.out;
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -746,8 +758,8 @@ public class CreateCommandTest {
     metaData.put("localStartTime", newOnDate);
     List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
     String actualOutput = getViewCalendarOutput(events);
-    String expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-11,Start time : 01:00," +
-            "End date : 2025-03-11,End time : 02:00,isPublic : false\n";
+    String expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-11,Start time : 01:00,"
+            + "End date : 2025-03-11,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
 
 
@@ -763,6 +775,13 @@ public class CreateCommandTest {
 
   }
 
+  /**
+   * A method to get the event on a particular date.
+   *
+   * @param date     the date in String format.
+   * @param calendar the calendar object.
+   * @return the processed output.
+   */
   public String getEventStringOnADate(String date, ICalendar calendar) {
     String onDate = DateUtils.changeDateToDateTime(date);
     LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -782,8 +801,8 @@ public class CreateCommandTest {
 
     // check whether the first event is added properly
     String actualOutput = getEventStringOnADate("2025-03-12", calendar);
-    String expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-12,Start time : 01:00," +
-            "End date : 2025-03-12,End time : 02:00,isPublic : false\n";
+    String expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-12,Start time : 01:00,"
+            + "End date : 2025-03-12,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-12T01:05")), true);
 
@@ -846,7 +865,8 @@ public class CreateCommandTest {
               "repeats WRFSUMT for -1 times";
       createCommand.execute(command, calendar);
     } catch (Exception e) {
-      assertEquals(e.getMessage(), "error :'for' must be followed by a valid number of times.");
+      assertEquals(e.getMessage(),
+              "error :'for' must be followed by a valid number of times.");
     }
   }
 
@@ -867,14 +887,14 @@ public class CreateCommandTest {
 
     // Recurring Event with autoDecline and no single event in calendar and no conflict.
     ICalendar calendar = new Calendar();
-    command = "event --autoDecline \"Recurring Event\" from 2025-03-12T01:00 to 2025-03-12T02:00 " +
-            "repeats WR for 7 times";
+    command = "event --autoDecline \"Recurring Event\" from 2025-03-12T01:00 to 2025-03-12T02:00 "
+            + "repeats WR for 7 times";
     createCommand.execute(command, calendar);
 
     // check whether the first event is added properly
     String actualOutput = getEventStringOnADate("2025-03-12", calendar);
-    String expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-12,Start time : 01:00," +
-            "End date : 2025-03-12,End time : 02:00,isPublic : false\n";
+    String expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-12,Start time : 01:00,"
+            + "End date : 2025-03-12,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-12T01:05")), true);
 
@@ -897,8 +917,8 @@ public class CreateCommandTest {
 
     // check whether the first event is added properly
     String actualOutput = getEventStringOnADate("2025-03-13", calendar);
-    String expectedEvent = "• Subject : Recurring Test,Start date : 2025-03-13,Start time : 01:00," +
-            "End date : 2025-03-13,End time : 02:00,isPublic : false\n";
+    String expectedEvent = "• Subject : Recurring Test,Start date : 2025-03-13,Start time : 01:00,"
+            + "End date : 2025-03-13,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-13T01:05")), true);
 
@@ -922,8 +942,8 @@ public class CreateCommandTest {
 
     // check whether the first event is added properly
     String actualOutput = getEventStringOnADate("2025-03-13", calendar);
-    String expectedEvent = "• Subject : Recurring Test,Start date : 2025-03-13,Start time : 01:00," +
-            "End date : 2025-03-13,End time : 02:00,isPublic : false\n";
+    String expectedEvent = "• Subject : Recurring Test,Start date : 2025-03-13,Start time : 01:00,"
+            + "End date : 2025-03-13,End time : 02:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-03-13T01:05")), true);
   }
@@ -1029,8 +1049,8 @@ public class CreateCommandTest {
     command = "event \"SingleEvent2\" from 2025-03-01T09:05 to 2025-03-01T10:00";
     createCommand.execute(command, calendar);
     actualOutput = getEventStringOnADate("2025-03-01", calendar);
-    expectedEvent = expectedEvent + "• Subject : SingleEvent2,Start date : 2025-03-01,Start time : 09:05," +
-            "End date : 2025-03-01,End time : 10:00,isPublic : false\n";
+    expectedEvent = expectedEvent + "• Subject : SingleEvent2,Start date : 2025-03-01,Start time : "
+            + "09:05," + "End date : 2025-03-01,End time : 10:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
     assertEquals(calendar.getAllCalendarEvents().size(), 2);
 
@@ -1073,8 +1093,8 @@ public class CreateCommandTest {
     assertEquals(calendar.getAllCalendarEvents().size(), 7);
 
     String actualOutput = getEventStringOnADate("2025-03-01", calendar);
-    String expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-01,Start time : 09:00," +
-            "End date : 2025-03-01,End time : 10:00,isPublic : false\n";
+    String expectedEvent = "• Subject : Recurring Event,Start date : 2025-03-01,Start time : 09:00,"
+            + "End date : 2025-03-01,End time : 10:00,isPublic : false\n";
     assertEquals(expectedEvent, actualOutput);
 
     command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
