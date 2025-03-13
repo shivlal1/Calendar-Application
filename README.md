@@ -101,10 +101,32 @@ export calendar april_calendar.csv
 | **U**        | Sunday    |
 
 ## Project Structure
+This project is organized clearly to enhance readability, maintainability, and ease of collaboration. The directory structure and contents are as follows:
 
-- `src/`: Source code
-- `test/`: Unit tests
-- `res/`: Resources (screenshots, command files, diagrams)
+### `src/`
+This directory contains the main source code organized using the MVC (Model-View-Controller) architectural pattern, along with utility classes:
+
+- **`controller`**: Contains command-related classes responsible for handling user commands such as Create, Edit, Show, Print, and Export.
+- **`model`**: Includes the logic behind the creation and editing of events. It also contains the logic of exporting and checking if the user is busy at a given time slot or not.
+- **`view`**: Handles all the user interface logic, including outputting to the console.
+- **`utils`**: Provides common helper functions like date conversions and regex utilities.
+- **`CalendarApp.java`**: The main entry point of the application, which is responsible for initializing and running the application logic.
+
+### `test/`
+This directory hosts all unit tests to ensure the correctness and reliability of the application:
+
+- **`CreateCommandTest.java`**: Tests functionalities related to creating new events.
+- **`ShowCommandTest.java`**: Tests functionalities for displaying event details and status.
+- **`EditCommandTest.java`**: Covers tests for editing event details.
+- **`PrintCommandTest.java`**: Verifies functionalities for printing events or schedules.
+- **`ExportCommandTest.java`**: Ensures correctness of event export functionalities.
+
+### `res/`
+This directory holds various resources useful for documentation, reference, or illustrative purposes, including:
+
+- Screenshots demonstrating application functionality.
+- Command files used for testing or demonstration.
+- Diagrams illustrating project architecture and design.
 - `README.md`: Project documentation
 
 ## Testing and Quality Assurance
