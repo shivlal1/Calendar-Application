@@ -75,16 +75,6 @@ public class PrintCommandTest {
     }
   }
 
-  @Test
-  public void printtest() throws Exception {
-    command = "print events from \"2025-04-01T10:00\" to \"2025-04-04T11:00\"";
-    command = "print events on \"2025-04-01\"";
-
-    ICommand cmd = new CalendarController();
-    cmd.execute(command, cal);
-  }
-
-
   /**
    * A method to get the event on a given date.
    *
@@ -168,7 +158,8 @@ public class PrintCommandTest {
     String eventsOnDate = getEventStringOnADate("2025-03-02T09:00", calendar, "2025-03-02T10:00");
     String event1 = "• Subject : Recurring Event Match,Start date : 2025-03-02,Start time : 09:00,"
             + "End date : 2025-03-02,End time : 10:00,isPublic : false\n";
-    String event2 = "• Subject : Match 1,Start date : 2025-03-02,Start time : 09:00,End date : 2025-03-02,"
+    String event2 = "• Subject : Match 1,Start date : 2025-03-02,Start time : 09:00," +
+            "End date : 2025-03-02,"
             + "End time : 10:00,isPublic : false\n";
     String event3 = "• Subject : Match 2,Start date : 2025-03-02,Start time : 09:00,"
             + "End date : 2025-03-02,End time : 10:00,isPublic : false\n";

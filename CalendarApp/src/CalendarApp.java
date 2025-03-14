@@ -55,6 +55,9 @@ public class CalendarApp {
         }
         if (isLastCommandExit(lines)) {
           for (String commandArgs : lines) {
+            if (commandArgs.equals("exit")) {
+              break;
+            }
             controller.execute(commandArgs, calendar);
           }
         } else {

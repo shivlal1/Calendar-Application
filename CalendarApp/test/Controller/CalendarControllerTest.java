@@ -10,6 +10,10 @@ import model.ICalendar;
 import view.ConsoleView;
 import view.View;
 
+/**
+ * Class to test the CalendarController.
+ * Passes the input to the parent classes and check for errors.
+ */
 public class CalendarControllerTest {
 
   CalendarController controler;
@@ -36,7 +40,8 @@ public class CalendarControllerTest {
 
     ICalendar calendar = new Calendar();
 
-    String command = "create event  \"multi Day@123 Event\" from 2025-09-20T12:00 to 2025-09-25T13:00";
+    String command = "create event  \"multi Day@123 Event\" from 2025-09-20T12:00 " +
+            "to 2025-09-25T13:00";
     controler.execute(command, calendar);
 
     command = "edit events name  \"multi Day@123 Event\" \"Hello\"";
@@ -76,14 +81,4 @@ public class CalendarControllerTest {
     controler.execute(command, calendar);
   }
 
-//  @Test
-//  public void emptyEdit() throws Exception {
-//
-//    thrown.expect(Exception.class);
-//    thrown.expectMessage("error :Must start with edit event");
-//    ICalendar calendar = new Calendar();
-//
-//    String command = "Ed";
-//    controler.execute(command,calendar);
-//  }
 }

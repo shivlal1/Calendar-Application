@@ -25,7 +25,7 @@ public class CalendarCsvExporter {
    */
   public String export(List<Map<String, Object>> eventList, String fileName) throws Exception {
 
-    if(eventList.size()==0){
+    if (eventList.size() == 0) {
       throw new Exception("Empty Events list");
     }
 
@@ -39,13 +39,25 @@ public class CalendarCsvExporter {
         LocalDateTime startDateTime = (LocalDateTime) event.get("startDate");
         LocalDateTime endDateTime = (LocalDateTime) event.get("endDate");
         String location = (String) event.get("location");
+        if (location == null) {
+          location = "";
+        }
+
         String description = (String) event.get("description");
+        if (description == null) {
+          description = "";
+        }
         Boolean isPublic = (Boolean) event.get("isPublic");
-        Boolean isAllDay = setIsAllDayValue();
         String startDateString = DateUtils.getCsvDate(startDateTime);
         String startTimeString = DateUtils.getCsvTime(startDateTime);
         String endDateString = DateUtils.getCsvDate(endDateTime);
         String endTimeString = DateUtils.getCsvTime(endDateTime);
+        Boolean isAllDay = false;
+
+        if (startDateString.equals(endDateString) && startTimeString.equals("00:00")
+                && endTimeString.equals("23:59")) {
+          isAllDay = true;
+        }
 
         writer.write(String.format("\"%s\",%s,%s,\"%s\",\"%s\",%b,\"%s\",\"%s\",%b\n",
                 subject, startDateString, startTimeString,
@@ -59,12 +71,5 @@ public class CalendarCsvExporter {
     }
   }
 
-  /**
-   * Sets the "All Day Event" value for events. Currently always returns false.
-   *
-   * @return false, indicating that events are not all-day by default.
-   */
-  private boolean setIsAllDayValue() {
-    return false;
-  }
+
 }

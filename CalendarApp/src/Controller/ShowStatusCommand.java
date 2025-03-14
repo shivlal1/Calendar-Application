@@ -15,9 +15,6 @@ import view.ConsoleView;
 public class ShowStatusCommand implements ICommand {
   private static final String regex = "status on (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})";
   private LocalDateTime localOnDate;
-  private String onDate;
-  private Pattern pattern;
-  private Matcher matcher;
 
   /**
    * This method validates errors in the show status command format and provides specific
@@ -33,7 +30,7 @@ public class ShowStatusCommand implements ICommand {
     if (!command.contains("status on")) {
       return "Missing or misplaced On";
     }
-    return "Invalid command";
+    return "Missing Date/invalid";
   }
 
   /**
@@ -44,6 +41,9 @@ public class ShowStatusCommand implements ICommand {
    * @throws Exception if the command format is invalid or missing required fields.
    */
   private void commandParser(String commandArgs) throws Exception {
+    String onDate;
+    Pattern pattern;
+    Matcher matcher;
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {

@@ -4,14 +4,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * This class provides utility methods for handling date and time operations.
- * It also has methods for parsing strings to LocalDateTime objects and formatting date strings.
+ * Helper class for date operations.
+ * Object cannot be created for this class.
+ * provides methods to parse string as localdatetime.
  */
 public class DateUtils {
 
-  private static final DateTimeFormatter dateTimeformat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-  private static final DateTimeFormatter csvDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-  private static final DateTimeFormatter csvTimeFormat = DateTimeFormatter.ofPattern("hh:mm a");
+  private static final DateTimeFormatter dateTimeformat =
+          DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+  private static final DateTimeFormatter csvDateFormat =
+          DateTimeFormatter.ofPattern("MM/dd/yyyy");
+  private static final DateTimeFormatter csvTimeFormat =
+          DateTimeFormatter.ofPattern("hh:mm a");
 
   public DateUtils() {
     throw new UnsupportedOperationException("Date Utility cannot be instantiated");
@@ -47,7 +51,6 @@ public class DateUtils {
 
   /**
    * Removes the 'T' character from a date string, replacing it with a space.
-   * This is useful for converting ISO 8601 date strings to a format that can be parsed by the formatter.
    *
    * @param date The date string to modify.
    * @return The modified date string with 'T' replaced by a space.

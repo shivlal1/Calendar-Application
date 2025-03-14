@@ -8,8 +8,6 @@ import org.junit.rules.ExpectedException;
 import model.Calendar;
 import model.ICalendar;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * A unit test for the ExportCommand class.
  */
@@ -25,38 +23,38 @@ public class ExportCommandTest {
 
   @Test(expected = Exception.class)
   public void testProperFileName() throws Exception {
-      command = "cal filename.csv";
-      exportCommand.execute(command, cal);
+    command = "cal filename.csv";
+    exportCommand.execute(command, cal);
   }
 
   @Test(expected = Exception.class)
   public void testProperFileName2() throws Exception {
-      command = "cal thisisaverylongfilenamethatistobeadded.csv";
-      exportCommand.execute(command, cal);
+    command = "cal thisisaverylongfilenamethatistobeadded.csv";
+    exportCommand.execute(command, cal);
   }
 
   @Test(expected = Exception.class)
   public void testMissingExportCal() throws Exception {
-      command = "filename.csv";
-      exportCommand.execute(command, cal);
+    command = "filename.csv";
+    exportCommand.execute(command, cal);
   }
 
   @Test(expected = Exception.class)
   public void testMissingFileName() throws Exception {
-      command = "cal";
-      exportCommand.execute(command, cal);
+    command = "cal";
+    exportCommand.execute(command, cal);
   }
 
   @Test(expected = Exception.class)
   public void testInvalidFileType() throws Exception {
-      command = "cal filename.png";
-      exportCommand.execute(command, cal);
+    command = "cal filename.png";
+    exportCommand.execute(command, cal);
   }
 
   @Test(expected = Exception.class)
   public void testIncorrectFileNameWithExtraWords() throws Exception {
-      command = "cal filename.csv hello there";
-      exportCommand.execute(command, cal);
+    command = "cal filename.csv hello there";
+    exportCommand.execute(command, cal);
   }
 
   @Rule
@@ -85,5 +83,6 @@ public class ExportCommandTest {
     String command = "print events";
     controler.execute(command, calendar);
   }
+
 
 }

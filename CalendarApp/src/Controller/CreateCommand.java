@@ -15,17 +15,23 @@ import utils.DateUtils;
  * parsing and executing event creation commands in a calendar system.
  */
 public class CreateCommand implements ICommand {
-  private String subject, weekdays, forTimes;
-  private String startDateTime, endDateTime, untilDateTime;
-  private String finalStartDate, finalEndDate, finalUntilDateTime;
-  private LocalDateTime localStartDateTime, localEndDateTime;
-  private String onDate, onTime;
+  private String subject;
+  private String weekdays;
+  private String forTimes;
+  private String startDateTime;
+  private String endDateTime;
+  private String untilDateTime;
+  private String finalStartDate;
+  private String finalEndDate;
+  private String finalUntilDateTime;
+  private LocalDateTime localStartDateTime;
+  private LocalDateTime localEndDateTime;
+  private String onDate;
+  private String onTime;
   private boolean isAllDayEvent;
   private boolean isRecurring;
   private boolean autoDecline;
   private Map<String, Object> metaData = new HashMap<>();
-  private Pattern pattern;
-  private Matcher matcher;
 
   private static final String regex = "^event\\s+(--autoDecline\\s+)?\"(.*?)\"\\s+(?=" +
           "from\\s+|on\\s+)(?:(?:from\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\\s+" +
@@ -48,6 +54,9 @@ public class CreateCommand implements ICommand {
    * @throws Exception if the command format is invalid.
    */
   private void commandParser(String commandArgs) throws Exception {
+    Pattern pattern;
+    Matcher matcher;
+
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {
@@ -112,6 +121,9 @@ public class CreateCommand implements ICommand {
     metaData.put("isRecurring", isRecurring);
     metaData.put("isAllDay", isAllDayEvent);
     metaData.put("autoDecline", autoDecline);
+    if (isRecurring) {
+      metaData.put("autoDecline", true);
+    }
   }
 
   /**

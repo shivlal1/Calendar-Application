@@ -54,15 +54,6 @@ public class SingleEvent extends Event {
     return newEventsList;
   }
 
-  /**
-   * Checks if auto-decline is enabled for this single event.
-   *
-   * @return false, as auto-decline is not enabled for single events.
-   */
-  @Override
-  protected boolean isAutoDeclineEnabled() {
-    return false;
-  }
 
   /**
    * Checks if the single event can be edited to a different day.
