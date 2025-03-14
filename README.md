@@ -144,6 +144,6 @@ The events being created by our program can be exported into a csv file and the 
 | Team Member | Contributions                                             |
 |-------------|-----------------------------------------------------------|
 | **Ronit**   | Implemented the **Controller** component, including command parsing, delegation, and execution logic. |
-| **Siva**    | Developed the **Model** component, including calendar event representation, data storage, and business logic. |
+| **Siva**    | Developed the **Model** component, including calendar event representation, data storage, and the flow of the execution of the program. |
 | **Ronit & Siva** | Collaboratively wrote and reviewed **unit test cases** to ensure application correctness and reliability. |
 
