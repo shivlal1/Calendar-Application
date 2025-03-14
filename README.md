@@ -11,6 +11,8 @@ This project implements a comprehensive virtual calendar application inspired by
 - **Recurring Events** (Customizable repetitions)
 - **Event Editing**
 - **Event Querying** (View events or check busy status)
+- Printing events on a given date**
+- Checking if the user is busy on a particular date**
 - **CSV Export** (Compatible with Google Calendar)
 - **Interactive and Headless Modes**
 
