@@ -28,7 +28,7 @@ java CalendarApp --mode interactive
 
 ### Headless Mode
 
-Execute commands from a file: ( commands.txt is keyword here , please enter the absolute file path after program runs)
+Execute commands from a file: ( please enter the absolute file path after program runs)
 
 ```bash
 java CalendarApp --mode headless
