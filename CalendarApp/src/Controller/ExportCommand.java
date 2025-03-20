@@ -16,8 +16,7 @@ import view.View;
  */
 public class ExportCommand implements ICommand {
   private String fileName;
-  private Pattern pattern;
-  private Matcher matcher;
+
 
   /**
    * This method parses the command arguments to extract the CSV file name.
@@ -26,6 +25,8 @@ public class ExportCommand implements ICommand {
    * @throws Exception if the command format is invalid.
    */
   private void commandParser(String commandArgs) throws Exception {
+    Pattern pattern;
+    Matcher matcher;
     String regex = "cal (.+\\.csv)";
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);

@@ -208,6 +208,12 @@ public class EditCommandTest {
     }
   }
 
+  /**
+   * A method to capture console output.
+   *
+   * @param events list of events that needs to be captured.
+   * @return filteredoutput the captured output.
+   */
   public String getViewCalendarOutput(List<Map<String, Object>> events) {
     PrintStream originalOut = System.out;
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -222,6 +228,13 @@ public class EditCommandTest {
     return filteredOutput;
   }
 
+  /**
+   * A method to get the event on a particular date.
+   *
+   * @param date     the date in String format.
+   * @param calendar the calendar object.
+   * @return the processed output.
+   */
   public String getEventStringOnADate(String date, ICalendar calendar) {
     String onDate = DateUtils.changeDateToDateTime(date);
     LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
@@ -250,8 +263,6 @@ public class EditCommandTest {
     command = "events name \"Event\" \"New Name\"";
     editCommand.execute(command, calendar);
 
-    //calendar.printEvents();
-    //view.viewEvents( calendar.getAllCalendarEvents());
 
     String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
     String event1 = "• Subject : New Name,Start date : 2025-03-01,Start time : 09:00," +

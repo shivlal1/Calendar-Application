@@ -18,14 +18,17 @@ import java.util.Map;
 import view.ConsoleView;
 import view.View;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+/**
+ * Test class to check the functionality of the export csv file.
+ */
 public class CalendarCsvExporterTest {
 
   View view;
 
   @Before
-  public void init(){
+  public void init() {
     view = new ConsoleView();
   }
 
@@ -40,23 +43,23 @@ public class CalendarCsvExporterTest {
     mapEvent.put("location", "snell");
     mapEvent.put("isPublic", true);
 
-    List<Map<String,Object>> events = new ArrayList<>();
+    List<Map<String, Object>> events = new ArrayList<>();
     events.add(mapEvent);
 
     String fileName = "testFile.csv";
     CalendarCsvExporter export = new CalendarCsvExporter();
-    String absolutePath = export.export(events,fileName);
+    String absolutePath = export.export(events, fileName);
     String expected = getViewCalendarOutput(absolutePath);
-    String actual = "Absolute Path"+absolutePath+"\n";
-    assertEquals(actual,expected);
+    String actual = "Absolute Path" + absolutePath + "\n";
+    assertEquals(actual, expected);
 
     String pathToRead = Paths.get(fileName).toAbsolutePath().toString();
 
-    List<String> readingEvents = Files.readAllLines( Paths.get(pathToRead) );
+    List<String> readingEvents = Files.readAllLines(Paths.get(pathToRead));
 
     String expectedHeader = "Subject, Start Date, Start Time, End Date, End Time, " +
             "All Day Event, Description, Location, Private";
-    assertEquals( expectedHeader, readingEvents.get(0));
+    assertEquals(expectedHeader, readingEvents.get(0));
 
     String expectedValue = "\"hello\",03/01/2025,10:00 AM,\"03/02/2025\",\"10:00 AM\"," +
             "false,\"annual meeting\",\"snell\",true";
@@ -74,11 +77,11 @@ public class CalendarCsvExporterTest {
     thrown.expectMessage("Not able to create file");
 
     Map<String, Object> mapEvent = new HashMap<>();
-    List<Map<String,Object>> events = new ArrayList<>();
+    List<Map<String, Object>> events = new ArrayList<>();
     events.add(mapEvent);
 
     CalendarCsvExporter export = new CalendarCsvExporter();
-    String absolutePath = export.export(events,"..csv");
+    String absolutePath = export.export(events, "..csv");
 
   }
 
@@ -87,12 +90,18 @@ public class CalendarCsvExporterTest {
     thrown.expect(Exception.class);
     thrown.expectMessage("Empty Events list");
 
-    List<Map<String,Object>> events = new ArrayList<>();
+    List<Map<String, Object>> events = new ArrayList<>();
 
     CalendarCsvExporter export = new CalendarCsvExporter();
-    String absolutePath = export.export(events,"hello.csv");
+    String absolutePath = export.export(events, "hello.csv");
   }
 
+  /**
+   * Function to caputure console value of absolute path.
+   *
+   * @param absolutePath absolute path as a parameter.
+   * @return string value with absolute path.
+   */
   public String getViewCalendarOutput(String absolutePath) {
     PrintStream originalOut = System.out;
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -100,7 +109,7 @@ public class CalendarCsvExporterTest {
     System.setOut(customOut);
     customOut.flush();
     int captureStartIndex = outputStream.size();
-    view.viewMessage("Absolute Path"+absolutePath);
+    view.viewMessage("Absolute Path" + absolutePath);
     System.setOut(originalOut);
     String capturedOutput = outputStream.toString();
     String filteredOutput = capturedOutput.substring(captureStartIndex);

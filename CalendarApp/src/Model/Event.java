@@ -35,13 +35,6 @@ public abstract class Event {
    */
   protected abstract List<Event> generateEventsForCalendar() throws Exception;
 
-  /**
-   * Checks if auto-decline is enabled for this event.
-   * This method must be implemented by subclasses.
-   *
-   * @return true if auto-decline is enabled; false otherwise.
-   */
-  protected abstract boolean isAutoDeclineEnabled();
 
   /**
    * Checks if the event can be edited to a different day.
@@ -59,10 +52,7 @@ public abstract class Event {
    * @return true if the start date is before the end date, else false.
    */
   protected boolean isStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
-    if (end.isAfter(start)) {
-      return true;
-    }
-    return false;
+    return end.isAfter(start);
   }
 
   /**
@@ -101,6 +91,7 @@ public abstract class Event {
    * @param newEvent The event to check for overlap.
    * @return true if there is an overlap else false.
    */
+
   protected boolean isOverlapWith(Event newEvent) {
 
     LocalDateTime newStartTime = newEvent.startDate;
@@ -108,27 +99,11 @@ public abstract class Event {
     LocalDateTime existingStartTime = this.startDate;
     LocalDateTime existingEndTime = this.endDate;
 
-    boolean isConflictExists = false;
-
-    if (newStartTime.isBefore(existingEndTime) && newEndTime.equals(existingStartTime)) {
-      isConflictExists = false;
-    }
-    if (existingStartTime.isBefore(newEndTime) && existingEndTime.equals(newStartTime)) {
-      isConflictExists = false;
-    }
-
-    if (newStartTime.isBefore(existingEndTime) && existingStartTime.isBefore(newEndTime)) {
-      isConflictExists = true;
-    }
-
-    if (existingStartTime.isBefore(newEndTime) && newStartTime.isBefore(existingEndTime)) {
-      isConflictExists = true;
-    }
-
-    if (existingStartTime.equals(newStartTime) || existingEndTime.equals(newEndTime)) {
-      isConflictExists = true;
-    }
-    return isConflictExists;
+    boolean isNoOverlap = (existingStartTime.compareTo(newStartTime) > 0 &&
+            existingStartTime.compareTo(newEndTime) >= 0) ||
+            (existingEndTime.compareTo(newEndTime) < 0 &&
+                    existingEndTime.compareTo(newStartTime) <= 0);
+    return !isNoOverlap;
   }
 
 }

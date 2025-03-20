@@ -17,8 +17,8 @@ public interface ICalendar {
    * @param subject            The subject or title of the event.
    * @param localStartDateTime The start date and time of the event.
    * @param localEndDateTime   The end date and time of the event.
-   * @param allMetaDeta        Additional metadata for the event, such as recurrence or auto-decline settings.
-   * @throws Exception If there's an error in creating the event, such as conflicts with existing events.
+   * @param allMetaDeta        Additional metadata for the event.
+   * @throws Exception If there's an error in creation like conflicts.
    */
   public void createEvent(String subject, LocalDateTime localStartDateTime,
                           LocalDateTime localEndDateTime,
@@ -33,11 +33,6 @@ public interface ICalendar {
    */
   public void editEvent(Map<String, Object> allMetaDeta) throws Exception;
 
-
-  /**
-   * Prints all events currently stored in the calendar.
-   */
-  public void printEvents();
 
   /**
    * Retrieves events that match the specified criteria (e.g., date range).

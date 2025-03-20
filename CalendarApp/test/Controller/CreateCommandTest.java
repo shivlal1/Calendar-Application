@@ -14,7 +14,6 @@ import java.util.Map;
 
 import model.Calendar;
 import model.ICalendar;
-import model.RecurringEvent;
 import utils.DateUtils;
 import view.ConsoleView;
 import view.View;
@@ -678,40 +677,6 @@ public class CreateCommandTest {
             pareStringToLocalDateTime("2025-03-11T02:00"));
   }
 
-  @Test
-  public void recEventMultipleMonths() throws Exception {
-    ICalendar calendar = new Calendar();
-    command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
-            "repeats TW for 2 times";
-    createCommand.execute(command, calendar);
-
-    String onDate = DateUtils.changeDateToDateTime("2025-03-11");
-    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
-
-    Map<String, Object> metaData = new HashMap<>();
-    metaData.put("localStartTime", newOnDate);
-
-    List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
-
-    //_______
-
-
-    PrintStream originalOut = System.out;
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    PrintStream customOut = new PrintStream(outputStream);
-    System.setOut(customOut);
-    customOut.flush();
-    int captureStartIndex = outputStream.size();
-
-    System.setOut(originalOut);
-    String capturedOutput = outputStream.toString();
-    String filteredOutput = capturedOutput.substring(captureStartIndex);
-
-    // Print the captured output
-    System.out.println("Captured Output After Specific Line:");
-    System.out.println(filteredOutput);
-
-  }
 
   /**
    * A method to check out the output of the calendar events.
@@ -1110,20 +1075,20 @@ public class CreateCommandTest {
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
-   @Test
-   public void autoDecline1() throws Exception {
+  @Test
+  public void autoDecline1() throws Exception {
 
-     thrown.expect(Exception.class);
-     thrown.expectMessage("the event conflicts with another event");
+    thrown.expect(Exception.class);
+    thrown.expectMessage("the event conflicts with another event");
 
     ICalendar calendar = new Calendar();
 
-     command = "event \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
-     createCommand.execute(command,calendar);
+    command = "event \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command, calendar);
 
-     command = "event --autoDecline \"event 2\" from 2025-03-01T09:45 to 2025-03-01T10:15";
-     createCommand.execute(command,calendar);
-   }
+    command = "event --autoDecline \"event 2\" from 2025-03-01T09:45 to 2025-03-01T10:15";
+    createCommand.execute(command, calendar);
+  }
 
   @Test
   public void autoDecline2() throws Exception {
@@ -1132,11 +1097,12 @@ public class CreateCommandTest {
 
     ICalendar calendar = new Calendar();
     command = "event --autoDecline \"event 2\" from 2025-03-01T09:45 to 2025-03-01T10:15";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
 
     command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
   }
+
   @Test
   public void autoDecline3() throws Exception {
     thrown.expect(Exception.class);
@@ -1144,11 +1110,12 @@ public class CreateCommandTest {
 
     ICalendar calendar = new Calendar();
     command = "event --autoDecline \"event 2\" from 2025-03-01T09:45 to 2025-03-01T10:15";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
 
     command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:45 to 2025-03-01T12:00";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
   }
+
   @Test
   public void autoDecline4() throws Exception {
     thrown.expect(Exception.class);
@@ -1156,10 +1123,10 @@ public class CreateCommandTest {
 
     ICalendar calendar = new Calendar();
     command = "event --autoDecline \"event 2\" from 2025-03-01T09:00 to 2025-03-01T10:15";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
 
     command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:45 to 2025-03-01T10:15";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
   }
 
   @Test
@@ -1169,21 +1136,22 @@ public class CreateCommandTest {
 
     ICalendar calendar = new Calendar();
     command = "event --autoDecline \"event 2\" from 2025-03-01T09:00 to 2025-03-01T10:00";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
 
     command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:45 to 2025-03-01T09:50";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
   }
+
   @Test
   public void autoDecline6() throws Exception {
     ICalendar calendar = new Calendar();
     command = "event --autoDecline \"event 2\" from 2025-03-01T09:00 to 2025-03-01T10:00";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
 
     command = "event --autoDecline \"SingleEvent\" from 2025-03-01T10:00 to 2025-03-01T11:50";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
 
-    assertEquals(calendar.getAllCalendarEvents().size(),2);
+    assertEquals(calendar.getAllCalendarEvents().size(), 2);
   }
 
   @Test
@@ -1192,9 +1160,9 @@ public class CreateCommandTest {
     ICalendar calendar = new Calendar();
     command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
             "repeats TW for 10 times";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
 
-    assertEquals( calendar.getAllCalendarEvents().size(),10);
+    assertEquals(calendar.getAllCalendarEvents().size(), 10);
   }
 
   @Test
@@ -1203,10 +1171,11 @@ public class CreateCommandTest {
     ICalendar calendar = new Calendar();
     command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
             "repeats TW for 0 times";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
 
-    assertEquals( calendar.getAllCalendarEvents().size(),0);
+    assertEquals(calendar.getAllCalendarEvents().size(), 0);
   }
+
   @Test
   public void autoDeclineEnable() throws Exception {
 
@@ -1215,11 +1184,11 @@ public class CreateCommandTest {
 
     ICalendar calendar = new Calendar();
     command = "event \"Single Event\" from 2025-03-11T01:00 to 2025-03-11T02:00";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
 
     command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T02:00 " +
             "repeats TW for 5 times";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
 
     view.viewEvents(calendar.getAllCalendarEvents());
 
@@ -1236,7 +1205,7 @@ public class CreateCommandTest {
 
     command = "event \"Recurring Event\" from 2025-03-11T01:00 to 2025-03-11T00:55 " +
             "repeats TW for 5 times";
-    createCommand.execute(command,calendar);
+    createCommand.execute(command, calendar);
 
   }
 

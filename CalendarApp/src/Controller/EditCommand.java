@@ -15,12 +15,14 @@ import utils.DateUtils;
  */
 public class EditCommand implements ICommand {
   private String eventName;
-  private String start, end;
-  private String property, newValue;
-  private LocalDateTime localStartTime, localEndTime;
+  private String start;
+  private String end;
+  private String property;
+  private String newValue;
+  private LocalDateTime localStartTime;
+  private LocalDateTime localEndTime;
   private Map<String, Object> metaData = new HashMap<>();
-  private Pattern pattern;
-  private Matcher matcher;
+
 
   private static final String regex = "^event(?:s)?\\s+" +
           "(?<property>\\S+)\\s+" +
@@ -47,6 +49,8 @@ public class EditCommand implements ICommand {
    * @throws Exception if there's an error while parsing the fields.
    */
   private void commandParser(String commandArgs) throws Exception {
+    Pattern pattern;
+    Matcher matcher;
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {
@@ -131,8 +135,6 @@ public class EditCommand implements ICommand {
       if (!command.matches(".*with\\s+\".*?\".*")) {
         return ("Missing or incorrect 'newValue' format (Expected: with \"NewValue\")");
       }
-    } else if (!command.matches(".*\".*?\"$")) {
-      return ("Missing 'newValue'");
     }
     return "Invalid command: Does not match expected format.";
   }

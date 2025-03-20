@@ -31,9 +31,7 @@ public class CalendarController implements ICommand {
    * This method splits a given string into two parts, the first word and the rest of the string.
    *
    * @param s The input string to be split.
-   * @return An array of two strings, where the first element is the first word
-   * and the second element is the rest of the string. If there's no space
-   * in the input string, the second element will be an empty string.
+   * @return An array of two strings.
    */
   private String[] splitString(String s) {
     int firstSpaceIndex = s.indexOf(" ");

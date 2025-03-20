@@ -17,8 +17,8 @@ import view.ConsoleView;
  * printing events within a specified time range from a calendar.
  */
 public class PrintCommand implements ICommand {
-  private String startDate, endDate;
-  private LocalDateTime localStart, localEnd;
+  private LocalDateTime localStart;
+  private LocalDateTime localEnd;
   private Map<String, Object> metaData;
   private Pattern pattern;
   private Matcher matcher;
@@ -42,8 +42,9 @@ public class PrintCommand implements ICommand {
    * @return a string describing the error in the command format.
    */
   private String diagnoseCommandError(String command) {
-    if (!command.startsWith("events"))
+    if (!command.startsWith("events")) {
       return "Missing events";
+    }
     boolean hasFrom = command.contains("from");
     boolean hasTo = command.contains("to");
     boolean hasOn = command.contains("on");
@@ -69,11 +70,17 @@ public class PrintCommand implements ICommand {
    * @throws Exception if the command format is invalid or missing required fields.
    */
   private void commandParser(String commandArgs) throws Exception {
+    Pattern pattern;
+    Matcher matcher;
+    String startDate;
+    String endDate;
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {
       throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
+
+
     startDate = matcher.group(1) != null ? matcher.group(1) : matcher.group(3);
     endDate = matcher.group(2);
     startDate = DateUtils.removeTinDateTime(startDate);

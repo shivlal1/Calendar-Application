@@ -95,6 +95,7 @@ public class Calendar implements ICalendar {
    * @param property The property to update.
    * @param newValue The new value for the property.
    * @param event    The event to update.
+   * @throws Exception throws exception for invalid property.
    */
   private void setPropertyValue(String property, String newValue, Event event) throws Exception {
     switch (property) {
@@ -141,7 +142,7 @@ public class Calendar implements ICalendar {
       if (!(newDate.toLocalDate().equals(event.endDate.toLocalDate())
               && newDate.isBefore(event.endDate))) {
         throw new Exception("invalid date for recurring event");
-      }else{
+      } else {
         event.startDate = newDate;
       }
     }
@@ -152,6 +153,7 @@ public class Calendar implements ICalendar {
    *
    * @param event    The event to update.
    * @param newValue The new end date as a string.
+   * @throws Exception exception if invalid start or end time is given.
    */
   private void updateEndDate(Event event, String newValue) throws Exception {
     LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
@@ -390,7 +392,7 @@ public class Calendar implements ICalendar {
     List<Event> allEvents = event.generateEventsForCalendar();
 
 
-      putGeneratedEventsIntoCalendar(allEvents, (Boolean) allMetaDeta.get("autoDecline"));
+    putGeneratedEventsIntoCalendar(allEvents, (Boolean) allMetaDeta.get("autoDecline"));
 
   }
 

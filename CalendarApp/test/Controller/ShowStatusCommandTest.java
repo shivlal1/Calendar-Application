@@ -16,7 +16,9 @@ import view.View;
 import static org.junit.Assert.assertEquals;
 import static utils.DateUtils.pareStringToLocalDateTime;
 
-
+/**
+ * Test class to check the functionality of show status.
+ */
 public class ShowStatusCommandTest {
   ICommand showStatusCommand;
   ICommand createCommand;
@@ -91,6 +93,12 @@ public class ShowStatusCommandTest {
     showStatusCommand.execute(command, cal);
   }
 
+  /**
+   * Function to caputre the print statement from console.
+   *
+   * @param status boolean value of the status.
+   * @return string value of the captured boolean.
+   */
   public String captureStatusOutput(boolean status) {
     PrintStream originalOut = System.out;
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -126,6 +134,7 @@ public class ShowStatusCommandTest {
     String expectedMessge = captureStatusOutput(expectedStatus);
     assertEquals(expectedMessge, "status : busy\n");
   }
+
   @Test
   public void multiEventSingleDayBusy() throws Exception {
     ICalendar calendar = new Calendar();
@@ -196,7 +205,6 @@ public class ShowStatusCommandTest {
     command = "status 2025-02-01T:05:00";
     showStatusCommand.execute(command, cal);
   }
-
 
 
 }

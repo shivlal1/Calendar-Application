@@ -71,10 +71,7 @@ public class RecurringEvent extends Event {
     DayOfWeek day = date.getDayOfWeek();
     char dayNameAsChar = getDayAbbreviation(day.name());
     String weekdayText = (String) allMetaDetails.get("weekdays");
-    if (weekdayText.indexOf(dayNameAsChar) != -1) {
-      return true;
-    }
-    return false;
+    return (weekdayText.indexOf(dayNameAsChar) != -1);
   }
 
   /**
@@ -160,15 +157,6 @@ public class RecurringEvent extends Event {
 
   }
 
-  /**
-   * Checks if auto-decline is enabled for this recurring event.
-   *
-   * @return true if auto-decline is enabled; false otherwise.
-   */
-  @Override
-  protected boolean isAutoDeclineEnabled() {
-    return true;
-  }
 
   /**
    * Converts a day of the week to its abbreviation (e.g., Monday to 'M').
@@ -177,23 +165,21 @@ public class RecurringEvent extends Event {
    * @return The abbreviation of the day.
    */
   private char getDayAbbreviation(String day) {
-    switch (day) {
-      case "MONDAY":
-        return 'M';
-      case "TUESDAY":
-        return 'T';
-      case "WEDNESDAY":
-        return 'W';
-      case "THURSDAY":
-        return 'R';
-      case "FRIDAY":
-        return 'F';
-      case "SATURDAY":
-        return 'S';
-      case "SUNDAY":
-        return 'U';
-      default:
-        return '?';
+
+    if (day.equals("TUESDAY")) {
+      return 'T';
+    } else if (day.equals("WEDNESDAY")) {
+      return 'W';
+    } else if (day.equals("THURSDAY")) {
+      return 'R';
+    } else if (day.equals("FRIDAY")) {
+      return 'F';
+    } else if (day.equals("SATURDAY")) {
+      return 'S';
+    } else if (day.equals("SUNDAY")) {
+      return 'U';
+    } else {
+      return 'M';
     }
   }
 
