@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import controller.CalendarController;
+import controller.CalendarManager;
+import controller.ICalendarManager;
 import model.Calendar;
 import model.ICalendar;
 import view.ConsoleView;
@@ -32,6 +34,7 @@ public class CalendarApp {
     ICalendar calendar = new Calendar();
     ConsoleView view = new ConsoleView();
     CalendarController controller = new CalendarController();
+    ICalendarManager calendarManager = new CalendarManager();
     Scanner scanner = new Scanner(System.in);
 
     if (isArgsStartingWithMode(args)) {
@@ -42,7 +45,11 @@ public class CalendarApp {
           if (commandArgs.equals("exit")) {
             break;
           }
-          controller.execute(commandArgs, calendar);
+          if (commandArgs.contains("--name")) {
+            calendarManager.execute(commandArgs);
+          } else {
+            controller.execute(commandArgs, calendar);
+          }
         }
       } else if (isHeadlessMode(args)) {
         view.viewMessage("Headless mode");
