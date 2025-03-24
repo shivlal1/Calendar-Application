@@ -21,7 +21,7 @@ public class EditCommand implements ICommand {
   private String newValue;
   private LocalDateTime localStartTime;
   private LocalDateTime localEndTime;
-  private Map<String, Object> metaData = new HashMap<>();
+  private Map<String, Object> metaData;
 
 
   private static final String regex = "^event(?:s)?\\s+" +

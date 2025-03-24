@@ -48,7 +48,6 @@ public class ExportCommand implements ICommand {
     String filePath = exporter.export(events, fileName);
     View displayView = new ConsoleView();
     displayView.viewMessage("Absolute Path " + filePath);
-
   }
 
   /**

@@ -11,7 +11,7 @@ import model.ICalendar;
  */
 public class CalendarController implements ICommand {
 
-  Map<String, ICommand> commandMap;
+  private Map<String, ICommand> commandMap;
 
   /**
    * Constructs a new CalendarController and initializes the commandMap with
