@@ -31,7 +31,7 @@ public class CreateCommand implements ICommand {
   private boolean isAllDayEvent;
   private boolean isRecurring;
   private boolean autoDecline;
-  private Map<String, Object> metaData = new HashMap<>();
+  private Map<String, Object> metaData;
 
   private static final String regex = "^event\\s+(--autoDecline\\s+)?\"(.*?)\"\\s+(?=" +
           "from\\s+|on\\s+)(?:(?:from\\s+(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\\s+" +
