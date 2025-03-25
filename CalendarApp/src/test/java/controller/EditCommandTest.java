@@ -69,15 +69,19 @@ public class EditCommandTest {
     }
   }
 
-  @Test
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test()
   public void missingFromTo() throws Exception {
-    try {
-      command = "event name \"Meeting\" 2025-03-01T09:00 to 2025-03-01T10:00 with " +
-              "\"Weekly Meeting\"";
-      editCommand.execute(command, cal);
-    } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Missing From");
-    }
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("Invalid Command Missing From");
+
+    command = "event name \"Meeting\" 2025-03-01T09:00 to 2025-03-01T10:00 with " +
+            "\"Weekly Meeting\"";
+    editCommand.execute(command, cal);
   }
 
   @Test
@@ -401,19 +405,27 @@ public class EditCommandTest {
     command = "events isPublic \"Annual Meeting\" \"true\"";
     editCommand.execute(command, calendar);
 
-    view.viewEvents(calendar.getAllCalendarEvents());
-    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
     String event1 = "• Subject : Annual Meeting,Start date : 2025-03-17,Start time : 01:00," +
             "End date : 2025-03-17,End time : 02:00,location : snell,description : empty event," +
             "isPublic : true\n";
     String event2 = "• Subject : Annual Meeting,Start date : 2025-03-24,Start time : 01:00," +
             "End date : 2025-03-24," +
             "End time : 02:00,location : snell,description : empty event,isPublic : true\n";
-    String event3 = "• Subject : Annual Meeting,Start date : 2025-03-31,Start time : 01:00," +
-            "End date : 2025-03-31,End time : 02:00,location : snell,description : empty event," +
+    String event3 = "• Subject : Event 2,Start date : 2025-03-31,Start time : 01:00," +
+            "End date : 2025-03-31,End time : 02:05,location : snell,description : empty event," +
             "isPublic : true\n";
 
+    command = "events name \"Annual Meeting\" from 2025-03-31T01:00 to 2025-03-31T02:00  with \"Event 2\"";
+    editCommand.execute(command, calendar);
+
+    command = "events endDate \"Event 2\" \"2025-03-31T02:05\"";
+    editCommand.execute(command, calendar);
+
+    view.viewEvents(calendar.getAllCalendarEvents());
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
+
     assertEquals(event1 + event2 + event3, actualOutput);
+
   }
 
 
@@ -451,9 +463,28 @@ public class EditCommandTest {
     assertEquals(event1 + event2 + event3, actualOutput);
   }
 
+  @Test
+  public void changePropertiesOfRecurringEvent() throws Exception {
+    // Recurring Event creation with future until time
+    ICalendar calendar = new Calendar();
+    command = "event \"Annual Meet\" from 2025-03-17T01:00 to 2025-03-17T06:00 " +
+            "repeats M until 2025-03-17T06:00";
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+    createCommand.execute(command, calendar);
+
+    command = "events startDate \"Annual Meet\" \"2025-03-17T03:00 \"";
+    editCommand.execute(command, calendar);
+
+    command = "events endDate \"Annual Meet\" \"2025-03-17T04:00 \"";
+    editCommand.execute(command, calendar);
+
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
+    String event1 = "• Subject : Annual Meet,Start date : 2025-03-17,Start time : 03:00," +
+            "End date : 2025-03-17,End time : 04:00,isPublic : false\n";
+
+    assertEquals(event1, actualOutput);
+  }
+
 
   @Test
   public void invalidStartDatesEditSingleEvent() throws Exception {
@@ -504,6 +535,38 @@ public class EditCommandTest {
     command = "events startDate \"Annual Meet\" \"2025-03-15T01:01\"";
     editCommand.execute(command, calendar);
   }
+
+  @Test
+  public void invalidStartDatesEditRecurringEvent2() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("invalid date for recurring event");
+    ICalendar calendar = new Calendar();
+
+    //change start date  after end date
+    command = "event \"Annual Meet\" from 2025-03-15T01:00 to 2025-03-15T02:00 " +
+            "repeats M until 2025-03-31T06:00";
+    createCommand.execute(command, calendar);
+
+    command = "events startDate \"Annual Meet\" \"2025-03-15T02:01\"";
+    editCommand.execute(command, calendar);
+  }
+
+
+  @Test
+  public void nomatchupdate() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("no matching update");
+    ICalendar calendar = new Calendar();
+
+    //change start date  after end date
+    command = "event \"Annual Meet\" from 2025-03-15T01:00 to 2025-03-15T02:00 " +
+            "repeats M until 2025-03-31T06:00";
+    createCommand.execute(command, calendar);
+
+    command = "events startDate \"Annual\" \"2025-03-15T02:01\"";
+    editCommand.execute(command, calendar);
+  }
+
 
   @Test
   public void invalidEndDate() throws Exception {
@@ -682,5 +745,8 @@ public class EditCommandTest {
             " 2025-03-02," + "End time : 10:00,isPublic : false\n";
     assertEquals(event1 + event2 + event3, actualOutput);
   }
+
+
+
 
 }

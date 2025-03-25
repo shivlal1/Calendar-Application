@@ -22,7 +22,7 @@ public class CalendarExtended
   @Override
   public void changeCalendarProperty(String property, String newValue) {
     if (property.equals("name")) {
-      this.calendarName = calendarName;
+      this.calendarName = newValue;
     } else if (property.equals("timeZone")) {
       changeMyTimeZone(newValue);
     }

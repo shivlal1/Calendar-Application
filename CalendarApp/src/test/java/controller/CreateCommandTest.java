@@ -492,13 +492,13 @@ public class CreateCommandTest {
     command = "event --autoDecline \"Hello\" from 2025-09-20T12:00 to 2025-09-20T13:00";
     createCommand.execute(command, calendar);
 
-    String onDate = DateUtils.changeDateToDateTime("2025-09-20");
-    LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
-
-    Map<String, Object> metaData = new HashMap<>();
-    metaData.put("localStartTime", newOnDate);
-
-    List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
+    command = "events on \"2025-09-20\"";
+    printCommand.execute(command, calendar);
+    String output = captureStatusOutputOfPrintCommand(command, calendar);
+    String actual = "• Subject : Hello,Start date : 2025-09-20,Start time : 12:00," +
+            "End date : 2025-09-20,End time : 13:00,isPublic : false\n";
+    assertEquals(output, actual);
+    List<Map<String, Object>> events = calendar.getAllCalendarEvents();
 
     assertEquals(events.size(), 1);
     Map<String, Object> firstEvent = events.get(0);
@@ -508,6 +508,20 @@ public class CreateCommandTest {
     assertEquals((LocalDateTime) firstEvent.get("endDate"),
             pareStringToLocalDateTime("2025-09-20T13:00"));
 
+  }
+
+  public String captureStatusOutputOfPrintCommand(String command, ICalendar cal) throws Exception {
+    PrintStream originalOut = System.out;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    PrintStream customOut = new PrintStream(outputStream);
+    System.setOut(customOut);
+    customOut.flush();
+    int captureStartIndex = outputStream.size();
+    printCommand.execute(command, cal);
+    System.setOut(originalOut);
+    String capturedOutput = outputStream.toString();
+    String filteredOutput = capturedOutput.substring(captureStartIndex);
+    return filteredOutput;
   }
 
   @Test
@@ -642,6 +656,26 @@ public class CreateCommandTest {
     metaData.put("localStartTime", newOnDate);
 
     List<Map<String, Object>> events = calendar.getMatchingEvents(metaData);
+
+    assertEquals(events.size(), 1);
+    Map<String, Object> firstEvent = events.get(0);
+    assertEquals((String) firstEvent.get("subject"), "All Day Event");
+    assertEquals((LocalDateTime) firstEvent.get("startDate"),
+            pareStringToLocalDateTime("2025-09-20T00:00"));
+    assertEquals((LocalDateTime) firstEvent.get("endDate"),
+            pareStringToLocalDateTime("2025-09-20T23:59"));
+  }
+
+  @Test
+  public void allDayEvent2() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event \"All Day Event\" on 2025-09-20T12:00";
+    createCommand.execute(command, calendar);
+
+    command = "events on \"2025-09-20\"";
+    printCommand.execute(command, calendar);
+
+    List<Map<String, Object>> events = calendar.getAllCalendarEvents();
 
     assertEquals(events.size(), 1);
     Map<String, Object> firstEvent = events.get(0);
@@ -1114,6 +1148,9 @@ public class CreateCommandTest {
 
     command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:45 to 2025-03-01T12:00";
     createCommand.execute(command, calendar);
+
+    assertEquals(calendar.getAllCalendarEvents().size(), 2);
+
   }
 
   @Test
@@ -1127,6 +1164,9 @@ public class CreateCommandTest {
 
     command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:45 to 2025-03-01T10:15";
     createCommand.execute(command, calendar);
+
+    assertEquals(calendar.getAllCalendarEvents().size(), 2);
+
   }
 
   @Test
@@ -1140,6 +1180,8 @@ public class CreateCommandTest {
 
     command = "event --autoDecline \"SingleEvent\" from 2025-03-01T09:45 to 2025-03-01T09:50";
     createCommand.execute(command, calendar);
+    assertEquals(calendar.getAllCalendarEvents().size(), 2);
+
   }
 
   @Test
@@ -1151,6 +1193,17 @@ public class CreateCommandTest {
     command = "event --autoDecline \"SingleEvent\" from 2025-03-01T10:00 to 2025-03-01T11:50";
     createCommand.execute(command, calendar);
 
+    assertEquals(calendar.getAllCalendarEvents().size(), 2);
+  }
+
+  @Test
+  public void autoDecline7() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event --autoDecline \"event 2\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "event --autoDecline \"SingleEvent\" from 2025-03-01T10:00 to 2025-03-01T10:50";
+    createCommand.execute(command, calendar);
     assertEquals(calendar.getAllCalendarEvents().size(), 2);
   }
 
@@ -1209,5 +1262,19 @@ public class CreateCommandTest {
 
   }
 
+
+  @Test
+  public void autoDecline9() throws Exception {
+
+    ICalendar calendar = new Calendar();
+    command = "event --autoDecline \"event 2\" from 2025-03-24T10:00 to 2025-03-24T12:00";
+    createCommand.execute(command, calendar);
+
+    command = "event --autoDecline \"SingleEvent\" from 2025-03-24T12:00 to 2025-03-24T14:00";
+    createCommand.execute(command, calendar);
+
+    System.out.println("size " + calendar.getAllCalendarEvents().size());
+    assertEquals(2, calendar.getAllCalendarEvents().size());
+  }
 
 }

@@ -206,5 +206,37 @@ public class ShowStatusCommandTest {
     showStatusCommand.execute(command, cal);
   }
 
+  @Test
+  public void statustest() throws Exception {
+    ICalendar calendar = new Calendar();
+    command = "event --autoDecline \"Recurring Event\" from 2025-03-01T09:00 to 2025-03-01T10:00 " +
+            "repeats SU for 7 times";
+    createCommand.execute(command, calendar);
+
+
+    command = "status on 2025-03-01T09:00";
+
+    String expectedMessge = captureStatusOutputOfPrintCommand(command, calendar);
+
+
+    assertEquals(expectedMessge, "status : busy\n");
+  }
+
+  public String captureStatusOutputOfPrintCommand(String command, ICalendar cal) throws Exception {
+
+    PrintStream originalOut = System.out;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    PrintStream customOut = new PrintStream(outputStream);
+    System.setOut(customOut);
+    customOut.flush();
+    int captureStartIndex = outputStream.size();
+    showStatusCommand.execute(command, cal);
+    System.setOut(originalOut);
+    String capturedOutput = outputStream.toString();
+    String filteredOutput = capturedOutput.substring(captureStartIndex);
+    return filteredOutput;
+
+  }
+
 
 }

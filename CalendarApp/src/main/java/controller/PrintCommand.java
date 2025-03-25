@@ -53,12 +53,7 @@ public class PrintCommand implements ICommand {
     if (!hasFrom && !hasOn) {
       return ("Missing From/On");
     }
-    if (!hasFrom && hasTo) {
-      return "Missing From";
-    }
-    if (!hasFrom && !hasTo && !hasOn) {
-      return "Missing On";
-    }
+
     return "Invalid command: Does not match expected format.";
   }
 
@@ -91,23 +86,19 @@ public class PrintCommand implements ICommand {
     if (endDate != null) {
       localEnd = DateUtils.stringToLocalDateTime(endDate);
     }
-    addValuesInMetaDataObject();
   }
 
-  /**
-   * This method adds the parsed value to the metadata map for event filtering.
-   */
-  private void addValuesInMetaDataObject() {
-    metaData.put("localStartTime", localStart);
-    metaData.put("localEndTime", localEnd);
-  }
 
   /**
-   * This method handles printing events based on the parsed metadata.
+   * This method adds the parsed value to the metadata map for event filtering
+   * It send the metadata to the console view
    *
    * @param calendar The ICalendar object containing events to be printed.
    */
   private void printCommandUtil(ICalendar calendar) {
+    metaData.put("localStartTime", localStart);
+    metaData.put("localEndTime", localEnd);
+
     List<Map<String, Object>> eventDetails = calendar.getMatchingEvents(metaData);
     ConsoleView v = new ConsoleView();
     v.viewEvents(eventDetails);

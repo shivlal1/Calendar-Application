@@ -7,7 +7,7 @@ import model.ICalendar;
  * in a calendar system. It has a method for executing commands with given
  * arguments on a calendar object.
  */
-public interface ICommand extends ICommandExtend {
+public interface ICommand {
 
   /**
    * Executes a command with the provided arguments on the specified calendar.

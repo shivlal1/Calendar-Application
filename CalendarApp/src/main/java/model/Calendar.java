@@ -139,11 +139,10 @@ public class Calendar implements ICalendar {
         throw new Exception("start date should be before end date");
       }
     } else {
-      if (!(newDate.toLocalDate().equals(event.endDate.toLocalDate())
-              && newDate.isBefore(event.endDate))) {
-        throw new Exception("invalid date for recurring event");
-      } else {
+      if ((newDate.toLocalDate().equals(event.endDate.toLocalDate()) && newDate.isBefore(event.endDate))) {
         event.startDate = newDate;
+      } else {
+        throw new Exception("invalid date for recurring event");
       }
     }
   }
@@ -157,11 +156,6 @@ public class Calendar implements ICalendar {
    */
   private void updateEndDate(Event event, String newValue) throws Exception {
     LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
-
-    if ((event.canBeEditedToDifferentDay() && newDate.isAfter(event.startDate))
-            || newDate.toLocalDate().equals(event.startDate.toLocalDate())) {
-      event.endDate = (newDate);
-    }
 
     if (event.canBeEditedToDifferentDay()) {
       if (newDate.isAfter(event.startDate)) {
@@ -185,10 +179,9 @@ public class Calendar implements ICalendar {
    * @param data Metadata containing edit details.
    * @return true if the edit is by event name and start time; false otherwise.
    */
-  private boolean isEditByEventNameAndStartTime(Map<String, Object> data) {
-    return (data.get("eventName") != null && data.get("startTime") != null && data.get("endTime")
-            == null);
-  }
+//  private boolean isEditByEventTime(Map<String, Object> data) {
+//    return (data.get("eventName") != null && data.get("startTime") != null);
+//  }
 
   /**
    * This method checks if an edit operation is by event name only.
@@ -196,10 +189,10 @@ public class Calendar implements ICalendar {
    * @param data Metadata containing edit details.
    * @return true if the edit is by event name only; false otherwise.
    */
-  private boolean isEditByEventName(Map<String, Object> data) {
-    return (data.get("eventName") != null && data.get("startTime") == null && data.get("endTime")
-            == null);
-  }
+//  private boolean isEditByEventName(Map<String, Object> data) {
+//    return (data.get("eventName") != null && data.get("startTime") == null && data.get("endTime")
+//            == null);
+//  }
 
   /**
    * This method checks if an edit operation is by event name and both start and end times.
@@ -207,10 +200,10 @@ public class Calendar implements ICalendar {
    * @param data Metadata containing edit details.
    * @return true if the edit is by event name and both start and end times; false otherwise.
    */
-  private boolean isEditByEventNameAndTime(Map<String, Object> data) {
-    return (data.get("eventName") != null && data.get("startTime") != null && data.get("endTime")
-            != null);
-  }
+//  private boolean isEditByEventNameAndTime(Map<String, Object> data) {
+//    return (data.get("eventName") != null && data.get("startTime") != null && data.get("endTime")
+//            != null);
+//  }
 
   /**
    * Edits an event based on the provided metadata.
@@ -223,16 +216,21 @@ public class Calendar implements ICalendar {
     String newValue = (String) data.get("newValue");
     String property = (String) data.get("property");
     String eventName = (String) data.get("eventName");
+    LocalDateTime localStartTime = data.get("localStartTime") != null ?
+            (LocalDateTime) data.get("localStartTime") : null;
+    LocalDateTime localEndTime = data.get("localEndTime") != null ?
+            (LocalDateTime) data.get("localEndTime") : null;
 
-    if (isEditByEventNameAndStartTime(data)) {
-      updateMatchingEvents(eventName, (LocalDateTime) data.get("localStartTime"),
-              null, newValue, property);
-    } else if (isEditByEventName(data)) {
-      updateMatchingEvents(eventName, null, null, newValue, property);
-    } else if (isEditByEventNameAndTime(data)) {
-      updateMatchingEvents(eventName, (LocalDateTime) data.get("localStartTime"),
-              (LocalDateTime) data.get("localEndTime"), newValue, property);
-    }
+    updateMatchingEvents(eventName, localStartTime, localEndTime, newValue, property);
+
+//    if (isEditByEventTime(data) && data.get("endTime")==null ) {
+//      updateMatchingEvents(eventName, localStartTime, localEndTime, newValue, property);
+//    } else if (isEditByEventName(data)) {
+//      updateMatchingEvents(eventName, localStartTime, localEndTime, newValue, property);
+//    } else if (isEditByEventTime(data) && data.get("endTime")!=null) {
+//      updateMatchingEvents(eventName, localStartTime, localEndTime, newValue, property);
+//    }
+
   }
 
   /**
@@ -288,7 +286,7 @@ public class Calendar implements ICalendar {
     if (isStartToEndDatePrintCommand(allMetaDeta)) {
       eventDetailsList = getEventsInBetween(startDateTime,
               (LocalDateTime) allMetaDeta.get("localEndTime"));
-    } else if (isOnDatePrintCommand(allMetaDeta)) {
+    } else if (allMetaDeta.get("localEndTime") == null) {
       eventDetailsList = getEventsOnDate(startDateTime);
     }
     return eventDetailsList;
@@ -304,15 +302,6 @@ public class Calendar implements ICalendar {
     return (allMetaDeta.get("localStartTime") != null && allMetaDeta.get("localEndTime") != null);
   }
 
-  /**
-   * Checks if the metadata indicates a print command for a single date.
-   *
-   * @param allMetaDeta Metadata containing print criteria.
-   * @return true if it's a print command for a single date; false otherwise.
-   */
-  private boolean isOnDatePrintCommand(Map<String, Object> allMetaDeta) {
-    return (allMetaDeta.get("localStartTime") != null);
-  }
 
   /**
    * Converts an event into a map for easier data access.

@@ -1,7 +1,9 @@
 package controller;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -37,32 +39,50 @@ public class PrintCommandTest {
 
   @Test
   public void testMissingTo() throws Exception {
-    try {
-      command = "events from 2025-04-01T10:00 2025-04-04";
-      printCommand.execute(command, cal);
-    } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Missing To");
-    }
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("Invalid Command Missing To");
+
+    command = "events from 2025-04-01T10:00 2025-04-04";
+    printCommand.execute(command, cal);
+
   }
 
   @Test
   public void testMissingFrom() throws Exception {
-    try {
-      command = "events 2025-04-01T10:00 2025-04-04";
-      printCommand.execute(command, cal);
-    } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Missing From/On");
-    }
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("Invalid Command Missing From/On");
+
+    command = "events 2025-04-01T10:00 2025-04-04";
+    printCommand.execute(command, cal);
   }
+
+
+  @Test
+  public void testMissingFromWithOn() throws Exception {
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("Invalid command: Does not match expected format.");
+
+    command = "events 2025-04-01T10:00 on  hello";
+    printCommand.execute(command, cal);
+  }
+
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
 
   @Test
   public void testMissingDate() throws Exception {
-    try {
-      command = "events";
-      printCommand.execute(command, cal);
-    } catch (Exception e) {
-      assertEquals(e.getMessage(), "Invalid Command Missing From/On");
-    }
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("Invalid Command Missing From/On");
+
+    command = "events";
+    printCommand.execute(command, cal);
+
   }
 
   @Test
@@ -205,4 +225,71 @@ public class PrintCommandTest {
 
     assertEquals(eventsOnDate, "");
   }
+
+  @Test
+  public void printOnEventFullFlowTest() throws Exception {
+    ICalendar calendar = new Calendar();
+
+    command = "event \"Recurring Event Match\" from 2025-03-02T09:00 to  2025-03-02T10:00 " +
+            "repeats U for 2 times";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Match 1\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Match 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "events on \"2025-03-01\"";
+    String eventsOnDate = captureStatusOutputOfPrintCommand(command, calendar);
+
+    assertEquals(eventsOnDate, "• Subject : Event 1,Start date : 2025-03-01,Start time : 09:00," +
+            "End date : 2025-03-05,End time : 10:00,isPublic : false\n");
+  }
+
+  @Test
+  public void printFromToEventFullFlowTest() throws Exception {
+    ICalendar calendar = new Calendar();
+
+    command = "event \"Recurring Event Match\" from 2025-03-02T09:00 to  2025-03-02T10:00 " +
+            "repeats U for 2 times";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-05T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Match 1\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Match 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "events from \"2025-03-01T09:00\" to \"2025-03-05T10:00\"";
+    String eventsOnDate = captureStatusOutputOfPrintCommand(command, calendar);
+
+    String event1 = "• Subject : Recurring Event Match,Start date : 2025-03-02,Start time : 09:00," +
+            "End date : 2025-03-02,End time : 10:00,isPublic : false\n";
+    String event2 = "• Subject : Event 1,Start date : 2025-03-01,Start time : 09:00,End date : 2025-03-05," +
+            "End time : 10:00,isPublic : false\n";
+    String event3 = "• Subject : Match 1,Start date : 2025-03-02,Start time : 09:00,End date : 2025-03-02," +
+            "End time : 10:00,isPublic : false\n";
+    String event4 = "• Subject : Match 2,Start date : 2025-03-02,Start time : 09:00,End date : 2025-03-02," +
+            "End time : 10:00,isPublic : false\n";
+
+    assertEquals(eventsOnDate, event1 + event2 + event3 + event4);
+  }
+
+  public String captureStatusOutputOfPrintCommand(String command, ICalendar cal) throws Exception {
+    PrintStream originalOut = System.out;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    PrintStream customOut = new PrintStream(outputStream);
+    System.setOut(customOut);
+    customOut.flush();
+    int captureStartIndex = outputStream.size();
+    printCommand.execute(command, cal);
+    System.setOut(originalOut);
+    String capturedOutput = outputStream.toString();
+    String filteredOutput = capturedOutput.substring(captureStartIndex);
+    return filteredOutput;
+  }
+
 }

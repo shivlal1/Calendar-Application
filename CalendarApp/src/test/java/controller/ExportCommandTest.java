@@ -5,8 +5,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.file.Paths;
+
 import model.Calendar;
 import model.ICalendar;
+
+import static org.junit.Assert.assertEquals;
+import static utils.DateUtils.pareStringToLocalDateTime;
 
 /**
  * A unit test for the ExportCommand class.
@@ -15,6 +22,7 @@ public class ExportCommandTest {
   ICommand exportCommand;
   ICalendar cal = new Calendar();
   String command;
+  CreateCommand createCommand;
 
   @Before
   public void init() {
@@ -84,5 +92,34 @@ public class ExportCommandTest {
     controler.execute(command, calendar);
   }
 
+
+  @Test
+  public void createAsingleDayAllDay() throws Exception {
+
+    ICalendar calendar = new Calendar();
+    createCommand = new CreateCommand();
+    command = "event \"Single Event\" on 2025-05-12T01:00";
+    createCommand.execute(command, calendar);
+    assertEquals(calendar.isUserBusy(pareStringToLocalDateTime("2025-05-12T01:05")), true);
+    command = "cal filename.csv";
+    exportCommand.execute(command, calendar);
+    String actualOutput = captureStatusOutputOfExportCommand(command, calendar);
+    String absolutePath = Paths.get("filename.csv").toAbsolutePath().toString();
+    assertEquals("Absolute Path " + absolutePath + "\n", actualOutput);
+  }
+
+  public String captureStatusOutputOfExportCommand(String command, ICalendar cal) throws Exception {
+    PrintStream originalOut = System.out;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    PrintStream customOut = new PrintStream(outputStream);
+    System.setOut(customOut);
+    customOut.flush();
+    int captureStartIndex = outputStream.size();
+    exportCommand.execute(command, cal);
+    System.setOut(originalOut);
+    String capturedOutput = outputStream.toString();
+    String filteredOutput = capturedOutput.substring(captureStartIndex);
+    return filteredOutput;
+  }
 
 }

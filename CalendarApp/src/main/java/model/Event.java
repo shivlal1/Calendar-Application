@@ -56,36 +56,6 @@ public abstract class Event {
   }
 
   /**
-   * Returns a string representation of the event, including its subject, start and end dates,
-   * description, location, and whether it is public.
-   *
-   * @return A string containing the event details.
-   */
-  @Override
-  public String toString() {
-    StringBuilder details = new StringBuilder();
-
-    if (subject != null) {
-      details.append(" Subject " + subject);
-    }
-    if (startDate != null) {
-      details.append(" Start Date : " + startDate);
-    }
-    if (description != null) {
-      details.append(" Description: " + description);
-    }
-    if (location != null) {
-      details.append(" Location: " + location);
-    }
-    if (endDate != null) {
-      details.append(" End Date :" + endDate);
-    }
-    details.append(" isPublic: " + isPublic);
-
-    return details.toString();
-  }
-
-  /**
    * Checks if this event overlaps with another event.
    *
    * @param newEvent The event to check for overlap.
@@ -99,10 +69,9 @@ public abstract class Event {
     LocalDateTime existingStartTime = this.startDate;
     LocalDateTime existingEndTime = this.endDate;
 
-    boolean isNoOverlap = (existingStartTime.compareTo(newStartTime) > 0 &&
-            existingStartTime.compareTo(newEndTime) >= 0) ||
-            (existingEndTime.compareTo(newEndTime) < 0 &&
-                    existingEndTime.compareTo(newStartTime) <= 0);
+    boolean isNoOverlap = ((existingEndTime.compareTo(newStartTime) <= 0
+            || existingStartTime.compareTo(newEndTime) >= 0));
+
     return !isNoOverlap;
   }
 
