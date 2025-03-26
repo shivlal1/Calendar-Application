@@ -60,7 +60,7 @@ java CalendarApp --mode headless
 | `copy event <eventName> on <dateTime> --target <calendarName> to <dateTime>`                            | Copies a specific event to a target calendar at specified date/time, preventing conflicts.     |
 | `copy events on <date> --target <calendarName> to <date>`                                               | Copies all events on a specific date to another calendar, adjusting for timezone.              |
 | `copy events between <date> and <date> --target <calendarName> to <date>`                               | Copies events within a range to a target calendar, adjusting times and preventing conflicts.   |
-| exit                                                                                                  | Exits the application.                                                                         |
+| `exit`                                                                                                  | Exits the application.                                                                         |
 
 
 ## Calendar Management Commands
