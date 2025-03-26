@@ -114,6 +114,14 @@ show status on 2024-04-01T09:30
 export calendar april_calendar.csv
 ```
 
+### Calendar Commands
+
+```
+create calendar --name WorkCalendar --timezone America/New_York
+edit calendar --name WorkCalendar --property timezone America/Los_Angeles
+use calendar --name WorkCalendar
+```
+
 ## Weekday Abbreviations
 
 | Abbreviation | Day       |
