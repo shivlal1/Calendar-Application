@@ -82,10 +82,11 @@ edit events location CompanyHoliday Remote
 ### Copy Events
 
 bash
+```
 copy event TeamMeeting on 2024-04-01T09:00 --target WorkCalendar to 2024-05-01T09:00
 copy events on 2024-04-01 --target PersonalCalendar to 2024-06-01
 copy events between 2024-04-01 and 2024-04-30 --target ProjectCalendar to 2024-07-01
-
+```
 ### Print Events
 
 bash
