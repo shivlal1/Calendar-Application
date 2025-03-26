@@ -62,6 +62,15 @@ java CalendarApp --mode headless
 | `copy events between <date> and <date> --target <calendarName> to <date>`                               | Copies events within a range to a target calendar, adjusting times and preventing conflicts.   |
 | exit                                                                                                  | Exits the application.                                                                         |
 
+
+## Calendar Management Commands
+
+| Command | Description |
+|---------|-------------|
+| `create calendar --name <calName> --timezone <area/location>` | Creates a new calendar with a unique name and specified timezone. |
+| `edit calendar --name <calendarName> --property <propertyName> <newPropertyValue>` | Edits properties (name or timezone) of an existing calendar. |
+| `use calendar --name <calendarName>` | Sets the active calendar context for subsequent commands. |
+
 ## Sample Command Variations
 
 ### Create Events
