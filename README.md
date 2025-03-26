@@ -66,22 +66,21 @@ java CalendarApp --mode headless
 
 ### Create Events
 
-bash
+```
 create event --autoDecline TeamMeeting from 2024-04-01T09:00 to 2024-04-01T10:00
 create event YogaSession from 2024-03-15T18:00 to 2024-03-15T19:00 repeats TR until 2024-05-30
 create event CompanyHoliday on 2024-07-04
-
+```
 
 ### Edit Events
 
-bash
+```
 edit event location TeamMeeting from 2024-04-01T09:00 to 2024-04-01T10:00 with ConferenceRoomA
 edit events title YogaSession from 2024-03-15T18:00 with EveningYoga
 edit events location CompanyHoliday Remote
-
+```
 ### Copy Events
 
-bash
 ```
 copy event TeamMeeting on 2024-04-01T09:00 --target WorkCalendar to 2024-05-01T09:00
 copy events on 2024-04-01 --target PersonalCalendar to 2024-06-01
@@ -89,22 +88,22 @@ copy events between 2024-04-01 and 2024-04-30 --target ProjectCalendar to 2024-0
 ```
 ### Print Events
 
-bash
+```
 print events on 2024-04-01
 print events from 2024-03-01 to 2024-03-31
-
+```
 
 ### Show Status
 
-bash
+```
 show status on 2024-04-01T09:30
-
+```
 
 ### Export Calendar
 
-bash
+```
 export calendar april_calendar.csv
-
+```
 
 ## Weekday Abbreviations
 
