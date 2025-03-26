@@ -44,19 +44,19 @@ java CalendarApp --mode headless
 
 | Command                                                                                                 | Description                                                                                    |
 | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| create event --autoDecline <eventName> from <dateTime> to <dateTime>                                  | Create an event with optional conflict auto-decline.                                           |
-| create event <eventName> from <dateTime> to <dateTime> repeats <weekdays> until <dateTime>            | Creates a recurring event until specified date.                                                | 
-| create event <eventName> on <date>                                                                    | Creates an all-day event.                                                                      |
-| create event --autoDecline <eventName> from <dateTime> to <dateTime> repeats <weekdays> for N times   | Creates a recurring event on the specified weekdays for N times                                |
-| create event <eventName> on <date> repeats <weekdays> for <N> times                                   | Creates an event on the specified date repeating on the given days for N times.                |
-| create event <eventName> on <date> repeats <weekdays> until <date>                                    | Creates an event on the specified date which repeats on the specified days until a given date. |
-| edit event <property> <eventName> from <dateTime> to <dateTime> with <newPropertyValue>               | Edits properties of an event with the given new property value.                                |
-| edit events <property> <eventName> from <dateStringTtimeString> with <NewPropertyValue>               | Edits the property of the event that starts from the given date and time.                      |
-| edit events <property> <eventName> <NewPropertyValue>                                                 | Edits the property of all events with the given name to the new property value.                |
-| print events on <date>                                                                                | Lists events on a specific day.                                                                |
-| print events from <date> to <date>                                                                    | Lists events within a specified range of dates.                                                |
-| export calendar <filename.csv>                                                                        | Exports calendar to CSV and prints file location.                                              |
-| show status on <dateTime>                                                                             | Shows busy status at a specified date and time if an event is already scheduled.               |
+| `create event --autoDecline <eventName> from <dateTime> to <dateTime>`                                  | Create an event with optional conflict auto-decline.                                           |
+| `create event <eventName> from <dateTime> to <dateTime> repeats <weekdays> until <dateTime>`            | Creates a recurring event until specified date.                                                | 
+| `create event <eventName> on <date>`                                                                    | Creates an all-day event.                                                                      |
+| `create event --autoDecline <eventName> from <dateTime> to <dateTime> repeats <weekdays> for N times`   | Creates a recurring event on the specified weekdays for N times                                |
+| `create event <eventName> on <date> repeats <weekdays> for <N> times`                                   | Creates an event on the specified date repeating on the given days for N times.                |
+| `create event <eventName> on <date> repeats <weekdays> until <date>`                                    | Creates an event on the specified date which repeats on the specified days until a given date. |
+| `edit event <property> <eventName> from <dateTime> to <dateTime> with <newPropertyValue>`               | Edits properties of an event with the given new property value.                                |
+| `edit events <property> <eventName> from <dateStringTtimeString> with <NewPropertyValue>`              | Edits the property of the event that starts from the given date and time.                      |
+| `edit events <property> <eventName> <NewPropertyValue>`                                                 | Edits the property of all events with the given name to the new property value.                |
+| `print events on <date>`                                                                                | Lists events on a specific day.                                                                |
+| `print events from <date> to <date>`                                                                    | Lists events within a specified range of dates.                                                |
+| `export calendar <filename.csv>`                                                                        | Exports calendar to CSV and prints file location.                                              |
+| `show status on <dateTime>`                                                                             | Shows busy status at a specified date and time if an event is already scheduled.               |
 | `copy event <eventName> on <dateTime> --target <calendarName> to <dateTime>`                            | Copies a specific event to a target calendar at specified date/time, preventing conflicts.     |
 | `copy events on <date> --target <calendarName> to <date>`                                               | Copies all events on a specific date to another calendar, adjusting for timezone.              |
 | `copy events between <date> and <date> --target <calendarName> to <date>`                               | Copies events within a range to a target calendar, adjusting times and preventing conflicts.   |
