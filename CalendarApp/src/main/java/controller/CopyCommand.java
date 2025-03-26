@@ -15,7 +15,6 @@ public class CopyCommand implements ICommand {
   private String eventName;
   private String startString;
   private String endString;
-
   private String targetCalendar;
   private String targetDateString;
   private LocalDateTime startDateTime;

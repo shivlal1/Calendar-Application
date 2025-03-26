@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import model.Calendar;
+import model.CalendarExtended;
 import model.ICalendar;
 import utils.DateUtils;
 import view.ConsoleView;
@@ -1276,5 +1277,25 @@ public class CreateCommandTest {
     System.out.println("size " + calendar.getAllCalendarEvents().size());
     assertEquals(2, calendar.getAllCalendarEvents().size());
   }
+
+
+  @Test
+  public void newCalAutoDeclineCheck() throws Exception {
+
+    ICalendar cal = new CalendarExtended("myCal", "Asia/Kolkata");
+
+    command = "event \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command, cal);
+
+    command = "event \"SingleEvent\" from 2025-03-02T09:45 to 2025-03-02T10:15";
+    createCommand.execute(command, cal);
+
+    command = "events name \"SingleEvent\" from 2025-03-01T09:00  with \"Event 2\"";
+    editCommand.execute(command, cal);
+
+    view.viewEvents(cal.getAllCalendarEvents());
+
+  }
+
 
 }

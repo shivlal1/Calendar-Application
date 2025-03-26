@@ -25,7 +25,7 @@ public class CalendarControllerTest {
     ICalendar calendar = new Calendar();
 
     CalendarController controller = new CalendarController();
-    controller.execute("hello",calendar);
+    controller.execute("hello", calendar);
 
   }
 
@@ -43,6 +43,6 @@ public class CalendarControllerTest {
     command = "create event \"Event 2\" from 2025-03-02T09:00 to 2025-03-02T10:00";
     controller.execute(command, calendar);
 
-    assertEquals(calendar.getAllCalendarEvents().size(),3);
+    assertEquals(calendar.getAllCalendarEvents().size(), 3);
   }
 }

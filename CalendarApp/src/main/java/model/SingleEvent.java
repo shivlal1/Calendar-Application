@@ -12,7 +12,6 @@ import java.util.Map;
  */
 public class SingleEvent extends Event {
 
-  private Map<String, Object> allMetaDetails;
 
   /**
    * Constructs a new SingleEvent object with the specified subject, start and end dates,
@@ -26,8 +25,7 @@ public class SingleEvent extends Event {
   SingleEvent(String subject, LocalDateTime startDate, LocalDateTime endDate,
               Map<String, Object> allMetaDetails) {
 
-    super(subject, startDate, endDate);
-    this.allMetaDetails = allMetaDetails;
+    super(subject, startDate, endDate, allMetaDetails);
   }
 
   /**

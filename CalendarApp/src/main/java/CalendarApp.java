@@ -1,12 +1,14 @@
-package controller;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
+import controller.CalendarController;
+import controller.CalendarManager;
+import controller.ICalendarManager;
 import model.ICalendarExtended;
 import view.ConsoleView;
+
 
 public class CalendarApp {
 
@@ -81,7 +83,7 @@ public class CalendarApp {
     } else {
       ICalendarExtended activeCalendar = calendarManager.getActiveCalendar();
       if (activeCalendar == null) {
-        view.viewMessage("No active calendar selected. Use 'use calendar --name <name>'");
+        view.viewMessage("No active calendar selected'");
         return;
       }
       controller.execute(commandArgs, activeCalendar);

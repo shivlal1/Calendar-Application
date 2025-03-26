@@ -2,6 +2,7 @@ package model;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class is an abstract base class for all types of events in the calendar system.
@@ -16,14 +17,21 @@ public abstract class Event {
   protected LocalDateTime startDate;
   protected LocalDateTime endDate;
   protected boolean isPublic;
+  protected Map<String, Object> allMetaDetails;
 
-  Event(String subject, LocalDateTime startDate, LocalDateTime endDate) {
+  /**
+   * @param subject
+   * @param startDate
+   * @param endDate
+   */
+  Event(String subject, LocalDateTime startDate, LocalDateTime endDate, Map<String, Object> allMetaDetails) {
     this.subject = subject;
     this.startDate = startDate;
     this.endDate = endDate;
-    this.isPublic = false;
-    this.description = null;
-    this.location = null;
+    this.isPublic = (Boolean) allMetaDetails.get("isPublic");
+    this.description = (String) allMetaDetails.get("description");
+    this.location = (String) allMetaDetails.get("location");
+    this.allMetaDetails = allMetaDetails;
   }
 
   /**

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import model.CalendarExtended;
+import model.ICalendar;
 import model.ICalendarExtended;
 
 public class CalendarManager implements ICalendarManager {
@@ -27,13 +28,8 @@ public class CalendarManager implements ICalendarManager {
   }
 
   private String[] processTillCalendarName(String commandArgs) throws Exception {
-    if (!commandArgs.startsWith("calendar --name")) {
-      throw new Exception("Command must start with 'calendar --name'");
-    }
 
-    String[] result = splitStringIntoTwo(commandArgs); // result[0] = "calendar", result[1] = "--name <calName> --timezone area/location"
-    result = splitStringIntoTwo(result[1]); // result[0] = "name", result[1] = "<calName> --timezone area/location"
-    result = splitStringIntoTwo(result[1]); // result[0] = "<calName>", result[1] = "--timezone area/location"
+    String[] result = splitStringIntoTwo(commandArgs); // result[0] = "<calName>", result[1] = "--timezone area/location"
     String calendarName = result[0];
 
     return new String[]{calendarName, result[1]};
@@ -57,7 +53,8 @@ public class CalendarManager implements ICalendarManager {
 
     String[] result = processTillCalendarName(commandArgs);
     String calendarName = result[0];
-    result = splitStringIntoTwo(result[1]); // result[0] = "--timezone", result[1] = "area/location"
+    result = splitStringIntoTwo(result[1]);
+    // result[0] = "--proeperty", result[1] = "<property-name> <new-property-value>"
 
     if (!result[0].equals("--property")) {
       throw new Exception("--property missing");
@@ -76,6 +73,9 @@ public class CalendarManager implements ICalendarManager {
     String calendarName = calendarDetails[0];
     String calendarTimeZone = calendarDetails[1];
 
+    if (calendarTimeZone.equals("")) {
+      throw new Exception("Missing timeZone value");
+    }
     calendarMap.put(calendarName, new CalendarExtended(calendarName, calendarTimeZone));
   }
 
@@ -87,7 +87,20 @@ public class CalendarManager implements ICalendarManager {
     String propertyValue = calendarDetails[2];
 
     ICalendarExtended calendar = calendarMap.get(calendarName);
-    calendar.changeCalendarProperty(propertyName, propertyValue);
+    if (calendar == null) {
+      throw new Exception("No such calendar exists");
+    }
+    if (propertyValue.equals("")) {
+      throw new Exception("property name/value is not present");
+    }
+    if(propertyName=="name"){
+      calendar.changeCalendarName(propertyValue);
+
+    }else if(propertyName=="timezone"){
+      calendar.changeCalendarTimeZone(propertyValue);
+    }else{
+      throw new Exception("invalid calendarProperty");
+    }
   }
 
   private void processCalendarUse(String commandArgs) throws Exception {
@@ -105,17 +118,38 @@ public class CalendarManager implements ICalendarManager {
     return activeCalendar;
   }
 
-  public void execute(String commandArgs) throws Exception {
-    String[] result = splitStringIntoTwo(commandArgs);
+  @Override
+  public ICalendar getCalendarByName(String calendarName) {
+    return calendarMap.get(calendarName);
+  }
 
-    if (result[0].equals("create")) {
+  public void execute(String commandArgs) throws Exception {
+    String[] result = splitCommand(commandArgs);
+
+    if (result[0].equals("create calendar --name ")) {
       processNewCalendarCreate(result[1]);
-    } else if (result[0].equals("edit")) {
+    } else if (result[0].equals("edit calendar --name ")) {
       processCalendarEdit(result[1]);
-    } else if (result[0].equals("use")) {
+    } else if (result[0].equals("use calendar --name ")) {
       processCalendarUse(result[1]);
+    } else {
+      throw new Exception("start with commad+calendar+name");
     }
 
   }
+
+  private String[] splitCommand(String input) {
+    int nameFlagIndex = input.indexOf("--name");
+
+    if (nameFlagIndex != -1) {
+      String firstPart = input.substring(0, nameFlagIndex + 7);
+      String secondPart = input.substring(nameFlagIndex + 7).trim();
+
+      return new String[]{firstPart, secondPart};
+    } else {
+      return null;
+    }
+  }
+
 
 }

@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface ICalendarExtended extends ICalendar {
 
-  public void changeCalendarProperty(String property, String newValue);
-
-  public void copyEventsToAnotherCalendar(ICalendarExtended toCalendar, Map<String, Object> metaDetails);
+  public void changeCalendarName(String newCalendarName);
+  public void changeCalendarTimeZone(String newTimeZone);
+  public void copyToTargetCalendar(ICalendarExtended toCalendar, Map<String, Object> metaDetails) throws Exception;
 }

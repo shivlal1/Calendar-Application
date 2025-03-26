@@ -52,12 +52,8 @@ public class CalendarCsvExporter {
         String startTimeString = DateUtils.getCsvTime(startDateTime);
         String endDateString = DateUtils.getCsvDate(endDateTime);
         String endTimeString = DateUtils.getCsvTime(endDateTime);
-        Boolean isAllDay = false;
+        Boolean isAllDay = isAllDayEvent(startDateString, endDateString, startTimeString, endTimeString);
 
-        if (startDateString.equals(endDateString) && startTimeString.equals("00:00")
-                && endTimeString.equals("23:59")) {
-          isAllDay = true;
-        }
 
         writer.write(String.format("\"%s\",%s,%s,\"%s\",\"%s\",%b,\"%s\",\"%s\",%b\n",
                 subject, startDateString, startTimeString,
@@ -71,5 +67,11 @@ public class CalendarCsvExporter {
     }
   }
 
+  private boolean isAllDayEvent(String startDateString, String endDateString,
+                                String startTimeString, String endTimeString) {
+
+    return (startDateString.equals(endDateString) && startTimeString.equals("12:00 AM")
+            && endTimeString.equals("11:59 PM"));
+  }
 
 }

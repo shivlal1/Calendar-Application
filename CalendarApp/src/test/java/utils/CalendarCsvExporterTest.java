@@ -116,4 +116,40 @@ public class CalendarCsvExporterTest {
     return filteredOutput;
   }
 
+  @Test
+  public void testCSVAllDay() throws Exception {
+
+    Map<String, Object> mapEvent = new HashMap<>();
+    mapEvent.put("subject", "hello");
+    mapEvent.put("startDate", LocalDateTime.of(2025, 3, 01, 00, 0));
+    mapEvent.put("endDate", LocalDateTime.of(2025, 3, 01, 23, 59));
+    mapEvent.put("description", "annual meeting");
+    mapEvent.put("location", "snell");
+    mapEvent.put("isPublic", true);
+
+    List<Map<String, Object>> events = new ArrayList<>();
+    events.add(mapEvent);
+
+    String fileName = "testFile.csv";
+    CalendarCsvExporter export = new CalendarCsvExporter();
+    String absolutePath = export.export(events, fileName);
+    String expected = getViewCalendarOutput(absolutePath);
+    String actual = "Absolute Path" + absolutePath + "\n";
+    assertEquals(actual, expected);
+
+    String pathToRead = Paths.get(fileName).toAbsolutePath().toString();
+
+    List<String> readingEvents = Files.readAllLines(Paths.get(pathToRead));
+
+    String expectedHeader = "Subject, Start Date, Start Time, End Date, End Time, " +
+            "All Day Event, Description, Location, Private";
+    assertEquals(expectedHeader, readingEvents.get(0));
+
+    String expectedValue = "\"hello\",03/01/2025,12:00 AM,\"03/01/2025\",\"11:59 PM\"," +
+            "true,\"annual meeting\",\"snell\",true";
+    assertEquals(expectedValue, readingEvents.get(1));
+
+  }
+
+
 }

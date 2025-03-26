@@ -15,7 +15,7 @@ import utils.DateUtils;
  */
 public class Calendar implements ICalendar {
 
-  private List<Event> calendarStorage;
+  protected List<Event> calendarStorage;
 
   /**
    * This method creates a new Calendar object and initializes the event storage.
@@ -66,7 +66,7 @@ public class Calendar implements ICalendar {
    * @param end    The end date.
    * @return true if the middle date is between start and end, else false.
    */
-  private boolean isBetween(LocalDateTime start, LocalDateTime middle, LocalDateTime end) {
+  protected boolean isBetween(LocalDateTime start, LocalDateTime middle, LocalDateTime end) {
     return ((middle.isAfter(start) || middle.isEqual(start))
             && (middle.isBefore(end) || middle.isEqual(end)));
   }
@@ -78,7 +78,7 @@ public class Calendar implements ICalendar {
    * @param to   The end date.
    * @return A list of event details in map format.
    */
-  private List<Map<String, Object>> getEventsInBetween(LocalDateTime from, LocalDateTime to) {
+  protected List<Map<String, Object>> getEventsInBetween(LocalDateTime from, LocalDateTime to) {
     List<Map<String, Object>> eventDetails = new ArrayList<>();
     for (Event event : calendarStorage) {
       if (isBetween(from, event.startDate, to)) {
@@ -174,38 +174,6 @@ public class Calendar implements ICalendar {
   }
 
   /**
-   * This method checks if an edit operation is by event name and start time.
-   *
-   * @param data Metadata containing edit details.
-   * @return true if the edit is by event name and start time; false otherwise.
-   */
-//  private boolean isEditByEventTime(Map<String, Object> data) {
-//    return (data.get("eventName") != null && data.get("startTime") != null);
-//  }
-
-  /**
-   * This method checks if an edit operation is by event name only.
-   *
-   * @param data Metadata containing edit details.
-   * @return true if the edit is by event name only; false otherwise.
-   */
-//  private boolean isEditByEventName(Map<String, Object> data) {
-//    return (data.get("eventName") != null && data.get("startTime") == null && data.get("endTime")
-//            == null);
-//  }
-
-  /**
-   * This method checks if an edit operation is by event name and both start and end times.
-   *
-   * @param data Metadata containing edit details.
-   * @return true if the edit is by event name and both start and end times; false otherwise.
-   */
-//  private boolean isEditByEventNameAndTime(Map<String, Object> data) {
-//    return (data.get("eventName") != null && data.get("startTime") != null && data.get("endTime")
-//            != null);
-//  }
-
-  /**
    * Edits an event based on the provided metadata.
    *
    * @param data Metadata containing details for the edit operation.
@@ -242,8 +210,12 @@ public class Calendar implements ICalendar {
    * @param eventName The event name to match.
    * @return true if the event matches; false otherwise.
    */
-  private boolean isMatchingEvent(Event event, LocalDateTime start, LocalDateTime end,
-                                  String eventName) {
+  protected boolean isMatchingEvent(Event event, LocalDateTime start, LocalDateTime end,
+
+                                    String eventName) {
+
+    System.out.println("calling parent");
+
     return (event.subject.equals(eventName)
             && (start == null || event.startDate.equals(start))
             && (end == null || event.endDate.equals(end)));
@@ -309,7 +281,7 @@ public class Calendar implements ICalendar {
    * @param event The event to convert.
    * @return A map containing event details.
    */
-  private Map<String, Object> getEventInMap(Event event) {
+  protected Map<String, Object> getEventInMap(Event event) {
     Map<String, Object> mapEvent = new HashMap<>();
     mapEvent.put("subject", (event.subject));
     mapEvent.put("startDate", (event.startDate));
@@ -317,6 +289,7 @@ public class Calendar implements ICalendar {
     mapEvent.put("description", (event.description));
     mapEvent.put("location", (event.location));
     mapEvent.put("isPublic", (event.isPublic));
+    mapEvent.put("isRecurring", false);
     return mapEvent;
   }
 
@@ -377,12 +350,8 @@ public class Calendar implements ICalendar {
 
     EventFactory factory = new EventFactory();
     Event event = factory.getEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
-
     List<Event> allEvents = event.generateEventsForCalendar();
-
-
     putGeneratedEventsIntoCalendar(allEvents, (Boolean) allMetaDeta.get("autoDecline"));
-
   }
 
   /**
