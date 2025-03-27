@@ -109,7 +109,6 @@ public class DateUtils {
   public static LocalDate stringToLocalDate(String date) {
     return LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
   }
-
   public static LocalDateTime changeTimeZone(LocalDateTime date, ZoneId sourceZoneId, ZoneId targetZoneId) {
     ZonedDateTime sourceZonedDateTime = date.atZone(sourceZoneId);
     return sourceZonedDateTime.withZoneSameInstant(targetZoneId).toLocalDateTime();

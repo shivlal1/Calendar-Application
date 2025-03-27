@@ -27,12 +27,10 @@ public class CopyCommand implements ICommand {
           "(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?)(?: and (\\d{4}-\\d{2}-\\d{2}))? " +
           "--target (\\S+) to (\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?)$";
 
-
   public CopyCommand(ICalendarManager calendarManager) {
     metaData = new HashMap<>();
     this.calendarManager = calendarManager;
   }
-
   private void commandParser(String commandArgs) throws Exception {
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(commandArgs);
@@ -55,14 +53,7 @@ public class CopyCommand implements ICommand {
     addValuesInMetaDataObject(commandArgs);
   }
 
-
   private void addValuesInMetaDataObject(String commandArgs) {
-
-    // metaData.put("endTime", endDateTime);
-    metaData.put("startTime", startDateTime);
-    metaData.put("targetCalendar", targetCalendar);
-    //metaData.put("destinationDate", targetDateTime);
-
     if (eventName != null) {
       metaData.put("copyType", "eventsOnDateWithTime");
       metaData.put("eventName", eventName);

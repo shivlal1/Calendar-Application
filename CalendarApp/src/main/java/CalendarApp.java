@@ -9,7 +9,6 @@ import controller.ICalendarManager;
 import model.ICalendarExtended;
 import view.ConsoleView;
 
-
 public class CalendarApp {
 
   public static void main(String[] args) throws Exception {

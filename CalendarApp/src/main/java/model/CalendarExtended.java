@@ -40,7 +40,7 @@ public class CalendarExtended
 
     return super.isMatchingEvent(event, start, end, eventName)
             || (event.subject.equals(eventName)
-            && (start != null && event.startDate.compareTo(start) >= 0) );
+            && (start != null && event.startDate.compareTo(start) >= 0));
   }
 
   private boolean isBetweenDates(LocalDate start, LocalDate middle, LocalDate end) {
