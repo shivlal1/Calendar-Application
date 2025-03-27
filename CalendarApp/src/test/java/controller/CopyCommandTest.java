@@ -36,31 +36,23 @@ public class CopyCommandTest {
     CopyCommand cmd = new CopyCommand(calManager);
 //    cmd.execute(command, cal);
 
-    command = "copy events between 2025-03-02 and 2025-03-03 --target <calendarName> to 2025-03-05";
+    command = "events between 2025-03-02 and 2025-03-03 --target <calendarName> to 2025-03-05";
     cmd.execute(command, cal);
 
     System.out.println(command + "------");
-    command = "copy events on 2025-03-02 --target <calendarName> to 2025-03-05";
+    command = "events on 2025-03-02 --target <calendarName> to 2025-03-05";
     cmd.execute(command, cal);
     System.out.println(command + "------");
 
   }
 
-
-  @Test
-  public void missingCopyKeyword() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("Invalid Command: Copy Missing");
-    command = new CopyCommand(calManager);
-    command.execute("events on 2025-03-01 --target work to 2025-04-01", cal);
-  }
 
   @Test
   public void missingOnOrBetween() throws Exception {
     thrown.expect(Exception.class);
     thrown.expectMessage("Invalid Command: Missing on or between");
     command = new CopyCommand(calManager);
-    command.execute("copy events 2025-03-01 --target work to 2025-04-01", cal);
+    command.execute("events 2025-03-01 --target work to 2025-04-01", cal);
   }
 
   @Test
@@ -68,7 +60,7 @@ public class CopyCommandTest {
     thrown.expect(Exception.class);
     thrown.expectMessage("Invalid Command: Missing --target");
     command = new CopyCommand(calManager);
-    command.execute("copy events on 2025-03-01 work to 2025-04-01", cal);
+    command.execute("events on 2025-03-01 work to 2025-04-01", cal);
   }
 
   @Test
@@ -76,7 +68,7 @@ public class CopyCommandTest {
     thrown.expect(Exception.class);
     thrown.expectMessage("Invalid Command: Missing destination date");
     command = new CopyCommand(calManager);
-    command.execute("copy events on 2025-03-01 --target work 2025-04-01", cal);
+    command.execute("events on 2025-03-01 --target work 2025-04-01", cal);
   }
 
   @Test
@@ -84,7 +76,7 @@ public class CopyCommandTest {
     thrown.expect(Exception.class);
     thrown.expectMessage("Invalid Command: Missing Date/invalid format");
     command = new CopyCommand(calManager);
-    command.execute("copy events on 01-03-2025 --target work to 01-04-2025", cal);
+    command.execute("events on 01-03-2025 --target work to 01-04-2025", cal);
   }
 
   @Test
@@ -92,23 +84,16 @@ public class CopyCommandTest {
     thrown.expect(Exception.class);
     thrown.expectMessage("Invalid Command: Missing destination date");
     command = new CopyCommand(calManager);
-    command.execute("copy events on 2025-03-01 --target work", cal);
+    command.execute("events on 2025-03-01 --target work", cal);
   }
 
-  @Test
-  public void emptyCommand() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("Invalid Command: Copy Missing");
-    command = new CopyCommand(calManager);
-    command.execute("", cal);
-  }
 
   @Test
   public void incompleteCommand() throws Exception {
     thrown.expect(Exception.class);
     thrown.expectMessage("Invalid Command: Missing on or between");
     command = new CopyCommand(calManager);
-    command.execute("copy", cal);
+    command.execute("", cal);
   }
 
   @Test
@@ -116,7 +101,7 @@ public class CopyCommandTest {
     thrown.expect(Exception.class);
     thrown.expectMessage("Invalid Command: Missing on or between");
     command = new CopyCommand(calManager);
-    command.execute("copy events --target work to 2025-04-01", cal);
+    command.execute("events --target work to 2025-04-01", cal);
   }
 
   @Test
@@ -124,7 +109,7 @@ public class CopyCommandTest {
     thrown.expect(Exception.class);
     thrown.expectMessage("Invalid Command: Missing Date/invalid format");
     CopyCommand command = new CopyCommand(calManager);
-    command.execute("copy events on 2025/03/01 --target work to 2025-04-01", cal);
+    command.execute("events on 2025/03/01 --target work to 2025-04-01", cal);
   }
 
   @Test
@@ -132,7 +117,7 @@ public class CopyCommandTest {
     thrown.expect(Exception.class);
     thrown.expectMessage("Invalid Command: Missing Date/invalid format");
     CopyCommand command = new CopyCommand(calManager);
-    command.execute("copy events on 2025-03-01 --target work to 2025/04/01", cal);
+    command.execute("events on 2025-03-01 --target work to 2025/04/01", cal);
   }
 
   @Test
@@ -140,7 +125,7 @@ public class CopyCommandTest {
     thrown.expect(Exception.class);
     thrown.expectMessage("Invalid Command: Missing Date/invalid format");
     command = new CopyCommand(calManager);
-    command.execute("copy \"Team Meeting!@#\" on 2025-03-01 --target work to 2025-04-01", cal);
+    command.execute("\"Team Meeting!@#\" on 2025-03-01 --target work to 2025-04-01", cal);
   }
 
 

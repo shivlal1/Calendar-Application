@@ -66,7 +66,7 @@ public class Calendar implements ICalendar {
    * @param end    The end date.
    * @return true if the middle date is between start and end, else false.
    */
-  protected boolean isBetween(LocalDateTime start, LocalDateTime middle, LocalDateTime end) {
+  private boolean isBetween(LocalDateTime start, LocalDateTime middle, LocalDateTime end) {
     return ((middle.isAfter(start) || middle.isEqual(start))
             && (middle.isBefore(end) || middle.isEqual(end)));
   }
@@ -213,9 +213,6 @@ public class Calendar implements ICalendar {
   protected boolean isMatchingEvent(Event event, LocalDateTime start, LocalDateTime end,
 
                                     String eventName) {
-
-    System.out.println("calling parent");
-
     return (event.subject.equals(eventName)
             && (start == null || event.startDate.equals(start))
             && (end == null || event.endDate.equals(end)));

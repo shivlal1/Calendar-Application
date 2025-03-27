@@ -23,7 +23,7 @@ public class CopyCommand implements ICommand {
   private Map<String, Object> metaData;
   private ICalendarManager calendarManager;
 
-  private static final String regex = "^copy events?(?: (\\S+))? (?:on|between) " +
+  private static final String regex = "^events?(?: (\\S+))? (?:on|between) " +
           "(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?)(?: and (\\d{4}-\\d{2}-\\d{2}))? " +
           "--target (\\S+) to (\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?)$";
 
@@ -64,24 +64,23 @@ public class CopyCommand implements ICommand {
     //metaData.put("destinationDate", targetDateTime);
 
     if (eventName != null) {
-      metaData.put("type", "eventsOnDateWithTime");
+      metaData.put("copyType", "eventsOnDateWithTime");
       metaData.put("eventName", eventName);
       metaData.put("onDateTime", DateUtils.pareStringToLocalDateTime(startString));
       metaData.put("newStartTime", DateUtils.pareStringToLocalDateTime(targetDateString));
     } else if (commandArgs.contains("between")) {
-      metaData.put("type", "onBetweenEvents");
+      metaData.put("copyType", "onBetweenEvents");
       metaData.put("fromDate", DateUtils.stringToLocalDate(startString));
       metaData.put("toDate", DateUtils.stringToLocalDate(endString));
       metaData.put("onDate", DateUtils.stringToLocalDate(targetDateString));
     } else {
-      metaData.put("type", "eventsOnDate");
+      metaData.put("copyType", "eventsOnDate");
+      metaData.put("onDateForCopy", DateUtils.stringToLocalDate(startString));
+      metaData.put("toDateDestination", DateUtils.stringToLocalDate(targetDateString));
     }
   }
 
   private String diagnoseCommandError(String command) {
-    if (!command.startsWith("copy")) {
-      return "Copy Missing";
-    }
     if (!(command.contains(" on ") || command.contains(" between "))) {
       return "Missing on or between";
     }

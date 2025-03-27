@@ -36,13 +36,16 @@ public class CalendarExtended
     return this.timeZone;
   }
 
-  public void createEvent(String subject,
-                          LocalDateTime localStartDateTime,
-                          LocalDateTime localEndDateTime,
-                          Map<String, Object> allMetaDeta) throws Exception {
+  protected boolean isMatchingEvent(Event event, LocalDateTime start, LocalDateTime end, String eventName) {
 
-    allMetaDeta.put("autoDecline", true);
-    super.createEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
+    return super.isMatchingEvent(event, start, end, eventName)
+            || (event.subject.equals(eventName)
+            && (start != null && event.startDate.compareTo(start) >= 0) );
+  }
+
+  private boolean isBetweenDates(LocalDate start, LocalDate middle, LocalDate end) {
+    return ((middle.isAfter(start) || middle.isEqual(start))
+            && (middle.isBefore(end) || middle.isEqual(end)));
   }
 
   private List<Event> filterEventsOnDateWithTime(Map<String, Object> metaDetails) {
@@ -71,15 +74,17 @@ public class CalendarExtended
             targetCalendar.getCalendarTimeZone());
 
     return factory.getCarbonCopy(event, newStartDateTime, newEndDateTime);
+
   }
 
   private List<Event> filterEventsOnDate(ICalendarExtended targetCalendar, Map<String, Object> metaDetails) {
     List<Event> events = new ArrayList<>();
-    LocalDate onDate = (LocalDate) metaDetails.get("onDate");
+    LocalDate onDate = (LocalDate) metaDetails.get("onDateForCopy");
+    LocalDate toDate = (LocalDate) metaDetails.get("toDateDestination");
     for (Event event : calendarStorage) {
       LocalDate startDate = event.startDate.toLocalDate();
       if (startDate.equals(onDate)) {
-        LocalDateTime newStartDateTime = LocalDateTime.of(onDate, event.startDate.toLocalTime());
+        LocalDateTime newStartDateTime = LocalDateTime.of(toDate, event.startDate.toLocalTime());
         Duration offsetTime = Duration.between(event.startDate, event.endDate);
         LocalDateTime newEndDateTime = newStartDateTime.plus(offsetTime);
         events.add(getNewCarbonCopy(event, targetCalendar, newStartDateTime, newEndDateTime));
@@ -92,11 +97,11 @@ public class CalendarExtended
     List<Event> events = new ArrayList<>();
 
     for (Event event : calendarStorage) {
-      LocalDateTime startDate = (LocalDateTime) metaDetails.get("fromDate");
-      LocalDateTime toDate = (LocalDateTime) metaDetails.get("toDate");
+      LocalDate startDate = (LocalDate) metaDetails.get("fromDate");
+      LocalDate toDate = (LocalDate) metaDetails.get("toDate");
       LocalDate onDate = (LocalDate) metaDetails.get("onDate");
 
-      if (isBetween(startDate, event.startDate, toDate)) {
+      if (isBetweenDates(startDate, event.startDate.toLocalDate(), toDate)) {
         LocalDateTime newStartDateTime = LocalDateTime.of(onDate, event.startDate.toLocalTime())
                 .plusDays(ChronoUnit.DAYS.between(startDate, event.startDate.toLocalDate()));
         Duration offsetTime = Duration.between(event.startDate, event.endDate);
@@ -124,12 +129,25 @@ public class CalendarExtended
     CalendarExtended newTargetCalendar = (CalendarExtended) targetCalendar;
 
     for (Event newEvent : newFilteredEventsList) {
+      boolean isOverLap = false;
       for (Event oldEvent : newTargetCalendar.calendarStorage) {
-        if (!newEvent.isOverlapWith(oldEvent)) {
-          newTargetCalendar.calendarStorage.add(newEvent);
+        if (newEvent.isOverlapWith(oldEvent)) {
+          isOverLap = true;
+          break;
         }
+      }
+      if (!isOverLap) {
+        newTargetCalendar.calendarStorage.add(newEvent);
       }
     }
   }
 
+  @Override
+  public void createEvent(String subject, LocalDateTime localStartDateTime,
+                          LocalDateTime localEndDateTime,
+                          Map<String, Object> allMetaDeta) throws Exception {
+
+    allMetaDeta.put("autoDecline", true);
+    super.createEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
+  }
 }
