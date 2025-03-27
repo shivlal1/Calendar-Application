@@ -1,12 +1,12 @@
 package controller;
 
-import model.ICalendarExtended;
+import model.ICalendarV2;
 
 public interface ICalendarManager {
 
-  public ICalendarExtended getActiveCalendar();
+  public ICalendarV2 getActiveCalendar();
 
-  public ICalendarExtended getCalendarByName(String calendarName);
+  public ICalendarV2 getCalendarByName(String calendarName);
 
   public void execute(String commandArgs) throws Exception;
 

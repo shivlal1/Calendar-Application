@@ -40,5 +40,4 @@ public class EventFactory {
     return event;
   }
 
-
 }

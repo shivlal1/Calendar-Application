@@ -4,14 +4,14 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
-import model.CalendarExtended;
-import model.ICalendarExtended;
+import model.CalendarV2;
+import model.ICalendarV2;
 import utils.DateUtils;
 
 public class CalendarManager implements ICalendarManager {
 
-  private ICalendarExtended activeCalendar;
-  private Map<String, ICalendarExtended> calendarMap;
+  private ICalendarV2 activeCalendar;
+  private Map<String, ICalendarV2> calendarMap;
 
   public CalendarManager() {
     calendarMap = new HashMap<>();
@@ -29,40 +29,37 @@ public class CalendarManager implements ICalendarManager {
   }
 
   private String[] processTillCalendarName(String commandArgs) throws Exception {
-    String[] result = splitStringIntoTwo(commandArgs); // result[0] = "<calName>", result[1] = "--timezone area/location"
-    String calendarName = result[0];
-    return new String[]{calendarName, result[1]};
+    String[] splitStringResult = splitStringIntoTwo(commandArgs); // result[0] = "<calName>", result[1] = "--timezone area/location"
+    String calendarName = splitStringResult[0];
+    return new String[]{calendarName, splitStringResult[1]};
   }
 
   private String[] getCalendarCreateDetails(String commandArgs) throws Exception {
+    String[] splitStringResult = processTillCalendarName(commandArgs);
+    String calendarName = splitStringResult[0];
+    splitStringResult = splitStringIntoTwo(splitStringResult[1]); // result[0] = "--timezone", result[1] = "area/location"
 
-    String[] result = processTillCalendarName(commandArgs);
-    String calendarName = result[0];
-    result = splitStringIntoTwo(result[1]); // result[0] = "--timezone", result[1] = "area/location"
-
-    if (!result[0].equals("--timezone")) {
+    if (!splitStringResult[0].equals("--timezone")) {
       throw new Exception("Missing --timezone flag");
     }
 
-    String calendarTimeZone = result[1];
+    String calendarTimeZone = splitStringResult[1];
     return new String[]{calendarName, calendarTimeZone};
   }
 
   private String[] getCalendarEditDetails(String commandArgs) throws Exception {
-
-    String[] result = processTillCalendarName(commandArgs);
-    String calendarName = result[0];
-    result = splitStringIntoTwo(result[1]);
+    String[] splitStringResult = processTillCalendarName(commandArgs);
+    String calendarName = splitStringResult[0];
+    splitStringResult = splitStringIntoTwo(splitStringResult[1]);
     // result[0] = "--proeperty", result[1] = "<property-name> <new-property-value>"
 
-    if (!result[0].equals("--property")) {
+    if (!splitStringResult[0].equals("--property")) {
       throw new Exception("--property missing");
     }
 
-    result = splitStringIntoTwo(result[1]);
-    String propertyName = result[0];
-    String propertyValue = result[1];
-
+    splitStringResult = splitStringIntoTwo(splitStringResult[1]);
+    String propertyName = splitStringResult[0];
+    String propertyValue = splitStringResult[1];
     return new String[]{calendarName, propertyName, propertyValue};
   }
 
@@ -73,7 +70,7 @@ public class CalendarManager implements ICalendarManager {
     String calendarTimeZone = calendarDetails[1];
 
     if (DateUtils.isValidZoneId(calendarTimeZone)) {
-      calendarMap.put(calendarName, new CalendarExtended(ZoneId.of(calendarTimeZone)));
+      calendarMap.put(calendarName, new CalendarV2(ZoneId.of(calendarTimeZone)));
     } else {
       throw new Exception("Missing timeZone value");
     }
@@ -85,7 +82,7 @@ public class CalendarManager implements ICalendarManager {
     String propertyName = calendarDetails[1];
     String propertyValue = calendarDetails[2];
 
-    ICalendarExtended calendar = calendarMap.get(calendarName);
+    ICalendarV2 calendar = calendarMap.get(calendarName);
     if (calendar == null) {
       throw new Exception("No such calendar exists");
     }
@@ -93,7 +90,7 @@ public class CalendarManager implements ICalendarManager {
       throw new Exception("property name/value is not present");
     }
     if (propertyName.equals("name")) {
-      ICalendarExtended calReference = calendar;
+      ICalendarV2 calReference = calendar;
       calendarMap.remove(calendarName);
       calendarMap.put(propertyValue, calReference);
 
@@ -105,33 +102,31 @@ public class CalendarManager implements ICalendarManager {
   }
 
   private void processCalendarUse(String commandArgs) throws Exception {
-    String[] result = processTillCalendarName(commandArgs);
-    String calendarName = result[0];
-
+    String[] splitStringResult = processTillCalendarName(commandArgs);
+    String calendarName = splitStringResult[0];
     if (!calendarMap.containsKey(calendarName)) {
       throw new Exception("calendar Doesn't exists to Use");
     }
     activeCalendar = calendarMap.get(calendarName);
   }
 
-  public ICalendarExtended getActiveCalendar() {
+  public ICalendarV2 getActiveCalendar() {
     return activeCalendar;
   }
 
   @Override
-  public ICalendarExtended getCalendarByName(String calendarName) {
+  public ICalendarV2 getCalendarByName(String calendarName) {
     return calendarMap.get(calendarName);
   }
 
   public void execute(String commandArgs) throws Exception {
-    String[] result = splitCommand(commandArgs);
-
-    if (result[0].equals("create calendar --name ")) {
-      processNewCalendarCreate(result[1]);
-    } else if (result[0].equals("edit calendar --name ")) {
-      processCalendarEdit(result[1]);
-    } else if (result[0].equals("use calendar --name ")) {
-      processCalendarUse(result[1]);
+    String[] splitStringResult = splitCommand(commandArgs);
+    if (splitStringResult[0].equals("create calendar --name ")) {
+      processNewCalendarCreate(splitStringResult[1]);
+    } else if (splitStringResult[0].equals("edit calendar --name ")) {
+      processCalendarEdit(splitStringResult[1]);
+    } else if (splitStringResult[0].equals("use calendar --name ")) {
+      processCalendarUse(splitStringResult[1]);
     } else {
       throw new Exception("start with commad+calendar+name");
     }
@@ -139,7 +134,6 @@ public class CalendarManager implements ICalendarManager {
 
   private String[] splitCommand(String input) {
     int nameFlagIndex = input.indexOf("--name");
-
     if (nameFlagIndex != -1) {
       String firstPart = input.substring(0, nameFlagIndex + 7);
       String secondPart = input.substring(nameFlagIndex + 7).trim();

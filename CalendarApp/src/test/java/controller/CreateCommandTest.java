@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import model.Calendar;
-import model.CalendarExtended;
+import model.CalendarV2;
 import model.ICalendar;
 import utils.DateUtils;
 import view.ConsoleView;
@@ -1283,7 +1283,7 @@ public class CreateCommandTest {
   @Test
   public void newCalAutoDeclineCheck() throws Exception {
 
-    ICalendar cal = new CalendarExtended(ZoneId.of("Asia/Kolkata"));
+    ICalendar cal = new CalendarV2(ZoneId.of("Asia/Kolkata"));
 
     command = "event \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
     createCommand.execute(command, cal);

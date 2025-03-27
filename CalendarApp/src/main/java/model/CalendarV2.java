@@ -11,13 +11,13 @@ import java.util.Map;
 
 import utils.DateUtils;
 
-public class CalendarExtended
+public class CalendarV2
         extends Calendar
-        implements ICalendarExtended {
+        implements ICalendarV2 {
 
   private ZoneId timeZone;
 
-  public CalendarExtended(ZoneId timeZone) {
+  public CalendarV2(ZoneId timeZone) {
     super();
     this.timeZone = timeZone;
   }
@@ -37,7 +37,6 @@ public class CalendarExtended
   }
 
   protected boolean isMatchingEvent(Event event, LocalDateTime start, LocalDateTime end, String eventName) {
-
     return super.isMatchingEvent(event, start, end, eventName)
             || (event.subject.equals(eventName)
             && (start != null && event.startDate.compareTo(start) >= 0));
@@ -65,7 +64,7 @@ public class CalendarExtended
     return events;
   }
 
-  private Event getNewCarbonCopy(Event event, ICalendarExtended targetCalendar,
+  private Event getNewCarbonCopy(Event event, ICalendarV2 targetCalendar,
                                  LocalDateTime newStartDateTime, LocalDateTime newEndDateTime) {
     EventFactory factory = new EventFactory();
     newStartDateTime = DateUtils.changeTimeZone(newStartDateTime, this.timeZone,
@@ -77,7 +76,7 @@ public class CalendarExtended
 
   }
 
-  private List<Event> filterEventsOnDate(ICalendarExtended targetCalendar, Map<String, Object> metaDetails) {
+  private List<Event> filterEventsOnDate(ICalendarV2 targetCalendar, Map<String, Object> metaDetails) {
     List<Event> events = new ArrayList<>();
     LocalDate onDate = (LocalDate) metaDetails.get("onDateForCopy");
     LocalDate toDate = (LocalDate) metaDetails.get("toDateDestination");
@@ -93,7 +92,7 @@ public class CalendarExtended
     return events;
   }
 
-  private List<Event> filteredEventsInBetween(Map<String, Object> metaDetails, ICalendarExtended targetCalendar) {
+  private List<Event> filteredEventsInBetween(Map<String, Object> metaDetails, ICalendarV2 targetCalendar) {
     List<Event> events = new ArrayList<>();
 
     for (Event event : calendarStorage) {
@@ -112,7 +111,7 @@ public class CalendarExtended
     return events;
   }
 
-  private List<Event> filterEventsToCopy(Map<String, Object> metaDetails, ICalendarExtended targetCalendar) {
+  private List<Event> filterEventsToCopy(Map<String, Object> metaDetails, ICalendarV2 targetCalendar) {
     String copyType = (String) metaDetails.get("copyType");
     if (copyType.equals("eventsOnDateWithTime")) {
       return filterEventsOnDateWithTime(metaDetails);
@@ -124,9 +123,9 @@ public class CalendarExtended
   }
 
   @Override
-  public void copyToTargetCalendar(ICalendarExtended targetCalendar, Map<String, Object> metaDetails) throws Exception {
+  public void copyToTargetCalendar(ICalendarV2 targetCalendar, Map<String, Object> metaDetails) throws Exception {
     List<Event> newFilteredEventsList = filterEventsToCopy(metaDetails, targetCalendar);
-    CalendarExtended newTargetCalendar = (CalendarExtended) targetCalendar;
+    CalendarV2 newTargetCalendar = (CalendarV2) targetCalendar;
 
     for (Event newEvent : newFilteredEventsList) {
       boolean isOverLap = false;

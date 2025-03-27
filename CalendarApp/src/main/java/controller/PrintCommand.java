@@ -73,7 +73,6 @@ public class PrintCommand implements ICommand {
       throw new Exception("Invalid Command " + diagnoseCommandError(commandArgs));
     }
 
-
     startDate = matcher.group(1) != null ? matcher.group(1) : matcher.group(3);
     endDate = matcher.group(2);
     startDate = DateUtils.removeTinDateTime(startDate);

@@ -56,7 +56,6 @@ public class CreateCommand implements ICommand {
   private void commandParser(String commandArgs) throws Exception {
     Pattern pattern;
     Matcher matcher;
-
     pattern = Pattern.compile(regex);
     matcher = pattern.matcher(commandArgs);
     if (!matcher.matches()) {
