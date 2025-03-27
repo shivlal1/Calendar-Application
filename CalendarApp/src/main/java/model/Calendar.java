@@ -138,7 +138,8 @@ public class Calendar implements ICalendar {
         throw new Exception("start date should be before end date");
       }
     } else {
-      if ((newDate.toLocalDate().equals(event.endDate.toLocalDate()) && newDate.isBefore(event.endDate))) {
+      if ((newDate.toLocalDate().equals(event.endDate.toLocalDate())
+              && newDate.isBefore(event.endDate))) {
         event.startDate = newDate;
       } else {
         throw new Exception("invalid date for recurring event");

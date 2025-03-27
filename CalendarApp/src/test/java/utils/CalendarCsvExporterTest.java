@@ -102,7 +102,7 @@ public class CalendarCsvExporterTest {
    * @param absolutePath absolute path as a parameter.
    * @return string value with absolute path.
    */
-  public String getViewCalendarOutput(String absolutePath) {
+  private String getViewCalendarOutput(String absolutePath) {
     PrintStream originalOut = System.out;
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     PrintStream customOut = new PrintStream(outputStream);

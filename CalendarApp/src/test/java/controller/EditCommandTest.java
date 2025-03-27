@@ -218,7 +218,7 @@ public class EditCommandTest {
    * @param events list of events that needs to be captured.
    * @return filteredoutput the captured output.
    */
-  public String getViewCalendarOutput(List<Map<String, Object>> events) {
+  private String getViewCalendarOutput(List<Map<String, Object>> events) {
     PrintStream originalOut = System.out;
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     PrintStream customOut = new PrintStream(outputStream);
@@ -239,7 +239,7 @@ public class EditCommandTest {
    * @param calendar the calendar object.
    * @return the processed output.
    */
-  public String getEventStringOnADate(String date, ICalendar calendar) {
+  private String getEventStringOnADate(String date, ICalendar calendar) {
     String onDate = DateUtils.changeDateToDateTime(date);
     LocalDateTime newOnDate = DateUtils.stringToLocalDateTime(onDate);
     Map<String, Object> metaData = new HashMap<>();
@@ -415,7 +415,8 @@ public class EditCommandTest {
             "End date : 2025-03-31,End time : 02:05,location : snell,description : empty event," +
             "isPublic : true\n";
 
-    command = "events name \"Annual Meeting\" from 2025-03-31T01:00 to 2025-03-31T02:00  with \"Event 2\"";
+    command = "events name \"Annual Meeting\" from 2025-03-31T01:00 to 2025-03-31T02:00  with " +
+            "\"Event 2\"";
     editCommand.execute(command, calendar);
 
     command = "events endDate \"Event 2\" \"2025-03-31T02:05\"";
