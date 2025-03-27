@@ -55,19 +55,11 @@ public class CopyCommand implements ICommand {
     if (!matcher.matches()) {
       throw new Exception("Invalid Command: " + diagnoseCommandError(commandArgs));
     }
-
     eventName = matcher.group(1);
     startString = matcher.group(2);
     endString = matcher.group(3);
     targetCalendar = matcher.group(4);
     targetDateString = matcher.group(5);
-    //
-    //    System.out.println("Parsed Command Successfully:");
-    //    System.out.println("  Event Name: " + eventName);
-    //    System.out.println("  Start Date/Time: " + startString);
-    //    System.out.println("  End Date/Time: " + endString);
-    //    System.out.println("  Target Calendar: " + targetCalendar);
-    //    System.out.println("  Destination Date/Time: " + targetDateString);
     addValuesInMetaDataObject(commandArgs);
   }
 

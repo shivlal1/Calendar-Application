@@ -48,7 +48,7 @@ public class CalendarV2
   }
 
   /**
-   * This method gets the timezone of this calendar.
+   * This method gets the timezone of the particular calendar.
    *
    * @return the timezone of the current calendar.
    */

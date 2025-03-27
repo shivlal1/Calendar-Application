@@ -14,7 +14,6 @@ import utils.DateUtils;
  * create, edit and process the details of a new calendar.
  */
 public class CalendarManager implements ICalendarManager {
-
   private ICalendarV2 activeCalendar;
   private Map<String, ICalendarV2> calendarMap;
 
