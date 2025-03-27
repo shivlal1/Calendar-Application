@@ -7,7 +7,7 @@ import org.junit.rules.ExpectedException;
 
 import java.time.ZoneId;
 
-import model.CalendarExtended;
+import model.CalendarV2;
 import model.ICalendar;
 
 public class CopyCommandTest {
@@ -19,7 +19,7 @@ public class CopyCommandTest {
   @Before
   public void init() {
     calManager = new CalendarManager();
-    cal = new CalendarExtended(ZoneId.of("Asia/Kolkata"));
+    cal = new CalendarV2(ZoneId.of("Asia/Kolkata"));
   }
 
   @Rule
@@ -32,7 +32,7 @@ public class CopyCommandTest {
 
     String command = "copy event \"Event\" on 2025-03-02T09:00 --target MyCal to 2025-03-02T10:00";
 //    System.out.println(command + "------");
-    ICalendar cal = new CalendarExtended(ZoneId.of("Asia/Kolkata"));
+    ICalendar cal = new CalendarV2(ZoneId.of("Asia/Kolkata"));
     CopyCommand cmd = new CopyCommand(calManager);
 //    cmd.execute(command, cal);
 

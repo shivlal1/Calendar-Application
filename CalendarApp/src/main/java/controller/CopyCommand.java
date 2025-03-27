@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import model.ICalendar;
-import model.ICalendarExtended;
+import model.ICalendarV2;
 import utils.DateUtils;
 
 public class CopyCommand implements ICommand {
@@ -88,12 +88,12 @@ public class CopyCommand implements ICommand {
   public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);
 
-    ICalendarExtended targetCal = calendarManager.getCalendarByName(targetCalendar);
+    ICalendarV2 targetCal = calendarManager.getCalendarByName(targetCalendar);
 
     if (targetCal == null) {
       throw new Exception("Target calendar doesn't exists");
     }
-    ICalendarExtended cal = (ICalendarExtended) calendar;
+    ICalendarV2 cal = (ICalendarV2) calendar;
     cal.copyToTargetCalendar(targetCal, metaData);
 
   }

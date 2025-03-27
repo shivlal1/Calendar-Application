@@ -6,7 +6,7 @@ import java.util.Scanner;
 import controller.CalendarController;
 import controller.CalendarManager;
 import controller.ICalendarManager;
-import model.ICalendarExtended;
+import model.ICalendarV2;
 import view.ConsoleView;
 
 public class CalendarApp {
@@ -80,7 +80,7 @@ public class CalendarApp {
     if (commandArgs.contains("--name")) {
       calendarManager.execute(commandArgs);
     } else {
-      ICalendarExtended activeCalendar = calendarManager.getActiveCalendar();
+      ICalendarV2 activeCalendar = calendarManager.getActiveCalendar();
       if (activeCalendar == null) {
         view.viewMessage("No active calendar selected'");
         return;

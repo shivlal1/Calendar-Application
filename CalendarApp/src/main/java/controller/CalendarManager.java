@@ -4,14 +4,14 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
-import model.CalendarExtended;
-import model.ICalendarExtended;
+import model.CalendarV2;
+import model.ICalendarV2;
 import utils.DateUtils;
 
 public class CalendarManager implements ICalendarManager {
 
-  private ICalendarExtended activeCalendar;
-  private Map<String, ICalendarExtended> calendarMap;
+  private ICalendarV2 activeCalendar;
+  private Map<String, ICalendarV2> calendarMap;
 
   public CalendarManager() {
     calendarMap = new HashMap<>();
@@ -73,7 +73,7 @@ public class CalendarManager implements ICalendarManager {
     String calendarTimeZone = calendarDetails[1];
 
     if (DateUtils.isValidZoneId(calendarTimeZone)) {
-      calendarMap.put(calendarName, new CalendarExtended(ZoneId.of(calendarTimeZone)));
+      calendarMap.put(calendarName, new CalendarV2(ZoneId.of(calendarTimeZone)));
     } else {
       throw new Exception("Missing timeZone value");
     }
@@ -85,7 +85,7 @@ public class CalendarManager implements ICalendarManager {
     String propertyName = calendarDetails[1];
     String propertyValue = calendarDetails[2];
 
-    ICalendarExtended calendar = calendarMap.get(calendarName);
+    ICalendarV2 calendar = calendarMap.get(calendarName);
     if (calendar == null) {
       throw new Exception("No such calendar exists");
     }
@@ -93,7 +93,7 @@ public class CalendarManager implements ICalendarManager {
       throw new Exception("property name/value is not present");
     }
     if (propertyName.equals("name")) {
-      ICalendarExtended calReference = calendar;
+      ICalendarV2 calReference = calendar;
       calendarMap.remove(calendarName);
       calendarMap.put(propertyValue, calReference);
 
@@ -114,12 +114,12 @@ public class CalendarManager implements ICalendarManager {
     activeCalendar = calendarMap.get(calendarName);
   }
 
-  public ICalendarExtended getActiveCalendar() {
+  public ICalendarV2 getActiveCalendar() {
     return activeCalendar;
   }
 
   @Override
-  public ICalendarExtended getCalendarByName(String calendarName) {
+  public ICalendarV2 getCalendarByName(String calendarName) {
     return calendarMap.get(calendarName);
   }
 
