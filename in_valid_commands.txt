@@ -1,0 +1,8 @@
+create event  "Hello" from 2025-09-20T12:00 to 2025-09-20T13:00
+create event  "multi Day Event" from 2025-09-20T12:00 to 2025-09-25T13:00
+edit events location "Hello" "Snell"
+edit events description "multi Day Event" "big event"
+create event "Recurring Event" from 2025-09-11T02:00 to 2025-09-11T02:01 repeats TW for 2 times
+print events on "2025-09-20"
+export cal events.csv
+exit
