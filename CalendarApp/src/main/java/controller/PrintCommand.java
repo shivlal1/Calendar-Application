@@ -88,8 +88,8 @@ public class PrintCommand implements ICommand {
 
 
   /**
-   * This method adds the parsed value to the metadata map for event filtering
-   * It send the metadata to the console view
+   * This method adds the parsed value to the metadata map for event filtering and sends the
+   * metadata to the console view.
    *
    * @param calendar The ICalendar object containing events to be printed.
    */

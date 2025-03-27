@@ -10,7 +10,9 @@ import java.io.PrintStream;
 
 import static org.junit.Assert.assertEquals;
 
-
+/**
+ * A unit test for the calendar app class.
+ */
 public class CalendarAppTest {
 
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -175,16 +177,24 @@ public class CalendarAppTest {
     CalendarApp.main(new String[]{"--mode", "interactive"});
   }
 
-
+  /**
+   * Simulates user input by temporarily redirecting the standard input stream.
+   *
+   * @param input The string representing user input to simulate.
+   */
   private void simulateUserInput(String input) {
     System.setIn(new ByteArrayInputStream(input.getBytes()));
     outputStream.reset(); // Clear previous output
   }
 
+  /**
+   * This method prints captured output from the redirected output stream.
+   *
+   * @return the normalized string output captured during command execution.
+   */
   private String getOutput() {
     return outputStream.toString().replace("\r", ""); // Normalize newlines
   }
-
 
   @Test
   public void basicCalendar2() throws Exception {
@@ -204,9 +214,7 @@ public class CalendarAppTest {
 
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
-
   }
-
 
   @Test
   public void invalidEdit() throws Exception {
@@ -314,7 +322,11 @@ public class CalendarAppTest {
     String useCal2 = "use calendar --name myCalendar2";
     String printEvent = "print events on \"2025-04-01\"";
 
-    String[] inputs = {createCal, createCal2, useCal, createEvent, copy, useCal2, printEvent, "exit"};
+    String[] inputs = {
+            createCal, createCal2, useCal, createEvent, copy, useCal2, printEvent,
+            "exit"
+    };
+
 
     String simulatedInput = String.join("\n", inputs) + "\n";
 
@@ -338,7 +350,10 @@ public class CalendarAppTest {
     String useCal2 = "use calendar --name myCalendar2";
     String printEvent = "print events on \"2025-04-01\"";
 
-    String[] inputs = {createCal, createCal2, useCal, createEvent, copy, useCal2, printEvent, "exit"};
+    String[] inputs = {
+            createCal, createCal2, useCal, createEvent, copy, useCal2, printEvent,
+            "exit"
+    };
     String simulatedInput = String.join("\n", inputs) + "\n";
 
     simulateUserInput(simulatedInput);
@@ -360,14 +375,17 @@ public class CalendarAppTest {
     String createEvent2 = "create event \"SingleEvent\" from 2025-03-02T02:00 to 2025-03-02T03:00";
     String createEvent3 = "create event \"SingleEvent\" from 2025-03-03T02:00 to 2025-03-03T03:00";
 
-    String copy = "copy events between 2025-03-01 and 2025-03-03 --target myCalendar2 to 2025-04-01";
+    String copy = "copy events between 2025-03-01 and 2025-03-03 --target myCalendar2 to " +
+            "2025-04-01";
     String useCal2 = "use calendar --name myCalendar2";
     String printEvent1 = "print events on \"2025-04-01\"";
     String printEvent2 = "print events on \"2025-04-02\"";
     String printEvent3 = "print events on \"2025-04-03\"";
 
-    String[] inputs = {createCal, createCal2, useCal, createEvent, createEvent2, createEvent3,
-            copy, useCal2, printEvent1, printEvent2, printEvent3, "exit"};
+    String[] inputs = {
+            createCal, createCal2, useCal, createEvent, createEvent2, createEvent3,
+            copy, useCal2, printEvent1, printEvent2, printEvent3, "exit"
+    };
     String simulatedInput = String.join("\n", inputs) + "\n";
 
     simulateUserInput(simulatedInput);
@@ -396,14 +414,18 @@ public class CalendarAppTest {
     String createEvent3 = "create event \"SingleEvent\" from 2025-03-03T02:00 to 2025-03-03T03:00";
     String edit = "edit events name \"SingleEvent\" from 2025-03-01T02:00 with \"Event 2\"";
 
-   // String copy = "copy events between 2025-03-01 and 2025-03-03 --target myCalendar2 to 2025-04-01";
+    // String copy = "copy events between 2025-03-01 and 2025-03-03 --target myCalendar2
+    // to 2025-04-01";
     //String useCal2 = "use calendar --name myCalendar2";
     String printEvent1 = "print events on \"2025-03-01\"";
     String printEvent2 = "print events on \"2025-03-02\"";
     String printEvent3 = "print events on \"2025-03-03\"";
 
-    String[] inputs = {createCal, createCal2, useCal, createEvent, createEvent2, createEvent3,
-            edit, printEvent1, printEvent2, printEvent3, "exit"};
+    String[] inputs = {
+            createCal, createCal2, useCal, createEvent, createEvent2, createEvent3,
+            edit, printEvent1, printEvent2, printEvent3, "exit"
+    };
+
     String simulatedInput = String.join("\n", inputs) + "\n";
 
     simulateUserInput(simulatedInput);
@@ -418,8 +440,6 @@ public class CalendarAppTest {
     String output4 = "• Subject : SingleEvent,Start date : 2025-04-03,Start time : 17:00," +
             "End date : 2025-04-03,End time : 18:00,isPublic : false\n";
 
-//    assertEquals(output1 + output2 + output3 + output4, getOutput());
+    //    assertEquals(output1 + output2 + output3 + output4, getOutput());
   }
-
-
 }

@@ -9,12 +9,13 @@ import model.ICalendar;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * A unit test for the CalendarController class.
+ */
 public class CalendarControllerTest {
-
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
-
 
   @Test
   public void commandTest() throws Exception {

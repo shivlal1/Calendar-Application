@@ -87,16 +87,34 @@ public class DateUtils {
     return stringToLocalDateTime(parsedDate);
   }
 
+  /**
+   * Converts a LocalDateTime object to a date string formatted specifically for CSV output.
+   *
+   * @param date The LocalDateTime to be converted.
+   * @return A formatted date string for CSV, or an empty string if input is null.
+   */
   public static String getCsvDate(LocalDateTime date) {
     return (date != null) ?
             date.toLocalDate().format(csvDateFormat) : "";
   }
 
+  /**
+   * Converts a LocalDateTime object to a time string formatted specifically for CSV output.
+   *
+   * @param date The LocalDateTime to be converted.
+   * @return A formatted time string for CSV, or an empty string if input date is null.
+   */
   public static String getCsvTime(LocalDateTime date) {
     return (date.toLocalDate() != null) ?
             date.toLocalTime().format(csvTimeFormat) : "";
   }
 
+  /**
+   * Checks if a provided string represents a valid timezone identifier.
+   *
+   * @param timezone The timezone string to validate.
+   * @return true if the timezone is valid; false otherwise.
+   */
   public static boolean isValidZoneId(String timezone) {
     try {
       ZoneId.of(timezone);
@@ -106,10 +124,26 @@ public class DateUtils {
     }
   }
 
+  /**
+   * Converts a date string in ISO_LOCAL_DATE format to a LocalDate object.
+   *
+   * @param date The string representing the date.
+   * @return The corresponding LocalDate object.
+   */
   public static LocalDate stringToLocalDate(String date) {
     return LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
   }
-  public static LocalDateTime changeTimeZone(LocalDateTime date, ZoneId sourceZoneId, ZoneId targetZoneId) {
+
+  /**
+   * Changes the timezone of a given LocalDateTime from a source timezone to a target timezone.
+   *
+   * @param date The original date-time value.
+   * @param sourceZoneId The current timezone of the provided date-time.
+   * @param targetZoneId The desired timezone for conversion.
+   * @return A LocalDateTime adjusted to the target timezone.
+   */
+  public static LocalDateTime changeTimeZone(LocalDateTime date, ZoneId sourceZoneId,
+                                             ZoneId targetZoneId) {
     ZonedDateTime sourceZonedDateTime = date.atZone(sourceZoneId);
     return sourceZonedDateTime.withZoneSameInstant(targetZoneId).toLocalDateTime();
   }
