@@ -184,12 +184,19 @@ This directory contains the main source code organized using the MVC (Model-View
 ### test/
 This directory hosts all unit tests to ensure the correctness and reliability of the application:
 
+#### controller/
 - **CreateCommandTest.java**: Tests functionalities related to creating new events.
 - **ShowCommandTest.java**: Tests functionalities for displaying event details and status.
 - **EditCommandTest.java**: Covers tests for editing event details.
 - **PrintCommandTest.java**: Verifies functionalities for printing events or schedules.
 - **ExportCommandTest.java**: Ensures correctness of event export functionalities.
+- **CopyCommandTest.java**: Ensures the correctness of event copy functionalities.
 
+#### utils/
+- **CalendarCsvExport.java**: Tests functionalities related to exporting the calendar to csv.
+- **DateUtilsTest.java**: Tests functionalities related to creating new events.
+
+**CalendarAppTest.java**: Tests functionalities of the main file that runs the program.
 ### res/
 This directory holds various resources useful for documentation, reference, or illustrative purposes, including:
 
