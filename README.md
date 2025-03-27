@@ -22,13 +22,49 @@ This project implements a comprehensive virtual calendar application inspired by
 - **Event Copying** (Support copying events between calendars, respecting timezone and conflict rules)
 - **Clarified Command Set** (Conflicts automatically declined, enhanced editing commands)
 
+### New Functionalities Implemented
+- **Support for Time Zones** – The system now accommodates time zones for event scheduling and management.
+- **Auto-Decline Policy** – By default, event conflicts are automatically declined, and editing events that create conflicts is not allowed.
+- **Copy Events to Another Calendar** – Users can now duplicate events across different calendars.
+- **Calendar Management Commands** – New commands for creating, editing, and switching between calendars have been introduced.
+
+### Code Design Approach
+The existing design was **NOT CHANGED** in any way to integrate these new functionalities. Instead of modifying the existing design, the implementation was extended by introducing new classes and interfaces. Changes to existing code primarily enhanced mutation testing strength and improved live coverage, addressing gaps from the previous assignment.
+
+### Key Code Changes
+
+#### 1. Copy Command in the Controller
+- Introduced a new class, `CopyCommand`, adhering to the existing command design pattern to support event copying.
+
+#### 2. Calendar Management Commands in the Controller
+- Created a new interface `ICalendarManager` and its concrete implementation `CalendarManager` to handle multiple calendars and track the active calendar context.
+- `ICalendarManager` provides an `execute()` method to handle calendar-specific commands.
+
+#### 3. Copy Command in the Model
+- **Previous Implementation (Assignment 4)**:
+  - `Calendar` implemented `ICalendar`, providing basic event management functionalities.
+
+- **Updated Implementation (Assignment 5)**:
+  - Created a new class, `CalendarV2`, extending `Calendar` and implementing `ICalendarV2`.
+  - `ICalendarV2` extends `ICalendar` by introducing methods for copying events.
+  - Methods previously marked private in `Calendar` were changed to protected to facilitate reuse in `CalendarV2`.
+
+#### 4. Auto-Decline Feature
+- Enabled auto-decline by default in the `CalendarV2` implementation.
+- Invoked the existing `createEvent` method from `Calendar` using `super()` to avoid code duplication.
+- Event editing triggers auto-decline if changes to event times cause conflicts. This was managed using `super()` in `CalendarV2` for methods like `updateStartDate` and `updateEndDate`.
+- Enhanced edit command syntax to support auto-decline when modifying event properties.
+- Introduced new logic in `CalendarV2` to filter and edit all events starting from a specified date using an enhanced implementation of `isMatchingEvent`.
+
+#### 5. Time Zone Support
+- Added a time zone parameter to the constructor of `CalendarV2`.
+- Developed new utility methods in `DateUtils` for handling time zone conversions.
 ## Usage
 
 ### Interactive Mode
 
 Start interactive command entry:
 
-bash
 java CalendarApp --mode interactive
 
 
@@ -36,7 +72,6 @@ java CalendarApp --mode interactive
 
 Execute commands from a file: ( please enter the absolute file path after program runs)
 
-bash
 java CalendarApp --mode headless
 
 
