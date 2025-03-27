@@ -37,7 +37,6 @@ public class CalendarV2
   }
 
   protected boolean isMatchingEvent(Event event, LocalDateTime start, LocalDateTime end, String eventName) {
-
     return super.isMatchingEvent(event, start, end, eventName)
             || (event.subject.equals(eventName)
             && (start != null && event.startDate.compareTo(start) >= 0));

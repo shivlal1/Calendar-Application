@@ -9,7 +9,6 @@ import java.util.List;
  * description, location, and whether the event is public.
  */
 public abstract class Event {
-
   protected String subject;
   protected String description;
   protected String location;

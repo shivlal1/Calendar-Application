@@ -87,9 +87,7 @@ public class CopyCommand implements ICommand {
   @Override
   public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);
-
     ICalendarV2 targetCal = calendarManager.getCalendarByName(targetCalendar);
-
     if (targetCal == null) {
       throw new Exception("Target calendar doesn't exists");
     }

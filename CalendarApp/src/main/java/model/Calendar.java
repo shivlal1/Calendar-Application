@@ -88,7 +88,6 @@ public class Calendar implements ICalendar {
     return eventDetails;
   }
 
-
   /**
    * Sets a property of an event to a new value.
    *
@@ -191,14 +190,6 @@ public class Calendar implements ICalendar {
 
     updateMatchingEvents(eventName, localStartTime, localEndTime, newValue, property);
 
-//    if (isEditByEventTime(data) && data.get("endTime")==null ) {
-//      updateMatchingEvents(eventName, localStartTime, localEndTime, newValue, property);
-//    } else if (isEditByEventName(data)) {
-//      updateMatchingEvents(eventName, localStartTime, localEndTime, newValue, property);
-//    } else if (isEditByEventTime(data) && data.get("endTime")!=null) {
-//      updateMatchingEvents(eventName, localStartTime, localEndTime, newValue, property);
-//    }
-
   }
 
   /**
@@ -211,8 +202,8 @@ public class Calendar implements ICalendar {
    * @return true if the event matches; false otherwise.
    */
   protected boolean isMatchingEvent(Event event, LocalDateTime start, LocalDateTime end,
-
                                     String eventName) {
+
     return (event.subject.equals(eventName)
             && (start == null || event.startDate.equals(start))
             && (end == null || event.endDate.equals(end)));

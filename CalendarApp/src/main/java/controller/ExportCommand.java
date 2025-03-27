@@ -17,7 +17,6 @@ import view.View;
 public class ExportCommand implements ICommand {
   private String fileName;
 
-
   /**
    * This method parses the command arguments to extract the CSV file name.
    *
