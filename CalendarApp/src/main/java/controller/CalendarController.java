@@ -26,6 +26,11 @@ public class CalendarController implements ICommand {
     commandMap.put("export", new ExportCommand());
   }
 
+  /**
+   * To construct a new calendarController which supports copy command also.
+   *
+   * @param calendarManager calandarManager which gives access calendar to target calendar.
+   */
   public CalendarController(ICalendarManager calendarManager) {
     this();
     commandMap.put("copy", new CopyCommand(calendarManager));

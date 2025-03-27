@@ -33,9 +33,10 @@ public class EventFactory {
 
   /**
    * This method gets the copy of the events from the start and end time provided time.
-   * @param event the event object.
+   *
+   * @param event              the event object.
    * @param localStartDateTime the start date and time.
-   * @param localEndDateTime the end date and time.
+   * @param localEndDateTime   the end date and time.
    * @return an event object which is basically the copy of the previous event.
    */
   Event getCarbonCopy(Event event, LocalDateTime localStartDateTime,

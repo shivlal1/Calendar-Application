@@ -14,7 +14,6 @@ import utils.DateUtils;
  * create, edit and process the details of a new calendar.
  */
 public class CalendarManager implements ICalendarManager {
-
   private ICalendarV2 activeCalendar;
   private Map<String, ICalendarV2> calendarMap;
 
@@ -31,8 +30,7 @@ public class CalendarManager implements ICalendarManager {
    * This method splits the input string into two parts at the first space.
    *
    * @param s the string to be split.
-   * @return an array with the first element being the first word,
-   *         and the second element the remaining string.
+   * @return an array with two string as first word and second word.
    */
   private String[] splitStringIntoTwo(String s) {
     int firstSpaceIndex = s.indexOf(" ");
@@ -143,6 +141,7 @@ public class CalendarManager implements ICalendarManager {
       ICalendarV2 calReference = calendar;
       calendarMap.remove(calendarName);
       calendarMap.put(propertyValue, calReference);
+      System.out.println("Name Change Success: " + propertyValue);
 
     } else if (propertyName.equals("timezone") && DateUtils.isValidZoneId(propertyValue)) {
       calendar.changeCalendarTimeZone(ZoneId.of(propertyValue));

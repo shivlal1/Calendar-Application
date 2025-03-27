@@ -19,9 +19,9 @@ public abstract class Event {
   /**
    * This method constructs an event object with the given subject, start date and end date.
    *
-   * @param subject the subject of the event.
+   * @param subject   the subject of the event.
    * @param startDate the start date of the event.
-   * @param endDate the end date of the event.
+   * @param endDate   the end date of the event.
    */
   Event(String subject, LocalDateTime startDate, LocalDateTime endDate) {
     this.subject = subject;
@@ -74,9 +74,13 @@ public abstract class Event {
     LocalDateTime existingStartTime = this.startDate;
     LocalDateTime existingEndTime = this.endDate;
 
-    boolean isNoOverlap = ((existingEndTime.compareTo(newStartTime) <= 0
-            || existingStartTime.compareTo(newEndTime) >= 0));
+//    boolean isNoOverlap = ((existingEndTime.compareTo(newStartTime) <= 0
+//            || existingStartTime.compareTo(newEndTime) >= 0));
 
+    boolean isNoOverlap = (existingStartTime.compareTo(newStartTime) > 0 &&
+            existingStartTime.compareTo(newEndTime) >= 0) ||
+            (existingEndTime.compareTo(newEndTime) < 0 &&
+                    existingEndTime.compareTo(newStartTime) <= 0);
     return !isNoOverlap;
   }
 

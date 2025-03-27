@@ -128,7 +128,7 @@ public class Calendar implements ICalendar {
    * @param newValue the new value which we want to give for updating.
    * @throws Exception exception if invalid start or end time is given.
    */
-  private void updateStartDate(Event event, String newValue) throws Exception {
+  protected void updateStartDate(Event event, String newValue) throws Exception {
     LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
 
     if (event.canBeEditedToDifferentDay()) {
@@ -154,7 +154,7 @@ public class Calendar implements ICalendar {
    * @param newValue The new end date as a string.
    * @throws Exception exception if invalid start or end time is given.
    */
-  private void updateEndDate(Event event, String newValue) throws Exception {
+  protected void updateEndDate(Event event, String newValue) throws Exception {
     LocalDateTime newDate = DateUtils.pareStringToLocalDateTime(newValue);
 
     if (event.canBeEditedToDifferentDay()) {

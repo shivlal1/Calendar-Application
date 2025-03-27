@@ -48,7 +48,7 @@ public class CalendarV2
   }
 
   /**
-   * This method gets the timezone of this calendar.
+   * This method gets the timezone of the particular calendar.
    *
    * @return the timezone of the current calendar.
    */
@@ -74,11 +74,58 @@ public class CalendarV2
   }
 
   /**
+   * Checks for conflicts with calendarStorage event and skips the given event.
+   *
+   * @param event the event which needs to be check with for conflict.
+   * @return true if conflicts otherwise false.
+   */
+  private boolean hasConflictsExcludingCurrentEvent(Event event) {
+    for (Event calendarEvent : calendarStorage) {
+      if (!calendarEvent.equals(event) && calendarEvent.isOverlapWith(event)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * To support the new V2 functionality of not updating start date if it overlaps with other event.
+   *
+   * @param event    the event we need to update.
+   * @param newValue the new value which we want to give for updating.
+   * @throws Exception exception if invalid start or end time is given.
+   */
+  protected void updateStartDate(Event event, String newValue) throws Exception {
+    LocalDateTime oldStartDate = event.startDate;
+    super.updateStartDate(event, newValue);
+    if (hasConflictsExcludingCurrentEvent(event)) {
+      event.startDate = oldStartDate;
+      throw new Exception("the event conflicts with another event");
+    }
+  }
+
+  /**
+   * This method updates the end date of an event if it dones't overlap using parents method.
+   *
+   * @param event    The event to update.
+   * @param newValue The new end date as a string.
+   * @throws Exception exception if invalid start or end time is given.
+   */
+  protected void updateEndDate(Event event, String newValue) throws Exception {
+    LocalDateTime oldEndDate = event.endDate;
+    super.updateEndDate(event, newValue);
+    if (hasConflictsExcludingCurrentEvent(event)) {
+      event.endDate = oldEndDate;
+      throw new Exception("the event conflicts with another event");
+    }
+  }
+
+  /**
    * This method checks if the date is in between the given start and end dates.
    *
-   * @param start the start date.
+   * @param start  the start date.
    * @param middle the middle date for which we need to check.
-   * @param end the end date.
+   * @param end    the end date.
    * @return true if the middle date is in between those dates else, false.
    */
   private boolean isBetweenDates(LocalDate start, LocalDate middle, LocalDate end) {
@@ -99,12 +146,7 @@ public class CalendarV2
     EventFactory factory = new EventFactory();
     for (Event event : calendarStorage) {
       LocalDateTime onDateTime = (LocalDateTime) metaDetails.get("onDateTime");
-//      String eventName = (String) metaDetails.get("eventName");
-//      boolean val = event.subject.equals((eventName));
-//     boolean val2 = event.startDate.equals(onDateTime);
-//     // System.out.println("val "+event.subject.equals((String) metaDetails.get("eventName")));
-//      //System.out.println("val 2 "+event.startDate.equals(onDateTime));
-      if (event.subject.equals( (String) metaDetails.get("eventName") )
+      if (event.subject.equals((String) metaDetails.get("eventName"))
               && event.startDate.equals(onDateTime)) {
         Duration offsetTime = Duration.between(event.startDate, event.endDate);
         LocalDateTime newStartDateTime = (LocalDateTime) metaDetails.get("newStartTime");
@@ -119,10 +161,10 @@ public class CalendarV2
   /**
    * This method makes a timezone-adjusted carbon copy of an event for the target calendar.
    *
-   * @param event Original event to be copied.
-   * @param targetCalendar Target calendar where the event will be copied.
+   * @param event            Original event to be copied.
+   * @param targetCalendar   Target calendar where the event will be copied.
    * @param newStartDateTime Adjusted start date/time for the copied event.
-   * @param newEndDateTime Adjusted end date/time for the copied event.
+   * @param newEndDateTime   Adjusted end date/time for the copied event.
    * @return A timezone-adjusted carbon copy of the original event.
    */
   private Event getNewCarbonCopy(Event event, ICalendarV2 targetCalendar,
@@ -142,7 +184,7 @@ public class CalendarV2
    * a new specified date.
    *
    * @param targetCalendar Target calendar where events will be copied.
-   * @param metaDetails Metadata map containing original date and destination date.
+   * @param metaDetails    Metadata map containing original date and destination date.
    * @return List of copied events matching criteria.
    */
   private List<Event> filterEventsOnDate(ICalendarV2 targetCalendar, Map<String,
@@ -166,8 +208,8 @@ public class CalendarV2
    * This method filters the events occurring within a specified date range and copies them to a
    * new date range on the target calendar.
    *
-   * @param metaDetails Metadata map containing start and end dates for original and
-   *                    new date ranges.
+   * @param metaDetails    Metadata map containing start and end dates for original and
+   *                       new date ranges.
    * @param targetCalendar Target calendar where events will be copied.
    * @return List of copied events matching the date-range criteria.
    */
@@ -195,7 +237,7 @@ public class CalendarV2
    * This method helps determine the type of copy operation to perform and delegates the request
    * to the appropriate filter method.
    *
-   * @param metaDetails Metadata map specifying the type of copy operation.
+   * @param metaDetails    Metadata map specifying the type of copy operation.
    * @param targetCalendar Target calendar for copied events.
    * @return List of events copied based on the specified criteria.
    */
@@ -216,7 +258,7 @@ public class CalendarV2
    * ensuring no event overlaps occur.
    *
    * @param targetCalendar The calendar where events will be copied to.
-   * @param metaDetails Metadata specifying the copy criteria and details.
+   * @param metaDetails    Metadata specifying the copy criteria and details.
    * @throws Exception If an error occurs during the copying process.
    */
   @Override
@@ -242,10 +284,10 @@ public class CalendarV2
   /**
    * This method makes a new event in the calendar with automatic conflict resolution.
    *
-   * @param subject Subject/title of the new event.
+   * @param subject            Subject/title of the new event.
    * @param localStartDateTime Event start date/time.
-   * @param localEndDateTime Event end date/time.
-   * @param allMetaDeta Metadata map containing additional event details and settings.
+   * @param localEndDateTime   Event end date/time.
+   * @param allMetaDeta        Metadata map containing additional event details and settings.
    * @throws Exception If event creation encounters an issue (e.g., conflicting events).
    */
   @Override
@@ -256,4 +298,16 @@ public class CalendarV2
     allMetaDeta.put("autoDecline", true);
     super.createEvent(subject, localStartDateTime, localEndDateTime, allMetaDeta);
   }
+
+
+  /**
+   * Edits an event based on the provided metadata using the Parents implementation.
+   *
+   * @param data Metadata containing details for the edit operation.
+   * @throws Exception If no matching event is found.
+   */
+  public void editEvent(Map<String, Object> data) throws Exception {
+    super.editEvent(data);
+  }
+
 }

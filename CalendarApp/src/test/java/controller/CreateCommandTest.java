@@ -16,6 +16,7 @@ import java.util.Map;
 import model.Calendar;
 import model.CalendarV2;
 import model.ICalendar;
+import model.ICalendarV2;
 import utils.DateUtils;
 import view.ConsoleView;
 import view.View;
@@ -1290,22 +1291,74 @@ public class CreateCommandTest {
 
 
   @Test
-  public void newCalAutoDeclineCheck() throws Exception {
+  public void newCreateAutoDecline() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("the event conflicts with another event");
 
-    ICalendar cal = new CalendarV2(ZoneId.of("Asia/Kolkata"));
+    ICalendarV2 calendar = new CalendarV2(ZoneId.of("Asia/Kolkata"));
+    command = "event \"Event 1\" from 2025-03-01T10:00 to 2025-03-01T11:00";
+    createCommand.execute(command, calendar);
 
-    command = "event \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
-    createCommand.execute(command, cal);
+    command = "event \"Event 2\" from 2025-03-01T10:15 to 2025-03-01T11:45";
+    createCommand.execute(command, calendar);
+  }
 
-    command = "event \"SingleEvent\" from 2025-03-02T09:45 to 2025-03-02T10:15";
-    createCommand.execute(command, cal);
+  @Test
+  public void newCreateSuccess() throws Exception {
+    ICalendarV2 calendar = new CalendarV2(ZoneId.of("Asia/Kolkata"));
+    command = "event \"Event 1\" from 2025-03-01T10:00 to 2025-03-01T11:00";
+    createCommand.execute(command, calendar);
+    command = "event \"Event 2\" from 2025-03-01T11:15 to 2025-03-01T11:30";
+    createCommand.execute(command, calendar);
+    assertEquals(calendar.getAllCalendarEvents().size(), 2);
+  }
 
-    command = "events name \"SingleEvent\" from 2025-03-01T09:00  with \"Event 2\"";
-    editCommand.execute(command, cal);
+  @Test
+  public void newRecEventConflict() throws Exception {
 
-    view.viewEvents(cal.getAllCalendarEvents());
+    thrown.expect(Exception.class);
+    thrown.expectMessage("the event conflicts with another event");
 
+    ICalendarV2 calendar = new CalendarV2(ZoneId.of("Asia/Kolkata"));
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "event --autoDecline \"Recurring Event\" from 2025-03-01T09:00 to 2025-03-01T10:00 " +
+            "repeats SU for 7 times";
+    createCommand.execute(command, calendar);
+  }
+
+  @Test
+  public void newRecEventConflicts() throws Exception {
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("the event conflicts with another event");
+
+    ICalendarV2 calendar = new CalendarV2(ZoneId.of("Asia/Kolkata"));
+    command = "event --autoDecline \"Recurring \" from 2025-03-01T09:00 to 2025-03-01T10:00 " +
+            "repeats S for 6 times";
+
+    createCommand.execute(command, calendar);
+
+    command = "event --autoDecline \"Recurring Event\" from 2025-03-01T09:00 to 2025-03-01T10:00 " +
+            "repeats SU for 7 times";
+    createCommand.execute(command, calendar);
   }
 
 
+  @Test
+  public void recEventSuccess() throws Exception {
+
+    ICalendarV2 calendar = new CalendarV2(ZoneId.of("Asia/Kolkata"));
+    command = "event --autoDecline \"Recurring \" from 2025-03-01T09:00 to 2025-03-01T10:00 " +
+            "repeats S for 1 times";
+
+    createCommand.execute(command, calendar);
+
+    command = "event --autoDecline \"Recurring Event\" from 2025-03-01T09:00 to 2025-03-01T10:00 " +
+            "repeats U for 1 times";
+    createCommand.execute(command, calendar);
+
+    assertEquals(calendar.getAllCalendarEvents().size(), 2);
+  }
 }

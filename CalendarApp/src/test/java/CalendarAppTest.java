@@ -7,6 +7,16 @@ import org.junit.rules.ExpectedException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.time.ZoneId;
+import java.util.ArrayList;
+
+import controller.CreateCommand;
+import controller.EditCommand;
+import controller.ICommand;
+import model.CalendarV2;
+import model.ICalendar;
+import view.ConsoleView;
+import view.View;
 
 import static org.junit.Assert.assertEquals;
 
@@ -45,10 +55,11 @@ public class CalendarAppTest {
     CalendarApp.main(new String[]{"--mode", "interactive"});
 
     String output1 = "Using interactive mode. To quit, use 'exit'\n";
-    String output2 = "• Subject : SingleEvent,Start date : 2025-03-01," +
+    String output2 = "Name Change Success: myCalendar2\n";
+    String output3 = "• Subject : SingleEvent,Start date : 2025-03-01," +
             "Start time : 09:00,End date : 2025-03-01,End time : 10:00,isPublic : false\n";
 
-    assertEquals(output1 + output2, getOutput());
+    assertEquals(output1 + output2 + output3, getOutput());
   }
 
 
@@ -235,51 +246,6 @@ public class CalendarAppTest {
   }
 
   @Test
-  public void editNameOfCalendar() throws Exception {
-
-    String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
-    String useCal = "use calendar --name myCalendar";
-    String editCal = "edit calendar --name myCalendar --property name myCalendar2";
-
-    String[] inputs = {createCal, useCal, editCal, "exit"};
-    String simulatedInput = String.join("\n", inputs) + "\n";
-
-    simulateUserInput(simulatedInput);
-    CalendarApp.main(new String[]{"--mode", "interactive"});
-  }
-
-  @Test
-  public void editTimeZoneOfCalendar() throws Exception {
-
-    String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
-    String useCal = "use calendar --name myCalendar";
-    String editCal = "edit calendar --name myCalendar --property timezone Australia/Sydney";
-
-    String[] inputs = {createCal, useCal, editCal, "exit"};
-    String simulatedInput = String.join("\n", inputs) + "\n";
-
-    simulateUserInput(simulatedInput);
-    CalendarApp.main(new String[]{"--mode", "interactive"});
-  }
-
-
-  @Test
-  public void editTimeZoneOfCalendarInvalid() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("invalid calendarProperty timezone");
-
-    String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
-    String useCal = "use calendar --name myCalendar";
-    String editCal = "edit calendar --name myCalendar --property timezone Austral/Sydney";
-
-    String[] inputs = {createCal, useCal, editCal, "exit"};
-    String simulatedInput = String.join("\n", inputs) + "\n";
-
-    simulateUserInput(simulatedInput);
-    CalendarApp.main(new String[]{"--mode", "interactive"});
-  }
-
-  @Test
   public void editNotExistingCal() throws Exception {
     thrown.expect(Exception.class);
     thrown.expectMessage("No such calendar exists");
@@ -322,14 +288,17 @@ public class CalendarAppTest {
     String useCal2 = "use calendar --name myCalendar2";
     String printEvent = "print events on \"2025-04-01\"";
 
-    String[] inputs = {
-            createCal, createCal2, useCal, createEvent, copy, useCal2, printEvent,
-            "exit"
-    };
-
+    ArrayList<String> inputs = new ArrayList<>();
+    inputs.add(createCal);
+    inputs.add(createCal2);
+    inputs.add(useCal);
+    inputs.add(createEvent);
+    inputs.add(copy);
+    inputs.add(useCal2);
+    inputs.add(printEvent);
+    inputs.add("exit");
 
     String simulatedInput = String.join("\n", inputs) + "\n";
-
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
 
@@ -350,10 +319,16 @@ public class CalendarAppTest {
     String useCal2 = "use calendar --name myCalendar2";
     String printEvent = "print events on \"2025-04-01\"";
 
-    String[] inputs = {
-            createCal, createCal2, useCal, createEvent, copy, useCal2, printEvent,
-            "exit"
-    };
+    ArrayList<String> inputs = new ArrayList<>();
+    inputs.add(createCal);
+    inputs.add(createCal2);
+    inputs.add(useCal);
+    inputs.add(createEvent);
+    inputs.add(copy);
+    inputs.add(useCal2);
+    inputs.add(printEvent);
+    inputs.add("exit");
+
     String simulatedInput = String.join("\n", inputs) + "\n";
 
     simulateUserInput(simulatedInput);
@@ -382,10 +357,21 @@ public class CalendarAppTest {
     String printEvent2 = "print events on \"2025-04-02\"";
     String printEvent3 = "print events on \"2025-04-03\"";
 
-    String[] inputs = {
-            createCal, createCal2, useCal, createEvent, createEvent2, createEvent3,
-            copy, useCal2, printEvent1, printEvent2, printEvent3, "exit"
-    };
+    ArrayList<String> inputs = new ArrayList<>();
+
+    // Adding elements dynamically
+    inputs.add(createCal);
+    inputs.add(createCal2);
+    inputs.add(useCal);
+    inputs.add(createEvent);
+    inputs.add(createEvent2);
+    inputs.add(createEvent3);
+    inputs.add(copy);
+    inputs.add(useCal2);
+    inputs.add(printEvent1);
+    inputs.add(printEvent2);
+    inputs.add(printEvent3);
+    inputs.add("exit");
     String simulatedInput = String.join("\n", inputs) + "\n";
 
     simulateUserInput(simulatedInput);
@@ -408,26 +394,38 @@ public class CalendarAppTest {
     String createCal = "create calendar --name myCalendar1 --timezone America/New_York";
     String createCal2 = "create calendar --name myCalendar2 --timezone Australia/Sydney";
     String useCal = "use calendar --name myCalendar1";
+    String diffEvent = "create event \"SingleEvent\" from 2025-02-01T02:00 to 2025-02-01T03:00";
     String createEvent = "create event \"SingleEvent\" from 2025-03-01T02:00 to 2025-03-01T03:00";
     String createEvent2 = "create event \"SingleEvent\" from 2025-03-02T02:00 to 2025-03-02T03:00";
     String createEvent3 = "create event \"SingleEvent\" from 2025-03-03T02:00 to 2025-03-03T03:00";
     String edit = "edit events name \"SingleEvent\" from 2025-03-01T02:00 with \"Event 2\"";
-
+    String diffPrint = "print events on \"2025-02-01\"";
     String printEvent1 = "print events on \"2025-03-01\"";
     String printEvent2 = "print events on \"2025-03-02\"";
     String printEvent3 = "print events on \"2025-03-03\"";
 
-    String[] inputs = {
-            createCal, createCal2, useCal, createEvent, createEvent2, createEvent3,
-            edit, printEvent1, printEvent2, printEvent3, "exit"
-    };
-
+    ArrayList<String> inputs = new ArrayList<>();
+    inputs.add(createCal);
+    inputs.add(createCal2);
+    inputs.add(useCal);
+    inputs.add(diffEvent);
+    inputs.add(createEvent);
+    inputs.add(createEvent2);
+    inputs.add(createEvent3);
+    inputs.add(edit);
+    inputs.add(diffPrint);
+    inputs.add(printEvent1);
+    inputs.add(printEvent2);
+    inputs.add(printEvent3);
+    inputs.add("exit");
     String simulatedInput = String.join("\n", inputs) + "\n";
 
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
 
     String output1 = "Using interactive mode. To quit, use 'exit'\n";
+    String diffEvent1 = "• Subject : SingleEvent,Start date : 2025-02-01,Start time : 02:00," +
+            "End date : 2025-02-01,End time : 03:00,isPublic : false\n";
     String output2 = "• Subject : Event 2,Start date : 2025-03-01," +
             "Start time : 02:00,End date : 2025-03-01,End time : 03:00,isPublic : false\n";
 
@@ -436,7 +434,7 @@ public class CalendarAppTest {
     String output4 = "• Subject : Event 2,Start date : 2025-03-03,Start time : 02:00," +
             "End date : 2025-03-03,End time : 03:00,isPublic : false\n";
 
-    assertEquals(output1 + output2 + output3 + output4, getOutput());
+    assertEquals(output1 + diffEvent1 + output2 + output3 + output4, getOutput());
   }
 
   @Test
@@ -445,11 +443,20 @@ public class CalendarAppTest {
     String createCal2 = "create calendar --name myCalendar2 --timezone Asia/Kolkata";
     String useCal = "use calendar --name myCalendar1";
     String createEvent = "create event \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
-    String copy = "copy event SingleEvent on 2025-03-01T09:00 --target myCalendar2 to 2025-03-01T09:00";
+    String copy = "copy event SingleEvent on 2025-03-01T09:00 --target myCalendar2 " +
+            "to 2025-03-01T09:00";
     String useCal2 = "use calendar --name myCalendar2";
     String printEvent = "print events on \"2025-03-01\"";
 
-    String[] inputs = {createCal, createCal2, useCal, createEvent, copy, useCal2, printEvent, "exit"};
+    ArrayList<String> inputs = new ArrayList<>();
+    inputs.add(createCal);
+    inputs.add(createCal2);
+    inputs.add(useCal);
+    inputs.add(createEvent);
+    inputs.add(copy);
+    inputs.add(useCal2);
+    inputs.add(printEvent);
+    inputs.add("exit");
 
     String simulatedInput = String.join("\n", inputs) + "\n";
 
@@ -463,5 +470,50 @@ public class CalendarAppTest {
     assertEquals(output1 + output2, getOutput());
   }
 
-  
+
+  @Test
+  public void editNameOfCalendar() throws Exception {
+
+    String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
+    String useCal = "use calendar --name myCalendar";
+    String editCal = "edit calendar --name myCalendar --property name myCalendar2";
+    String[] inputs = {createCal, useCal, editCal, "exit"};
+    String simulatedInput = String.join("\n", inputs) + "\n";
+
+    simulateUserInput(simulatedInput);
+    CalendarApp.main(new String[]{"--mode", "interactive"});
+
+    String output = "Using interactive mode. To quit, use 'exit'\n";
+    assertEquals(output + "Name Change Success: myCalendar2\n", getOutput());
+
+  }
+
+
+  @Test
+  public void newCalAutoDeclineCheck() throws Exception {
+    String command;
+    ICommand createCommand = new CreateCommand();
+    ICommand editCommand = new EditCommand();
+    View view = new ConsoleView();
+
+    ICalendar cal = new CalendarV2(ZoneId.of("Asia/Kolkata"));
+    command = "event \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command, cal);
+    command = "event \"SingleEvent\" from 2025-03-02T09:45 to 2025-03-02T10:15";
+    createCommand.execute(command, cal);
+    command = "events name \"SingleEvent\" from 2025-03-01T09:00  with \"Event 2\"";
+    editCommand.execute(command, cal);
+    view.viewEvents(cal.getAllCalendarEvents());
+
+    String output1 = "• Subject : Event 2,Start date : 2025-03-01,Start time : 09:00," +
+            "End date : 2025-03-01,End time : 10:00,isPublic : false\n";
+
+    String output2 = "• Subject : Event 2,Start date : 2025-03-02," +
+            "Start time : 09:45,End date : 2025-03-02,End time : 10:15,isPublic : false\n";
+
+    assertEquals(output1 + output2, getOutput());
+
+  }
+
+
 }

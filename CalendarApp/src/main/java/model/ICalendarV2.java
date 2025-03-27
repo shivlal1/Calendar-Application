@@ -27,7 +27,7 @@ public interface ICalendarV2 extends ICalendar {
   /**
    * This method copies events from the current calendar instance to a target calendar.
    *
-   * @param toCalendar The target instance where events will be copied.
+   * @param toCalendar  The target instance where events will be copied.
    * @param metaDetails A map containing details having the parameters for the copying process.
    * @throws Exception If copying fails due to conflicting events or invalid criteria.
    */
