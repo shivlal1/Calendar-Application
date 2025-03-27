@@ -1,11 +1,12 @@
 package controller;
 
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
 import model.CalendarExtended;
-import model.ICalendar;
 import model.ICalendarExtended;
+import utils.DateUtils;
 
 public class CalendarManager implements ICalendarManager {
 
@@ -28,10 +29,8 @@ public class CalendarManager implements ICalendarManager {
   }
 
   private String[] processTillCalendarName(String commandArgs) throws Exception {
-
     String[] result = splitStringIntoTwo(commandArgs); // result[0] = "<calName>", result[1] = "--timezone area/location"
     String calendarName = result[0];
-
     return new String[]{calendarName, result[1]};
   }
 
@@ -73,15 +72,15 @@ public class CalendarManager implements ICalendarManager {
     String calendarName = calendarDetails[0];
     String calendarTimeZone = calendarDetails[1];
 
-    if (calendarTimeZone.equals("")) {
+    if (DateUtils.isValidZoneId(calendarTimeZone)) {
+      calendarMap.put(calendarName, new CalendarExtended(ZoneId.of(calendarTimeZone)));
+    } else {
       throw new Exception("Missing timeZone value");
     }
-    calendarMap.put(calendarName, new CalendarExtended(calendarName, calendarTimeZone));
   }
 
   private void processCalendarEdit(String commandArgs) throws Exception {
     String calendarDetails[] = getCalendarEditDetails(commandArgs);
-
     String calendarName = calendarDetails[0];
     String propertyName = calendarDetails[1];
     String propertyValue = calendarDetails[2];
@@ -93,13 +92,15 @@ public class CalendarManager implements ICalendarManager {
     if (propertyValue.equals("")) {
       throw new Exception("property name/value is not present");
     }
-    if(propertyName=="name"){
-      calendar.changeCalendarName(propertyValue);
+    if (propertyName.equals("name")) {
+      ICalendarExtended calReference = calendar;
+      calendarMap.remove(calendarName);
+      calendarMap.put(propertyValue, calReference);
 
-    }else if(propertyName=="timezone"){
-      calendar.changeCalendarTimeZone(propertyValue);
-    }else{
-      throw new Exception("invalid calendarProperty");
+    } else if (propertyName.equals("timezone") && DateUtils.isValidZoneId(propertyValue)) {
+      calendar.changeCalendarTimeZone(ZoneId.of(propertyValue));
+    } else {
+      throw new Exception("invalid calendarProperty timezone");
     }
   }
 
@@ -108,9 +109,8 @@ public class CalendarManager implements ICalendarManager {
     String calendarName = result[0];
 
     if (!calendarMap.containsKey(calendarName)) {
-      throw new Exception("Calendar with name '" + calendarName + "' does not exist.");
+      throw new Exception("calendar Doesn't exists to Use");
     }
-
     activeCalendar = calendarMap.get(calendarName);
   }
 
@@ -119,7 +119,7 @@ public class CalendarManager implements ICalendarManager {
   }
 
   @Override
-  public ICalendar getCalendarByName(String calendarName) {
+  public ICalendarExtended getCalendarByName(String calendarName) {
     return calendarMap.get(calendarName);
   }
 
@@ -135,7 +135,6 @@ public class CalendarManager implements ICalendarManager {
     } else {
       throw new Exception("start with commad+calendar+name");
     }
-
   }
 
   private String[] splitCommand(String input) {
@@ -144,12 +143,10 @@ public class CalendarManager implements ICalendarManager {
     if (nameFlagIndex != -1) {
       String firstPart = input.substring(0, nameFlagIndex + 7);
       String secondPart = input.substring(nameFlagIndex + 7).trim();
-
       return new String[]{firstPart, secondPart};
     } else {
       return null;
     }
   }
-
 
 }

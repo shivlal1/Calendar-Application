@@ -8,6 +8,7 @@ import org.junit.rules.ExpectedException;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1282,7 +1283,7 @@ public class CreateCommandTest {
   @Test
   public void newCalAutoDeclineCheck() throws Exception {
 
-    ICalendar cal = new CalendarExtended("myCal", "Asia/Kolkata");
+    ICalendar cal = new CalendarExtended(ZoneId.of("Asia/Kolkata"));
 
     command = "event \"SingleEvent\" from 2025-03-01T09:00 to 2025-03-01T10:00";
     createCommand.execute(command, cal);

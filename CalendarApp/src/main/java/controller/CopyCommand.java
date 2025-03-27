@@ -1,14 +1,14 @@
 package controller;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import model.ICalendar;
+import model.ICalendarExtended;
+import utils.DateUtils;
 
 public class CopyCommand implements ICommand {
 
@@ -21,18 +21,64 @@ public class CopyCommand implements ICommand {
   private LocalDateTime endDateTime;
   private LocalDateTime targetDateTime;
   private Map<String, Object> metaData;
-
-  public CopyCommand() {
-    metaData = new HashMap<>();
-  }
+  private ICalendarManager calendarManager;
 
   private static final String regex = "^copy events?(?: (\\S+))? (?:on|between) " +
           "(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?)(?: and (\\d{4}-\\d{2}-\\d{2}))? " +
           "--target (\\S+) to (\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?)$";
 
-  private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd['T'HH:mm]");
 
-  private static String diagnoseCommandError(String command) {
+  public CopyCommand(ICalendarManager calendarManager) {
+    metaData = new HashMap<>();
+    this.calendarManager = calendarManager;
+  }
+
+  private void commandParser(String commandArgs) throws Exception {
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(commandArgs);
+    if (!matcher.matches()) {
+      throw new Exception("Invalid Command: " + diagnoseCommandError(commandArgs));
+    }
+
+    eventName = matcher.group(1);
+    startString = matcher.group(2);
+    endString = matcher.group(3);
+    targetCalendar = matcher.group(4);
+    targetDateString = matcher.group(5);
+//
+//    System.out.println("Parsed Command Successfully:");
+//    System.out.println("  Event Name: " + eventName);
+//    System.out.println("  Start Date/Time: " + startString);
+//    System.out.println("  End Date/Time: " + endString);
+//    System.out.println("  Target Calendar: " + targetCalendar);
+//    System.out.println("  Destination Date/Time: " + targetDateString);
+    addValuesInMetaDataObject(commandArgs);
+  }
+
+
+  private void addValuesInMetaDataObject(String commandArgs) {
+
+    // metaData.put("endTime", endDateTime);
+    metaData.put("startTime", startDateTime);
+    metaData.put("targetCalendar", targetCalendar);
+    //metaData.put("destinationDate", targetDateTime);
+
+    if (eventName != null) {
+      metaData.put("type", "eventsOnDateWithTime");
+      metaData.put("eventName", eventName);
+      metaData.put("onDateTime", DateUtils.pareStringToLocalDateTime(startString));
+      metaData.put("newStartTime", DateUtils.pareStringToLocalDateTime(targetDateString));
+    } else if (commandArgs.contains("between")) {
+      metaData.put("type", "onBetweenEvents");
+      metaData.put("fromDate", DateUtils.stringToLocalDate(startString));
+      metaData.put("toDate", DateUtils.stringToLocalDate(endString));
+      metaData.put("onDate", DateUtils.stringToLocalDate(targetDateString));
+    } else {
+      metaData.put("type", "eventsOnDate");
+    }
+  }
+
+  private String diagnoseCommandError(String command) {
     if (!command.startsWith("copy")) {
       return "Copy Missing";
     }
@@ -48,55 +94,17 @@ public class CopyCommand implements ICommand {
     return "Missing Date/invalid format";
   }
 
-  private void addValuesInMetaDataObject() {
-    metaData.put("eventName", eventName);
-    metaData.put("endTime", endDateTime);
-    metaData.put("startTime", startDateTime);
-    metaData.put("targetCalendar", targetCalendar);
-    metaData.put("destinationDate", targetDateTime);
-  }
-
-  private void commandParser(String commandArgs) throws Exception {
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(commandArgs);
-    if (!matcher.matches()) {
-      throw new Exception("Invalid Command: " + diagnoseCommandError(commandArgs));
-    }
-
-    eventName = matcher.group(1);
-    startString = matcher.group(2);
-    endString = matcher.group(3);
-    targetCalendar = matcher.group(4);
-    targetDateString = matcher.group(5);
-
-    startDateTime = parseDateTime(startString);
-    endDateTime = endString != null ? parseDate(endString).atStartOfDay() : null;
-    targetDateTime = parseDateTime(targetDateString);
-
-    System.out.println("Parsed Command Successfully:");
-    System.out.println("  Event Name: " + eventName);
-    System.out.println("  Start Date/Time: " + startDateTime);
-    System.out.println("  End Date/Time: " + endDateTime);
-    System.out.println("  Target Calendar: " + targetCalendar);
-    System.out.println("  Destination Date/Time: " + targetDateTime);
-    addValuesInMetaDataObject();
-  }
-
-  private static LocalDateTime parseDateTime(String dateTime) {
-    if (dateTime.contains("T")) {
-      return LocalDateTime.parse(dateTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-    } else {
-      return LocalDate.parse(dateTime, DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay();
-    }
-  }
-
-  private static LocalDate parseDate(String date) {
-    return LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
-  }
-
   @Override
   public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);
-//    calendar.copyEvent(metaData);
+
+    ICalendarExtended targetCal = calendarManager.getCalendarByName(targetCalendar);
+
+    if (targetCal == null) {
+      throw new Exception("Target calendar doesn't exists");
+    }
+    ICalendarExtended cal = (ICalendarExtended) calendar;
+    cal.copyToTargetCalendar(targetCal, metaData);
+
   }
 }

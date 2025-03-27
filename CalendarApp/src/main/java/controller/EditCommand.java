@@ -23,7 +23,6 @@ public class EditCommand implements ICommand {
   private LocalDateTime localEndTime;
   private Map<String, Object> metaData;
 
-
   private static final String regex = "^event(?:s)?\\s+" +
           "(?<property>\\S+)\\s+" +
           "\"(?<eventName>.*?)\"\\s+" +

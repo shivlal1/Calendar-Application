@@ -13,6 +13,8 @@ import java.util.Map;
 public class SingleEvent extends Event {
 
 
+  private Map<String, Object> allMetaDetails;
+
   /**
    * Constructs a new SingleEvent object with the specified subject, start and end dates,
    * and the metadata.
@@ -25,8 +27,19 @@ public class SingleEvent extends Event {
   SingleEvent(String subject, LocalDateTime startDate, LocalDateTime endDate,
               Map<String, Object> allMetaDetails) {
 
-    super(subject, startDate, endDate, allMetaDetails);
+    super(subject, startDate, endDate);
+    this.allMetaDetails = allMetaDetails;
   }
+
+  public SingleEvent(Event other, LocalDateTime newStartTime, LocalDateTime newEndTime) {
+    super(other.subject, other.startDate, other.endDate);
+    this.isPublic = other.isPublic;
+    this.description = other.description;
+    this.location = other.location;
+    this.startDate = newStartTime;
+    this.endDate = newEndTime;
+  }
+
 
   /**
    * Generates the event for the calendar. For single events, this simply returns the event itself.

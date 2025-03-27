@@ -26,6 +26,10 @@ public class CalendarController implements ICommand {
     commandMap.put("export", new ExportCommand());
   }
 
+  public CalendarController(ICalendarManager calendarManager) {
+    this();
+    commandMap.put("copy", new CopyCommand(calendarManager));
+  }
 
   /**
    * This method splits a given string into two parts, the first word and the rest of the string.

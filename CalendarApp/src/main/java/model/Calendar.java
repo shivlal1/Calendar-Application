@@ -301,7 +301,6 @@ public class Calendar implements ICalendar {
    */
   private List<Map<String, Object>> getEventsOnDate(LocalDateTime onDate) {
     List<Map<String, Object>> events = new ArrayList<>();
-
     LocalDate localOnDate = onDate.toLocalDate();
 
     for (Event event : calendarStorage) {
@@ -362,7 +361,6 @@ public class Calendar implements ICalendar {
   @Override
   public List<Map<String, Object>> getAllCalendarEvents() {
     List<Map<String, Object>> events = new ArrayList<>();
-
     for (Event event : calendarStorage) {
       events.add(getEventInMap(event));
     }

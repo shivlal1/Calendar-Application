@@ -21,7 +21,6 @@ public class PrintCommand implements ICommand {
   private LocalDateTime localEnd;
   private Map<String, Object> metaData;
 
-
   private static final String regex = "^events (?:" +
           "from \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\" " +
           "to \"(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})\"|" +

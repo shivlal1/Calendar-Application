@@ -15,6 +15,8 @@ import utils.DateUtils;
  */
 public class RecurringEvent extends Event {
 
+  private Map<String, Object> allMetaDetails;
+
   /**
    * This method constructs a new RecurringEvent object with the specified subject, start
    * and end dates, and metadata.
@@ -27,7 +29,8 @@ public class RecurringEvent extends Event {
   RecurringEvent(String subject, LocalDateTime startDate, LocalDateTime endDate,
                  Map<String, Object> allMetaDetails) {
 
-    super(subject, startDate, endDate, allMetaDetails);
+    super(subject, startDate, endDate);
+    this.allMetaDetails = allMetaDetails;
   }
 
   /**
@@ -38,15 +41,15 @@ public class RecurringEvent extends Event {
    * @param newStartTime The new start date and time.
    * @param newEndTime   The new end date and time.
    */
-  public RecurringEvent(Event other, LocalDateTime newStartTime, LocalDateTime newEndTime,
-                        Map<String, Object> allMetaDetails) {
-    super(other.subject, other.startDate, other.endDate, allMetaDetails);
+  public RecurringEvent(Event other, LocalDateTime newStartTime, LocalDateTime newEndTime) {
+    super(other.subject, other.startDate, other.endDate);
     this.isPublic = other.isPublic;
     this.description = other.description;
     this.location = other.location;
     this.startDate = newStartTime;
     this.endDate = newEndTime;
   }
+
 
   /**
    * Retrieves the end date for recurring events based on the "until" metadata.
@@ -90,7 +93,7 @@ public class RecurringEvent extends Event {
     while (eventsEncountered < requriredRecurringEvents) {
 
       if (isWeekDayIncluded(currDate)) {
-        eventsList.add(new RecurringEvent(this, currDate, end, allMetaDetails));
+        eventsList.add(new RecurringEvent(this, currDate, end));
         eventsEncountered++;
       }
 
@@ -119,7 +122,7 @@ public class RecurringEvent extends Event {
 
     while (!currDate.isAfter(until)) {
       if (isWeekDayIncluded(currDate)) {
-        eventsList.add(new RecurringEvent(this, currDate, end, allMetaDetails));
+        eventsList.add(new RecurringEvent(this, currDate, end));
       }
       currDate = currDate.plusDays(1);
       end = end.plusDays(1);

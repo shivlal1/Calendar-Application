@@ -32,4 +32,14 @@ public class EventFactory {
     return event;
   }
 
+  Event getCarbonCopy(Event event, LocalDateTime localStartDateTime, LocalDateTime localEndDateTime) {
+    if (event instanceof RecurringEvent) {
+      event = new RecurringEvent(event, localStartDateTime, localEndDateTime);
+    } else {
+      event = new SingleEvent(event, localStartDateTime, localEndDateTime);
+    }
+    return event;
+  }
+
+
 }

@@ -1,6 +1,9 @@
 package utils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -92,5 +95,23 @@ public class DateUtils {
   public static String getCsvTime(LocalDateTime date) {
     return (date.toLocalDate() != null) ?
             date.toLocalTime().format(csvTimeFormat) : "";
+  }
+
+  public static boolean isValidZoneId(String timezone) {
+    try {
+      ZoneId.of(timezone);
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  public static LocalDate stringToLocalDate(String date) {
+    return LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
+  }
+
+  public static LocalDateTime changeTimeZone(LocalDateTime date, ZoneId sourceZoneId, ZoneId targetZoneId) {
+    ZonedDateTime sourceZonedDateTime = date.atZone(sourceZoneId);
+    return sourceZonedDateTime.withZoneSameInstant(targetZoneId).toLocalDateTime();
   }
 }

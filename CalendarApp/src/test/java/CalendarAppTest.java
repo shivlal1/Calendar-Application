@@ -207,4 +207,99 @@ public class CalendarAppTest {
 
   }
 
+
+  @Test
+  public void invalidEdit() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("--property missing");
+
+    String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
+    String useCal = "use calendar --name myCalendar";
+    String editCal = "edit calendar --name myCalendar name myCalendar2";
+
+    String[] inputs = {createCal, useCal, editCal, "exit"};
+
+    String simulatedInput = String.join("\n", inputs) + "\n";
+
+    simulateUserInput(simulatedInput);
+    CalendarApp.main(new String[]{"--mode", "interactive"});
+
+  }
+
+  @Test
+  public void editNameOfCalendar() throws Exception {
+
+    String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
+    String useCal = "use calendar --name myCalendar";
+    String editCal = "edit calendar --name myCalendar --property name myCalendar2";
+
+    String[] inputs = {createCal, useCal, editCal, "exit"};
+    String simulatedInput = String.join("\n", inputs) + "\n";
+
+    simulateUserInput(simulatedInput);
+    CalendarApp.main(new String[]{"--mode", "interactive"});
+  }
+
+  @Test
+  public void editTimeZoneOfCalendar() throws Exception {
+
+    String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
+    String useCal = "use calendar --name myCalendar";
+    String editCal = "edit calendar --name myCalendar --property timezone Australia/Sydney";
+
+    String[] inputs = {createCal, useCal, editCal, "exit"};
+    String simulatedInput = String.join("\n", inputs) + "\n";
+
+    simulateUserInput(simulatedInput);
+    CalendarApp.main(new String[]{"--mode", "interactive"});
+  }
+
+
+  @Test
+  public void editTimeZoneOfCalendarInvalid() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("invalid calendarProperty timezone");
+
+    String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
+    String useCal = "use calendar --name myCalendar";
+    String editCal = "edit calendar --name myCalendar --property timezone Austral/Sydney";
+
+    String[] inputs = {createCal, useCal, editCal, "exit"};
+    String simulatedInput = String.join("\n", inputs) + "\n";
+
+    simulateUserInput(simulatedInput);
+    CalendarApp.main(new String[]{"--mode", "interactive"});
+  }
+
+  @Test
+  public void editNotExistingCal() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("No such calendar exists");
+
+    String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
+    String useCal = "use calendar --name myCalendar";
+    String editCal = "edit calendar --name NotExistingCal --property timezone Australia/Sydney";
+
+    String[] inputs = {createCal, useCal, editCal, "exit"};
+    String simulatedInput = String.join("\n", inputs) + "\n";
+
+    simulateUserInput(simulatedInput);
+    CalendarApp.main(new String[]{"--mode", "interactive"});
+  }
+
+
+  @Test
+  public void invalidUse() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("calendar Doesn't exists to Use");
+
+    String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
+    String useCal = "use calendar --name notExistingCal";
+
+    String[] inputs = {createCal, useCal, "exit"};
+    String simulatedInput = String.join("\n", inputs) + "\n";
+
+    simulateUserInput(simulatedInput);
+    CalendarApp.main(new String[]{"--mode", "interactive"});
+  }
 }

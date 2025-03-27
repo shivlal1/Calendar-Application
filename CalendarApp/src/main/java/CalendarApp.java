@@ -18,8 +18,8 @@ public class CalendarApp {
     }
 
     ConsoleView view = new ConsoleView();
-    CalendarController controller = new CalendarController();
     ICalendarManager calendarManager = new CalendarManager();
+    CalendarController controller = new CalendarController(calendarManager);
     Scanner scanner = new Scanner(System.in);
 
     if (isArgsStartingWithMode(args)) {
