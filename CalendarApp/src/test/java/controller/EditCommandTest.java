@@ -8,12 +8,15 @@ import org.junit.rules.ExpectedException;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import model.Calendar;
+import model.CalendarV2;
 import model.ICalendar;
+import model.ICalendarV2;
 import utils.DateUtils;
 import view.ConsoleView;
 import view.View;
@@ -745,6 +748,89 @@ public class EditCommandTest {
     String event3 = "• Subject : Event 2,Start date : 2025-03-02,Start time : 09:00,End date :" +
             " 2025-03-02," + "End time : 10:00,isPublic : false\n";
     assertEquals(event1 + event2 + event3, actualOutput);
+  }
+
+
+  @Test
+  public void v2calEditStartTimeOverlap() throws Exception {
+
+    thrown.expect(Exception.class);
+    thrown.expectMessage("the event conflicts with another event");
+
+    ICalendarV2 calendar = new CalendarV2(ZoneId.of("Asia/Kolkata"));
+
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event 2\" from 2025-03-01T11:00 to 2025-03-01T12:00";
+    createCommand.execute(command, calendar);
+
+    command = "events startDate \"Event 2\" \"2025-03-01T09:45\"";
+    editCommand.execute(command, calendar);
+
+  }
+
+  @Test
+  public void v2calEditStartTimeSuccess() throws Exception {
+
+    ICalendarV2 calendar = new CalendarV2(ZoneId.of("Asia/Kolkata"));
+
+    command = "event \"Event 1\" from 2025-03-01T09:00 to 2025-03-01T10:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event 2\" from 2025-03-01T11:00 to 2025-03-01T12:00";
+    createCommand.execute(command, calendar);
+
+    command = "events startDate \"Event 2\" \"2025-03-01T11:45\"";
+    editCommand.execute(command, calendar);
+
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
+    String event1 = "• Subject : Event 1,Start date : 2025-03-01,Start time : 09:00," +
+            "End date : 2025-03-01,End time : 10:00,isPublic : false\n" +
+            "• Subject : Event 2,Start date : 2025-03-01,Start time : 11:45," +
+            "End date : 2025-03-01,End time : 12:00,isPublic : false\n";
+
+    assertEquals(event1, actualOutput);
+  }
+
+
+  @Test
+  public void v2calEditEndTimeOverlap() throws Exception {
+    thrown.expect(Exception.class);
+    thrown.expectMessage("the event conflicts with another event");
+
+    ICalendarV2 calendar = new CalendarV2(ZoneId.of("Asia/Kolkata"));
+    command = "event \"Event 1\" from 2025-03-01T10:00 to 2025-03-01T11:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event 2\" from 2025-03-01T09:00 to 2025-03-01T09:45";
+    createCommand.execute(command, calendar);
+
+    command = "events endDate \"Event 2\" \"2025-03-01T10:45\"";
+    editCommand.execute(command, calendar);
+
+  }
+
+
+  @Test
+  public void v2calEditNoOverlap() throws Exception {
+
+    ICalendarV2 calendar = new CalendarV2(ZoneId.of("Asia/Kolkata"));
+    command = "event \"Event 1\" from 2025-03-01T10:00 to 2025-03-01T11:00";
+    createCommand.execute(command, calendar);
+
+    command = "event \"Event 2\" from 2025-03-01T09:00 to 2025-03-01T09:45";
+    createCommand.execute(command, calendar);
+
+    command = "events endDate \"Event 2\" \"2025-03-01T09:30\"";
+    editCommand.execute(command, calendar);
+
+    String actualOutput = getViewCalendarOutput(calendar.getAllCalendarEvents());
+    String event1 = "• Subject : Event 1,Start date : 2025-03-01,Start time : 10:00," +
+            "End date : 2025-03-01,End time : 11:00,isPublic : false\n" +
+            "• Subject : Event 2,Start date : 2025-03-01,Start time : 09:00," +
+            "End date : 2025-03-01,End time : 09:30,isPublic : false\n";
+    assertEquals(event1, actualOutput);
   }
 
 

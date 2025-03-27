@@ -35,9 +35,9 @@ public class SingleEvent extends Event {
    * This method constructs a new SingleEvent object with the given new start time, new end time
    * and the other event object's details.
    *
-   * @param other the other event object details which it will extend.
+   * @param other        the other event object details which it will extend.
    * @param newStartTime the new start time of the event.
-   * @param newEndTime the new end time of the event.
+   * @param newEndTime   the new end time of the event.
    */
   public SingleEvent(Event other, LocalDateTime newStartTime, LocalDateTime newEndTime) {
     super(other.subject, other.startDate, other.endDate);
