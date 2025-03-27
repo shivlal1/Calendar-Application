@@ -52,7 +52,8 @@ public class CalendarCsvExporter {
         String startTimeString = DateUtils.getCsvTime(startDateTime);
         String endDateString = DateUtils.getCsvDate(endDateTime);
         String endTimeString = DateUtils.getCsvTime(endDateTime);
-        Boolean isAllDay = isAllDayEvent(startDateString, endDateString, startTimeString, endTimeString);
+        Boolean isAllDay = isAllDayEvent(startDateString, endDateString, startTimeString,
+                endTimeString);
 
 
         writer.write(String.format("\"%s\",%s,%s,\"%s\",\"%s\",%b,\"%s\",\"%s\",%b\n",
@@ -67,6 +68,15 @@ public class CalendarCsvExporter {
     }
   }
 
+  /**
+   * Determines whether an event should be classified as an "all-day" event.
+   *
+   * @param startDateString The event's start date as a string.
+   * @param endDateString   The event's end date as a string.
+   * @param startTimeString The event's start time as a string.
+   * @param endTimeString   The event's end time as a string.
+   * @return true if the event spans an entire day; false otherwise.
+   */
   private boolean isAllDayEvent(String startDateString, String endDateString,
                                 String startTimeString, String endTimeString) {
 

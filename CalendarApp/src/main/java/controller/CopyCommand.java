@@ -10,6 +10,11 @@ import model.ICalendar;
 import model.ICalendarV2;
 import utils.DateUtils;
 
+/**
+ * This class represents the copy command functionality which implements the ICommand interface.
+ * It has the functionality to parse the command with the given regex and insert all the
+ * details/features extracted into a hashmap containing the metadata.
+ */
 public class CopyCommand implements ICommand {
 
   private String eventName;
@@ -27,10 +32,23 @@ public class CopyCommand implements ICommand {
           "(\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?)(?: and (\\d{4}-\\d{2}-\\d{2}))? " +
           "--target (\\S+) to (\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2})?)$";
 
+  /**
+   * This method constructs the metaData hashmap and initializes the calendar manager.
+   *
+   * @param calendarManager the calendar manager object we need to initialize.
+   */
   public CopyCommand(ICalendarManager calendarManager) {
     metaData = new HashMap<>();
     this.calendarManager = calendarManager;
   }
+
+  /**
+   * This method parses the provided command string using a regular expression and
+   * extracts relevant details required for further processing of the events.
+   *
+   * @param commandArgs the input command string to be parsed.
+   * @throws Exception if the command format doesn't match the expected pattern.
+   */
   private void commandParser(String commandArgs) throws Exception {
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(commandArgs);
@@ -43,16 +61,23 @@ public class CopyCommand implements ICommand {
     endString = matcher.group(3);
     targetCalendar = matcher.group(4);
     targetDateString = matcher.group(5);
-//
-//    System.out.println("Parsed Command Successfully:");
-//    System.out.println("  Event Name: " + eventName);
-//    System.out.println("  Start Date/Time: " + startString);
-//    System.out.println("  End Date/Time: " + endString);
-//    System.out.println("  Target Calendar: " + targetCalendar);
-//    System.out.println("  Destination Date/Time: " + targetDateString);
+    //
+    //    System.out.println("Parsed Command Successfully:");
+    //    System.out.println("  Event Name: " + eventName);
+    //    System.out.println("  Start Date/Time: " + startString);
+    //    System.out.println("  End Date/Time: " + endString);
+    //    System.out.println("  Target Calendar: " + targetCalendar);
+    //    System.out.println("  Destination Date/Time: " + targetDateString);
     addValuesInMetaDataObject(commandArgs);
   }
 
+  /**
+   * This method stores the parsed command details into a metadata object
+   * used during the execution of the copy operation. It identifies the type of copy operation
+   * and extracts the fields accordingly.
+   *
+   * @param commandArgs the original command string to determine the type of command.
+   */
   private void addValuesInMetaDataObject(String commandArgs) {
     if (eventName != null) {
       metaData.put("copyType", "eventsOnDateWithTime");
@@ -71,6 +96,13 @@ public class CopyCommand implements ICommand {
     }
   }
 
+  /**
+   * This method checks for common formatting errors in the provided command string and
+   * returns a descriptive error message.
+   *
+   * @param command the command string to be analyzed.
+   * @return an error message indicating the specific issue with the command.
+   */
   private String diagnoseCommandError(String command) {
     if (!(command.contains(" on ") || command.contains(" between "))) {
       return "Missing on or between";
@@ -84,6 +116,14 @@ public class CopyCommand implements ICommand {
     return "Missing Date/invalid format";
   }
 
+  /**
+   * This method exectures the copy command, copying events from the current calendar to
+   * the specified target calendar.
+   *
+   * @param commandArgs the arguments specifying the copy details.
+   * @param calendar    the source calendar from where the events will be copied.
+   * @throws Exception if the target calendar doesn't exist or the operation encounters an error.
+   */
   @Override
   public void execute(String commandArgs, ICalendar calendar) throws Exception {
     commandParser(commandArgs);

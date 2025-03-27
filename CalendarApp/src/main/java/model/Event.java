@@ -17,9 +17,11 @@ public abstract class Event {
   protected boolean isPublic;
 
   /**
-   * @param subject
-   * @param startDate
-   * @param endDate
+   * This method constructs an event object with the given subject, start date and end date.
+   *
+   * @param subject the subject of the event.
+   * @param startDate the start date of the event.
+   * @param endDate the end date of the event.
    */
   Event(String subject, LocalDateTime startDate, LocalDateTime endDate) {
     this.subject = subject;
@@ -65,7 +67,6 @@ public abstract class Event {
    * @param newEvent The event to check for overlap.
    * @return true if there is an overlap else false.
    */
-
   protected boolean isOverlapWith(Event newEvent) {
 
     LocalDateTime newStartTime = newEvent.startDate;

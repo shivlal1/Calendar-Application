@@ -10,6 +10,9 @@ import java.time.ZoneId;
 import model.CalendarV2;
 import model.ICalendar;
 
+/**
+ * A unit test for the copy command class.
+ */
 public class CopyCommandTest {
 
   ICalendarManager calManager;
@@ -31,10 +34,10 @@ public class CopyCommandTest {
     thrown.expectMessage("Target calendar doesn't exists");
 
     String command = "copy event \"Event\" on 2025-03-02T09:00 --target MyCal to 2025-03-02T10:00";
-//    System.out.println(command + "------");
+    //    System.out.println(command + "------");
     ICalendar cal = new CalendarV2(ZoneId.of("Asia/Kolkata"));
     CopyCommand cmd = new CopyCommand(calManager);
-//    cmd.execute(command, cal);
+    //    cmd.execute(command, cal);
 
     command = "events between 2025-03-02 and 2025-03-03 --target <calendarName> to 2025-03-05";
     cmd.execute(command, cal);
@@ -125,7 +128,8 @@ public class CopyCommandTest {
     thrown.expect(Exception.class);
     thrown.expectMessage("Invalid Command: Missing Date/invalid format");
     command = new CopyCommand(calManager);
-    command.execute("\"Team Meeting!@#\" on 2025-03-01 --target work to 2025-04-01", cal);
+    command.execute("\"Team Meeting!@#\" on 2025-03-01 --target work to 2025-04-01",
+            cal);
   }
 
 
