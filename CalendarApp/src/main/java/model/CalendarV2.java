@@ -99,11 +99,6 @@ public class CalendarV2
     EventFactory factory = new EventFactory();
     for (Event event : calendarStorage) {
       LocalDateTime onDateTime = (LocalDateTime) metaDetails.get("onDateTime");
-//      String eventName = (String) metaDetails.get("eventName");
-//      boolean val = event.subject.equals((eventName));
-//     boolean val2 = event.startDate.equals(onDateTime);
-//     // System.out.println("val "+event.subject.equals((String) metaDetails.get("eventName")));
-//      //System.out.println("val 2 "+event.startDate.equals(onDateTime));
       if (event.subject.equals( (String) metaDetails.get("eventName") )
               && event.startDate.equals(onDateTime)) {
         Duration offsetTime = Duration.between(event.startDate, event.endDate);
