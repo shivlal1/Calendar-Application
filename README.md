@@ -176,7 +176,7 @@ This project is organized clearly to enhance readability, maintainability, and e
 ### src/
 This directory contains the main source code organized using the MVC (Model-View-Controller) architectural pattern, along with utility classes:
 
-- **controller**: Contains command-related classes responsible for handling user commands such as Create, Edit, Show, Print, and Export.
+- **controller**: Contains command-related classes responsible for handling user commands such as Create, Edit, Show, Print, Export, Copy, and Calendar Management.
 - **model**: Includes the logic behind the creation and editing of events. It also contains the logic of exporting and checking if the user is busy at a given time slot or not.
 - **view**: Handles all the user interface logic, including outputting to the console.
 - **utils**: Provides common helper functions like date conversions and regex utilities.
@@ -192,6 +192,7 @@ This directory hosts all unit tests to ensure the correctness and reliability of
 - **PrintCommandTest.java**: Verifies functionalities for printing events or schedules.
 - **ExportCommandTest.java**: Ensures correctness of event export functionalities.
 - **CopyCommandTest.java**: Ensures the correctness of event copy functionalities.
+- **CalendarControllerTest.java**: Ensures the correctness of the Calendar controller.
 
 #### utils/
 - **CalendarCsvExport.java**: Tests functionalities related to exporting the calendar to csv.
@@ -218,6 +219,6 @@ The events being created by our program can be exported into a csv file and the 
  
 | Team Member | Contributions                                             |
 |-------------|-----------------------------------------------------------|
-| **Ronit**   | Implemented the **Controller** component, including command parsing, delegation, and execution logic. |
-| **Siva**    | Developed the **Model** component, including calendar event representation, data storage, and the flow of the execution of the program. |
+| **Ronit**   | Implemented the **Controller** component, including command parsing, delegation, and execution logic. Wrote new class for Copy Comamnd and created new Calendar Manager to support multiple calendars.|
+| **Siva**    | Developed the **Model** component, including calendar event representation, data storage, and the flow of the execution of the program. Created CalendarV2 class to support copy functionality, timezone, autodecline, and new edit changes.|
 | **Ronit & Siva** | Collaboratively wrote and reviewed **unit test cases** to ensure application correctness and reliability. |
