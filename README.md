@@ -4,7 +4,9 @@
 
 This project implements a comprehensive virtual calendar application inspired by Google Calendar and Apple's iCalendar. It simplifies event management, allowing users to seamlessly create, modify, query, and export calendar events through intuitive command-line interactions.
 
-## Features
+## ALL the Features and New Extended Features below works
+
+## Features 
 
 - **Single Calendar Support** (EST timezone)
 - **Event Conflict Management** (Automatic conflict detection and optional auto-decline)
