@@ -70,9 +70,9 @@ java CalendarApp --mode interactive
 
 ### Headless Mode
 
-Execute commands from a file: ( please enter the absolute file path after program runs)
 
 java CalendarApp --mode headless
+( please enter the absolute file path after program runs after the program display Headless mode)
 
 
 ## Supported Commands
