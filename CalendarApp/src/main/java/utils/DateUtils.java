@@ -20,6 +20,9 @@ public class DateUtils {
   private static final DateTimeFormatter csvTimeFormat =
           DateTimeFormatter.ofPattern("hh:mm a");
 
+  /**
+   * Constructor for the Dateutils class to throw error.
+   */
   public DateUtils() {
     throw new UnsupportedOperationException("Date Utility cannot be instantiated");
   }

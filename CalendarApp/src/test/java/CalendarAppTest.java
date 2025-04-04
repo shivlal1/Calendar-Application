@@ -516,4 +516,132 @@ public class CalendarAppTest {
   }
 
 
+  @Test
+  public void changeSelfTimeZone() throws Exception {
+
+    String createCal = "create calendar --name myCalendar1 --timezone America/New_York";
+    String useCal = "use calendar --name myCalendar1";
+    String diffEvent = "create event \"Event 1\" from 2025-02-01T02:00 to 2025-02-01T03:00";
+    String createEvent = "create event \"Event 2 \" from 2025-03-01T02:00 to 2025-03-01T03:00";
+    String zoneChange = "edit calendar --name myCalendar1 --property timezone Asia/Kolkata";
+    String diffPrint = "print events on \"2025-02-01\"";
+    String printEvent1 = "print events on \"2025-03-01\"";
+
+    ArrayList<String> inputs = new ArrayList<>();
+    inputs.add(createCal);
+    inputs.add(useCal);
+    inputs.add(diffEvent);
+    inputs.add(createEvent);
+    inputs.add(zoneChange);
+    inputs.add(diffPrint);
+    inputs.add(printEvent1);
+    inputs.add("exit");
+
+    String simulatedInput = String.join("\n", inputs) + "\n";
+    simulateUserInput(simulatedInput);
+    CalendarApp.main(new String[]{"--mode", "interactive"});
+    String output1 = "Using interactive mode. To quit, use 'exit'\n";
+    String evet1 = "• Subject : Event 1,Start date : 2025-02-01,Start time : 12:30," +
+            "End date : 2025-02-01,End time : 13:30,isPublic : false\n";
+    String event2 = "• Subject : Event 2,Start date : 2025-03-01,Start time : 12:30," +
+            "End date : 2025-03-01,End time : 13:30,isPublic : false\n";
+
+    assertEquals(output1 + evet1 + event2, getOutput());
+  }
+
+
+  @Test
+  public void eventNotCopiedBecauseOfConflictInTargetCal() throws Exception {
+
+    String createCal2 = "create calendar --name myCalendar2 --timezone Asia/Kolkata";
+    String useCal2 = "use calendar --name myCalendar2";
+    String diffEvent = "create event \"Event 1\" from 2025-02-01T12:30 to 2025-02-01T13:30";
+
+    String createCal = "create calendar --name myCalendar1 --timezone America/New_York";
+    String useCal = "use calendar --name myCalendar1";
+    String event = "create event \"Event 1\" from 2025-02-01T02:00 to 2025-02-01T03:00";
+    // this event willl not be copied as it creats conflict with the target calendar
+    String createEvent = "create event \"Event 2 \" from 2025-03-01T02:00 to 2025-03-01T03:00";
+    String copy = "copy events on 2025-03-01 --target myCalendar2 to 2025-02-01";
+
+    String calUse = "use calendar --name myCalendar2";
+    String diffPrint = "print events on \"2025-02-01\"";
+    String printEvent1 = "print events on \"2025-03-01\"";
+
+
+    ArrayList<String> inputs = new ArrayList<>();
+    inputs.add(createCal2);
+    inputs.add(useCal2);
+    inputs.add(diffEvent);
+    inputs.add(createCal);
+    inputs.add(useCal);
+    inputs.add(event);
+    inputs.add(createEvent);
+    inputs.add(copy);
+    inputs.add(calUse);
+    inputs.add(diffPrint);
+    inputs.add(printEvent1);
+    inputs.add("exit");
+
+    String simulatedInput = String.join("\n", inputs) + "\n";
+    simulateUserInput(simulatedInput);
+    CalendarApp.main(new String[]{"--mode", "interactive"});
+    String output1 = "Using interactive mode. To quit, use 'exit'\n";
+    String evet1 = "• Subject : Event 1,Start date : 2025-02-01,Start time : 12:30," +
+            "End date : 2025-02-01,End time : 13:30,isPublic : false\n";
+
+    assertEquals(output1 + evet1, getOutput());
+  }
+
+
+  @Test
+  public void recurringEventsCopiedToAnotherCalendar() throws Exception {
+
+    // Create calendar
+    String createCal2 = "create calendar --name myCalendar2 --timezone Asia/Kolkata";
+    String useCal2 = "use calendar --name myCalendar2";
+
+    //create another calendar and add single and recurring events
+    String createCal = "create calendar --name myCalendar1 --timezone America/New_York";
+    String useCal = "use calendar --name myCalendar1";
+    String singleEvent = "create event \"Event 1\" from 2025-02-01T12:30 to 2025-02-01T13:30";
+    String recEvent = "create event --autoDecline \"Recurring\" from 2025-04-01T09:00" +
+            " to 2025-04-01T10:00 " +
+            "repeats T for 1 times";
+
+    // copy to myCalendar2
+    String copy = "copy events between 2025-02-01 and 2025-05-01 --target myCalendar2 to " +
+            "2025-04-01";
+
+    String calUse = "use calendar --name myCalendar2";
+
+    String diffPrint = "print events on \"2025-04-01\"";
+    String printEvent1 = "print events on \"2025-05-30\"";
+
+    ArrayList<String> inputs = new ArrayList<>();
+    inputs.add(createCal2);
+    inputs.add(useCal2);
+    inputs.add(createCal);
+    inputs.add(useCal);
+    inputs.add(singleEvent);
+    inputs.add(recEvent);
+    inputs.add(copy);
+    inputs.add(calUse);
+    inputs.add(diffPrint);
+    inputs.add(printEvent1);
+    inputs.add("exit");
+
+    String simulatedInput = String.join("\n", inputs) + "\n";
+    simulateUserInput(simulatedInput);
+    CalendarApp.main(new String[]{"--mode", "interactive"});
+    String output1 = "Using interactive mode. To quit, use 'exit'\n";
+    String evet1 = "• Subject : Event 1,Start date : 2025-04-01,Start time : 22:00," +
+            "End date : 2025-04-01,End time : 23:00,isPublic : false\n";
+    String event2 = "• Subject : Recurring,Start date : 2025-05-30," +
+            "Start time : 18:30,End date : 2025-05-30,End time : 19:30,isPublic : false\n";
+
+
+    assertEquals(output1 + evet1 + event2, getOutput());
+  }
+
 }
