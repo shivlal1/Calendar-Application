@@ -5,9 +5,16 @@ import java.util.Scanner;
 
 import controller.CalendarController;
 import controller.CalendarManager;
+import controller.CalendarManagerV2;
 import controller.ICalendarManager;
+import controller.ICalendarManagerV2;
+import controller.ICommand;
+import controller.ViewController;
 import model.ICalendarV2;
 import view.ConsoleView;
+import view.JFrameView;
+import view.UiView;
+import view.View;
 
 /**
  * This class is the main driving class of the program. This class handles the initialization
@@ -27,9 +34,9 @@ public class CalendarApp {
       throw new Exception("Use: --mode interactive OR --mode headless <commandFile>");
     }
 
-    ConsoleView view = new ConsoleView();
+    View view = new ConsoleView();
     ICalendarManager calendarManager = new CalendarManager();
-    CalendarController controller = new CalendarController(calendarManager);
+    ICommand controller = new CalendarController(calendarManager);
     Scanner scanner = new Scanner(System.in);
 
     if (isArgsStartingWithMode(args)) {
@@ -38,6 +45,11 @@ public class CalendarApp {
       } else if (isHeadlessMode(args)) {
         runHeadlessMode(view, controller, calendarManager, scanner);
       } else {
+
+        ICalendarManagerV2 manager = new CalendarManagerV2("default", "America/New_York");
+        UiView uiView = new JFrameView();
+        ViewController viewController = new ViewController(manager, uiView);
+
         throw new Exception("Unsupported mode. Use only 'interactive' or 'headless'");
       }
     } else {
@@ -54,7 +66,7 @@ public class CalendarApp {
    * @param scanner         Scanner object for reading user input from console.
    * @throws Exception If command execution encounters an issue.
    */
-  private static void runInteractiveMode(ConsoleView view, CalendarController controller,
+  private static void runInteractiveMode(View view, ICommand controller,
                                          ICalendarManager calendarManager,
                                          Scanner scanner) throws Exception {
 
@@ -77,7 +89,7 @@ public class CalendarApp {
    * @param scanner         Scanner object used to read the file path from the console.
    * @throws Exception If the file path is invalid or the file doesn't end with 'exit'.
    */
-  private static void runHeadlessMode(ConsoleView view, CalendarController controller,
+  private static void runHeadlessMode(View view, ICommand controller,
                                       ICalendarManager calendarManager,
                                       Scanner scanner) throws Exception {
     view.viewMessage("Headless mode");
@@ -111,8 +123,8 @@ public class CalendarApp {
    * @param calendarManager Manager for calendar-specific commands.
    * @throws Exception If execution of the command encounters an error.
    */
-  private static void executeCommand(String commandArgs, ConsoleView view,
-                                     CalendarController controller,
+  private static void executeCommand(String commandArgs, View view,
+                                     ICommand controller,
                                      ICalendarManager calendarManager) throws Exception {
     if (commandArgs.contains("--name")) {
       calendarManager.execute(commandArgs);
