@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.List;
@@ -26,7 +27,7 @@ public interface UiView {
 
   public Map<String, Object> getUserShowEventChoice(LocalDate date, List<Map<String, Object>> dayEvents);
 
-  public String[] getSelectedDate();
+  public String[] getSelectedDate(ActionEvent e);
 
   public void searchEventsToEdit();
 

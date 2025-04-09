@@ -48,7 +48,7 @@ public class ViewController implements ActionListener {
         break;
 
       case "Add Event":
-        String ans[] = uiView.getSelectedDate();
+        String ans[] = uiView.getSelectedDate(e);
         int d = Integer.parseInt(ans[0]);
         int m = Integer.parseInt(ans[1]);
         int y = Integer.parseInt(ans[2]);
@@ -62,7 +62,7 @@ public class ViewController implements ActionListener {
         Map<String, Object> event = uiView.getUserShowEventChoice(date, eventDetails);
 
         event.put("isAllDay", false);
-        event.put("autoDecline", false);
+        event.put("autoDecline", true);
 
         StringBuilder bulletEvent = new StringBuilder();
         bulletEvent.append(" Subject : " + event.get("subject") + ",");
@@ -70,22 +70,23 @@ public class ViewController implements ActionListener {
         bulletEvent.append("Start date : " + event.get("endDate") + ",");
         bulletEvent.append("location : " + event.get("location") + ",");
         bulletEvent.append("description : " + event.get("description") + ",");
-        bulletEvent.append("isPublic : " +  event.get("isPublic") + ",");
+        bulletEvent.append("isPublic : " + event.get("isPublic") + ",");
 
         bulletEvent.deleteCharAt(bulletEvent.length() - 1);
-
-        System.out.println( bulletEvent.toString());
-
+        System.out.println(bulletEvent.toString());
         String subject = event.get("subject").toString();
 
-       String startDateAfterT =  DateUtils.removeTinDateTime( event.get("startDate").toString() );
-        LocalDateTime startDate =  DateUtils.stringToLocalDateTime( startDateAfterT);
+        String startDateAfterT = DateUtils.removeTinDateTime(event.get("startDate").toString());
+        LocalDateTime startDate = DateUtils.stringToLocalDateTime(startDateAfterT);
 
-        String endDateAfterT =  DateUtils.removeTinDateTime( event.get("endDate").toString() );
-        LocalDateTime endDate =  DateUtils.stringToLocalDateTime( endDateAfterT);
+        LocalDateTime endDate = null;
+        if (event.get("endDate") != null) {
+          String endDateAfterT = DateUtils.removeTinDateTime(event.get("endDate").toString());
+          endDate = DateUtils.stringToLocalDateTime(endDateAfterT);
+        }
 
         try {
-          calendarV2.createEvent(subject, startDate,endDate, event );
+          calendarV2.createEvent(subject, startDate, endDate, event);
         } catch (Exception ex) {
           throw new RuntimeException(ex);
         }

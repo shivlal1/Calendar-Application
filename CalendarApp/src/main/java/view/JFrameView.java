@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,14 +40,10 @@ public class JFrameView extends JFrame implements UiView {
   JTextField untilField;
   JTextField repeatsField;
   JTextField forField;
-
   JTextField nameField;
   JTextField startDateField;
   JTextField endDateField;
-  JTextField descriptionField;
-  JTextField locationField;
-  JRadioButton publicRadio;
-  JRadioButton privateRadio;
+
   JCheckBox recurringCheck;
 
   public JFrameView() {
@@ -66,9 +63,11 @@ public class JFrameView extends JFrame implements UiView {
   }
 
 
-  public String[] getSelectedDate() {
+  public String[] getSelectedDate(ActionEvent e) {
 
-    String day = dayButton.getText();
+    String day = ((JButton) e.getSource()).getText();
+
+
     System.out.println("day: " + currentMonth);
     String currentMonthInString = currentMonth.toString();
     System.out.println("currentMonthInString: " + currentMonthInString);
@@ -77,7 +76,7 @@ public class JFrameView extends JFrame implements UiView {
     System.out.println("spli: " + spli[0]);
     System.out.println("spli: " + spli[1]);
 
-    String ans[] = {dayButton.getText(), spli[1], spli[0]};
+    String ans[] = {day, spli[1], spli[0]};
 
     return ans;
   }
@@ -193,7 +192,7 @@ public class JFrameView extends JFrame implements UiView {
 
     StringBuilder eventListBuilder = new StringBuilder();
     if (dayEvents.isEmpty()) {
-      eventListBuilder.append("No events");
+      eventListBuilder.append("No events scheduled");
     } else {
 
       for (Map<String, Object> event : dayEvents) {
@@ -221,16 +220,16 @@ public class JFrameView extends JFrame implements UiView {
         }
         bulletEvent.deleteCharAt(bulletEvent.length() - 1);
 
-        eventListBuilder.append(bulletEvent);
+        eventListBuilder.append(bulletEvent + "\n");
         newDayEvents.add(bulletEvent.toString());
       }
 
     }
 
-    Object[] options = {"Add New Event", "Edit Event", "Cancel"};
+    Object[] options = {"Add New Event", "Cancel"};
     int choice = JOptionPane.showOptionDialog(
             frame,
-            eventListBuilder.toString() + "\n\nWhat would you like to do?",
+            eventListBuilder.toString(),
             "Events on " + date,
             JOptionPane.YES_NO_CANCEL_OPTION,
             JOptionPane.QUESTION_MESSAGE,
@@ -242,24 +241,6 @@ public class JFrameView extends JFrame implements UiView {
 
     if (choice == 0) {
       metaDeta = showEventForm(date, dayEvents, -1);
-    }
-
-    if (choice == 1 && !dayEvents.isEmpty()) {
-      String[] eventArray = dayEvents.toArray(new String[0]);
-      String selected = (String) JOptionPane.showInputDialog(
-              frame,
-              "Select event to edit:",
-              "Edit Event",
-              JOptionPane.PLAIN_MESSAGE,
-              null,
-              eventArray,
-              eventArray[0]
-      );
-
-      if (selected != null) {
-        int index = dayEvents.indexOf(selected);
-        metaDeta = showEventForm(date, dayEvents, index); // pass index to edit
-      }
     }
 
     return metaDeta;
@@ -360,8 +341,7 @@ public class JFrameView extends JFrame implements UiView {
     untilField = new JTextField(12);
     repeatsField = new JTextField(12);
     forField = new JTextField(12);
-
-    JPanel recurringPanel = new JPanel(new GridLayout(0, 2, 3, 3));
+    JPanel recurringPanel = new JPanel(new GridLayout(0, 2, 1, 1));
     recurringPanel.add(new JLabel("Until (YYYY-MM-DD):"));
     recurringPanel.add(untilField);
     recurringPanel.add(new JLabel("Repeats (Daily/Weekly/Monthly):"));
@@ -369,7 +349,6 @@ public class JFrameView extends JFrame implements UiView {
     recurringPanel.add(new JLabel("For (number of times):"));
     recurringPanel.add(forField);
     recurringPanel.setVisible(false);
-
     return recurringPanel;
   }
 
@@ -381,68 +360,22 @@ public class JFrameView extends JFrame implements UiView {
     panel.add(startDateField);
     panel.add(new JLabel("End Date:"));
     panel.add(endDateField);
-    panel.add(new JLabel("Description:"));
-    panel.add(descriptionField);
-    panel.add(new JLabel("Location:"));
-    panel.add(locationField);
-
-    panel.add(new JLabel("is Public Event:"));
-    JPanel isPublicPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
-    isPublicPanel.add(publicRadio);
-    isPublicPanel.add(privateRadio);
-    panel.add(isPublicPanel);
-
     panel.add(new JLabel("Recurring:"));
     panel.add(recurringCheck);
     return panel;
   }
 
   private Map<String, Object> showEventForm(LocalDate date, List<Map<String, Object>> dayEvents, int editIndex) {
-
     Map<String, Object> metaData = new HashMap<>();
-
     nameField = new JTextField(12);
     startDateField = new JTextField(12);
     endDateField = new JTextField(12);
-    descriptionField = new JTextField(12);
-    locationField = new JTextField(12);
-    publicRadio = new JRadioButton("Yes");
-    privateRadio = new JRadioButton("No");
-
-    ButtonGroup visibilityGroup = new ButtonGroup();
-    visibilityGroup.add(publicRadio);
-    visibilityGroup.add(privateRadio);
-
     untilField = new JTextField(12);
     repeatsField = new JTextField(12);
     forField = new JTextField(12);
-
     recurringCheck = new JCheckBox("Recurring Event");
     JPanel recurringPanel = getRecurringPanel();
     recurringCheck.addItemListener(e -> recurringPanel.setVisible(recurringCheck.isSelected()));
-
-    if (editIndex >= 0) {
-
-      Map<String, Object> event = dayEvents.get(editIndex);
-
-      nameField.setText(event.get("name").toString());
-      startDateField.setText(event.get("startDate").toString());
-      endDateField.setText(event.get("endDate").toString());
-      descriptionField.setText(event.get("description").toString());
-      locationField.setText(event.get("location").toString());
-
-      String eventVisibility = event.get("isPublic").toString();
-      if ("yes".equalsIgnoreCase(eventVisibility)) publicRadio.setSelected(true);
-      else privateRadio.setSelected(true);
-
-      metaData.put("type", "Edit");
-      metaData.put("index", editIndex);
-
-    } else {
-      publicRadio.setSelected(true);
-      metaData.put("type", "add");
-
-    }
 
     JPanel panel = getMainPanel();
     JPanel container = new JPanel(new BorderLayout());
@@ -453,7 +386,7 @@ public class JFrameView extends JFrame implements UiView {
     int result = JOptionPane.showConfirmDialog(
             frame,
             container,
-            editIndex >= 0 ? "Edit Event" : "Add New Event",
+            "Add New Event",
             JOptionPane.OK_CANCEL_OPTION,
             JOptionPane.PLAIN_MESSAGE
     );
@@ -461,24 +394,19 @@ public class JFrameView extends JFrame implements UiView {
     if (result == JOptionPane.OK_OPTION) {
 
       if (!nameField.getText().trim().isEmpty() && !startDateField.getText().trim().isEmpty()) {
+        String eventName = nameField.getText().trim().equals("") ? null : nameField.getText().trim();
+        String startDate = startDateField.getText().trim().equals("") ? null : startDateField.getText().trim();
+        String endDate = endDateField.getText().trim().equals("") ? null : endDateField.getText().trim();
+        String repeats = repeatsField.getText().trim().equals("") ? null : repeatsField.getText().trim();
+        String forValue = forField.getText().trim().equals("") ? null : forField.getText().trim();
 
-        metaData.put("subject", nameField.getText().trim());
-        metaData.put("startDate", startDateField.getText().trim());
-        metaData.put("endDate", endDateField.getText().trim());
-        metaData.put("description", descriptionField.getText().trim());
-        metaData.put("location", locationField.getText().trim());
-        metaData.put("isPublic",  publicRadio.isSelected() ? "true" : "false" );
-        metaData.put("untilField",  untilField.getText().trim() );
-        metaData.put("repeatsField", repeatsField.getText().trim() );
-        metaData.put("forField", forField.getText().trim() );
+        metaData.put("subject", eventName);
+        metaData.put("startDate", startDate);
+        metaData.put("endDate", endDate);
+        metaData.put("untilTime", untilField.getText().trim());
+        metaData.put("weekdays", repeats);
+        metaData.put("forTimes", forValue);
         metaData.put("isRecurring", recurringCheck.isSelected());
-
-//        if (editIndex >= 0) {
-//          dayEvents.set(editIndex, formattedEvent.toString());
-//        } else {
-//          dayEvents.add(formattedEvent.toString());
-//        }
-
       }
     }
 
