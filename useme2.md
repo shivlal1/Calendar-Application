@@ -109,7 +109,7 @@ To add a new event:
 3. **Add New Event**  
    Click **"Add New Event"** in the popup. A form will open as shown below:
 
-   ![Add Event Dialog](image.png)
+    ![Add Event Dialog](create_event_pop_ip.png)
 
 4. **Fill in Details**
    - **Event Name**
