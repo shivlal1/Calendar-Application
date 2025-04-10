@@ -8,7 +8,7 @@
 
 ## 2. Main GUI Interface
 
-![guifront.jpeg](guifront.jpeg)
+![guifront.jpeg](homescreen.png)
 
 Upon launching the application, the screen above will appear — this is the **main interface** of the Calendar App. The layout is organized into three main sections: the **Top Navigation Bar**, the **Calendar View**, and the **Bottom Panel**.
 
