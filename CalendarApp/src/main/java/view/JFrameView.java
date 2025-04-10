@@ -77,7 +77,6 @@ public class JFrameView extends JFrame implements UiView {
     return wrapper;
   }
 
-
   private JPanel getCalendarMetaPanel() {
     JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.setBackground(Color.WHITE);
@@ -85,15 +84,11 @@ public class JFrameView extends JFrame implements UiView {
     JLabel calendarLabel = new JLabel("Calendar:");
     calendarLabel.setFont(calendarLabel.getFont().deriveFont(Font.BOLD));
     calendarLabel.setForeground(new Color(0, 102, 204));
-
     calendarValueLabel = new JLabel(selectedCalendar);
-
     JLabel timezoneLabel = new JLabel("Timezone:");
     timezoneLabel.setFont(timezoneLabel.getFont().deriveFont(Font.BOLD));
     timezoneLabel.setForeground(new Color(0, 102, 204));
-
     timezoneValueLabel = new JLabel(newCalendarTimeZone != null ? newCalendarTimeZone : "");
-
     panel.add(calendarLabel);
     panel.add(calendarValueLabel);
     panel.add(Box.createHorizontalStrut(30));
@@ -290,7 +285,7 @@ public class JFrameView extends JFrame implements UiView {
 
   public HashMap<String, Object> getEditPropertyValuesFromGUI() {
     HashMap<String, Object> metaDeta = new HashMap<>();
-    String property = properToBeEdited.getText().trim().toLowerCase();
+    String property = properToBeEdited.getText().trim();
     String newValue = newPropertyValue.getText().trim();
     metaDeta.put("property", property);
     metaDeta.put("newValue", newValue);
@@ -328,6 +323,7 @@ public class JFrameView extends JFrame implements UiView {
     inputPanel.add(endDate);
     inputPanel.add(eventToBeEditedEndDate);
     inputPanel.add(searchButton);
+    inputPanel.add(getDateInfo());
     return inputPanel;
   }
 
@@ -384,9 +380,9 @@ public class JFrameView extends JFrame implements UiView {
     forField = new JTextField(12);
     JPanel recurringPanel = new JPanel(new GridLayout(0, 2, 5, 5));
     recurringPanel.setBorder(BorderFactory.createTitledBorder("Recurring Options"));
-    recurringPanel.add(new JLabel("Until (YYYY-MM-DD):"));
+    recurringPanel.add(new JLabel("Until Date"));
     recurringPanel.add(untilField);
-    recurringPanel.add(new JLabel("Repeats (Daily/Weekly/Monthly):"));
+    recurringPanel.add(new JLabel("Repeats (weekdays eg. MT):"));
     recurringPanel.add(repeatsField);
     recurringPanel.add(new JLabel("For (number of times):"));
     recurringPanel.add(forField);
@@ -408,6 +404,12 @@ public class JFrameView extends JFrame implements UiView {
     return panel;
   }
 
+  private JLabel getDateInfo() {
+    JLabel infoLabel = new JLabel("Date format Eg: 2025-04-31T01:00");
+    infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    return infoLabel;
+  }
+
   private Map<String, Object> showEventForm(LocalDate date, List<Map<String, Object>> dayEvents) {
     Map<String, Object> metaData = new HashMap<>();
     nameField = new JTextField(12);
@@ -424,6 +426,7 @@ public class JFrameView extends JFrame implements UiView {
     container.add(panel, BorderLayout.NORTH);
     container.add(recurringPanel, BorderLayout.CENTER);
     container.setPreferredSize(new Dimension(400, 320)); // compact!
+    container.add(getDateInfo(), BorderLayout.SOUTH);
 
     int result = JOptionPane.showConfirmDialog(
             frame,

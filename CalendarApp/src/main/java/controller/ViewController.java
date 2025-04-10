@@ -178,6 +178,7 @@ public class ViewController implements ActionListener {
     updateMap.put("localEndTime", editEventEndDate);
     try {
       calendarV2.editEvent(updateMap);
+      uiView.showMessage("Edit Event Success");
     } catch (Exception ex) {
       uiView.showMessage("Please Enter Valid property name and value before " +
               "clicking udpate all events");

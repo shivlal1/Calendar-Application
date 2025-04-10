@@ -15,7 +15,7 @@ public class CalendarCsvImporter {
     List<Map<String, Object>> metaData = new ArrayList<>();
     try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
       String line;
-      br.readLine(); // Skip header
+      br.readLine();
       while ((line = br.readLine()) != null) {
         Map<String, Object> meta = new HashMap<>();
         String[] values = line.split("\\s*,\\s*(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
@@ -37,9 +37,9 @@ public class CalendarCsvImporter {
           meta.put("isAllDay", false);
         }
         meta.put("subject", values[0]);
-        meta.put("Description", values[6]);
+        meta.put("description", values[6]);
         meta.put("location", values[7]);
-        meta.put("isPublic", values[8]);
+        meta.put("isPublic", Boolean.parseBoolean(values[8]));
         meta.put("isRecurring", false);
         metaData.add(meta);
       }

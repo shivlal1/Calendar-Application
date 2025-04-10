@@ -28,8 +28,13 @@ public class SingleEvent extends Event {
               Map<String, Object> allMetaDetails) {
     super(subject, startDate, endDate);
     this.allMetaDetails = allMetaDetails;
-//    this.location = allMetaDetails.containsKey("location") ?
-//            allMetaDetails.get("location").toString() : null;
+
+    this.location = allMetaDetails.containsKey("location") ?
+            allMetaDetails.get("location").toString() : null;
+    this.description = allMetaDetails.containsKey("description") ?
+            allMetaDetails.get("description").toString() : null;
+    this.isPublic = allMetaDetails.containsKey("isPublic") ?
+            (Boolean) allMetaDetails.get("isPublic") : null;
   }
 
   /**
