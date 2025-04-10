@@ -34,7 +34,9 @@ public class SingleEvent extends Event {
     this.description = allMetaDetails.containsKey("description") ?
             allMetaDetails.get("description").toString() : null;
     this.isPublic = allMetaDetails.containsKey("isPublic") ?
-            (Boolean) allMetaDetails.get("isPublic") : null;
+            (Boolean) allMetaDetails.get("isPublic") : false;
+    String val="";
+    val = "hello";
   }
 
   /**
