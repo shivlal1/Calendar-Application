@@ -8,7 +8,7 @@
 
 ## 2. Main GUI Interface
 
-![guifront.jpeg](homescreen.png)
+![guifront.jpeg](res/useme1.png)
 
 Upon launching the application, the screen above will appear — this is the **main interface** of the Calendar App. The layout is organized into three main sections: the **Top Navigation Bar**, the **Calendar View**, and the **Bottom Panel**.
 
@@ -109,7 +109,7 @@ To add a new event:
 3. **Add New Event**  
    Click **"Add New Event"** in the popup. A form will open as shown below:
 
-    ![Add Event Dialog](create_event_pop_up.png)
+    ![Add Event Dialog](res/useme2.png)
 
 4. **Fill in Details**
    - **Event Name**
@@ -148,7 +148,7 @@ To bulk-edit events:
 
    Click **Search** to display the matching results.
 
-   ![Edit Events Dialog](edit_and_search.png)
+   ![Edit Events Dialog](useme3.png)
 
 3. **View Results**  
    Matches appear in the textbox below the search button.
