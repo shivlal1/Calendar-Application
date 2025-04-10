@@ -304,8 +304,10 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   private JPanel getSearchEventsToEditPanel() {
-    JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+    JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
     inputPanel.setBorder(BorderFactory.createTitledBorder(""));
+
+
     nameLabel = new JLabel("Name:");
     eventToBeEditedName = new JTextField(12);
     JLabel startDate = new JLabel("Start Date:");
@@ -343,7 +345,7 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   public void searchEventsToEdit() {
-    JDialog dialog = new JDialog(frame, "Search Events", true);
+    JDialog dialog = new JDialog(frame, "Search and edit events", true);
     dialog.setSize(600, 500);
     dialog.setLayout(new BorderLayout());
     dialog.add(getSearchEventsToEditPanel(), BorderLayout.NORTH);
@@ -373,15 +375,8 @@ public class JFrameView extends JFrame implements UiView {
     untilField = new JTextField(12);
     repeatsField = new JTextField(12);
     forField = new JTextField(12);
-
-//    Dimension fieldSize = new Dimension(200, 25);
-//    untilField.setPreferredSize(fieldSize);
-//    repeatsField.setPreferredSize(fieldSize);
-//    forField.setPreferredSize(fieldSize);
-
     JPanel recurringPanel = new JPanel(new GridLayout(0, 2, 5, 5));
-    recurringPanel.setBorder(BorderFactory.createTitledBorder("Recurring Options")); // ⬅️ Titled border
-
+    recurringPanel.setBorder(BorderFactory.createTitledBorder("Recurring Options"));
     recurringPanel.add(new JLabel("Until (YYYY-MM-DD):"));
     recurringPanel.add(untilField);
     recurringPanel.add(new JLabel("Repeats (Daily/Weekly/Monthly):"));

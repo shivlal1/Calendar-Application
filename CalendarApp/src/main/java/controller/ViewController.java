@@ -104,7 +104,6 @@ public class ViewController implements ActionListener {
   }
 
   private void handleDropDown() {
-
     if (uiView.isAddCalendar()) {
       uiView.showAddCalendarinUI();
       String calendarDetails[] = uiView.getCalendarDetails();
@@ -126,7 +125,6 @@ public class ViewController implements ActionListener {
     }
     calendarV2 = calendarManager.getCalendarByName(activeCalendarName);
     uiView.setCalendar(activeCalendarName, calendarV2.getCalendarTimeZone().toString());
-
   }
 
   private void handleAddEvent(ActionEvent e) {
@@ -143,12 +141,10 @@ public class ViewController implements ActionListener {
     if(event==null || event.size()==0){
       return;
     }
-
     if( isCreateEventErrorHandled(event)){
       return;
     }
     Map<String, Object> dataForCreateEvent = getDataForCreateEvent(event);
-
     try {
       String subject = dataForCreateEvent.get("subject").toString();
       LocalDateTime startDate = (LocalDateTime) dataForCreateEvent.get("startDate");
@@ -268,6 +264,7 @@ public class ViewController implements ActionListener {
       }
       bulletEvent.deleteCharAt(bulletEvent.length() - 1);
       eventListBuilder.append(bulletEvent + "\n");
+      count++;
     }
     return eventListBuilder.toString();
   }
