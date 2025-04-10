@@ -154,7 +154,7 @@ To bulk-edit events:
    Matches appear in the textbox below the search button.
 
 4. **Edit Properties**  
-   - **Property Name**: What to change (e.g., `name`, `location`)
+   - **Property Name**: What to change (e.g., `name`, `location`, `description`, `startDate`, `endDate`, `isPublic`)
    - **New Value**: The updated value
 
 5. **Apply Changes**  
