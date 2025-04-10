@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
@@ -11,7 +10,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.swing.*;
+import java.awt.Color;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import javax.swing.BorderFactory;
+import java.awt.Font;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JScrollPane;
+import java.awt.GridLayout;
+import javax.swing.JOptionPane;
+import java.awt.Window;
+import javax.swing.JDialog;
+import javax.swing.SwingConstants;
+import java.awt.Dimension;
 
 /**
  * JFrameView implements the UiView interface to provide a Swing-based GUI for application.
@@ -24,7 +45,6 @@ public class JFrameView extends JFrame implements UiView {
   private JLabel monthLabel;
   private JComboBox<String> calendarDropdown;
   private Map<String, Color> calendars;
-  private Map<LocalDate, List<String>> events;
   private YearMonth currentMonth;
   private String selectedCalendar;
   private JButton searchButton;
@@ -65,7 +85,6 @@ public class JFrameView extends JFrame implements UiView {
     frame.setLocationRelativeTo(null);
     frame.setLayout(new BorderLayout());
     currentMonth = YearMonth.now();
-    events = new HashMap<>();
     frame.add(getNorthPanel(), BorderLayout.NORTH);
     calendarPanel = new JPanel();
     updateButton = new JButton("Update All Matches");
@@ -73,6 +92,7 @@ public class JFrameView extends JFrame implements UiView {
     frame.add(calendarPanel, BorderLayout.CENTER);
     frame.add(getBottomPanel(), BorderLayout.SOUTH);
   }
+
   /**
    * Returns the north panel of the frame which contains top controls and calendar meta info.
    * The calendar meta info is used to display the calendar name and timezone.
@@ -208,6 +228,7 @@ public class JFrameView extends JFrame implements UiView {
   public void display() {
     frame.setVisible(true);
   }
+
   /**
    * Binds action listener for calendar dropdown changes.
    */
@@ -238,7 +259,6 @@ public class JFrameView extends JFrame implements UiView {
     String[] details = {newCalendarName, newCalendarTimeZone};
     return details;
   }
-
 
   /**
    * Updates the calendar panel with buttons representing days in the current month.
@@ -273,7 +293,7 @@ public class JFrameView extends JFrame implements UiView {
    */
   public boolean shouldAddCalendar() {
     String selected = (String) calendarDropdown.getSelectedItem();
-   return selected.equals("+");
+    return selected.equals("+");
   }
 
   /**
@@ -335,7 +355,7 @@ public class JFrameView extends JFrame implements UiView {
     );
 
     if (choice == 0) {
-      metaDeta = showEventForm(date, dayEvents);
+      metaDeta = showEventForm();
     }
     return metaDeta;
   }
@@ -386,6 +406,7 @@ public class JFrameView extends JFrame implements UiView {
     metaDeta.put("newValue", newValue);
     return metaDeta;
   }
+
   /**
    * Clears search/edit text fields in the search dialog box.
    */
@@ -397,6 +418,7 @@ public class JFrameView extends JFrame implements UiView {
     properToBeEdited.setText("");
     newPropertyValue.setText("");
   }
+
   /**
    * Closes the search/edit dialog.
    */
@@ -407,6 +429,7 @@ public class JFrameView extends JFrame implements UiView {
       window.dispose();
     }
   }
+
   /**
    * Constructs the panel for entering search parameters to find events.
    *
@@ -515,7 +538,7 @@ public class JFrameView extends JFrame implements UiView {
   /**
    * Returns the main event input panel with name, start, and end fields.
    *
-   * @return  JPanel with basic event details input field.
+   * @return JPanel with basic event details input field.
    */
   private JPanel getMainPanel() {
     JPanel panel = new JPanel(new GridLayout(0, 2, 10, 10));
@@ -547,7 +570,7 @@ public class JFrameView extends JFrame implements UiView {
    *
    * @return Map with values to form the event.
    */
-  private Map<String, Object> showEventForm(LocalDate date, List<Map<String, Object>> dayEvents) {
+  private Map<String, Object> showEventForm() {
     Map<String, Object> metaData = new HashMap<>();
     nameField = new JTextField(12);
     startDateField = new JTextField(12);
@@ -632,6 +655,7 @@ public class JFrameView extends JFrame implements UiView {
     topPanel.add(editAcrossCalendar);
     return topPanel;
   }
+
   /**
    * Displays events as text in the result area of the GUI.
    */

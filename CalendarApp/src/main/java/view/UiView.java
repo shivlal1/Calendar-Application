@@ -76,8 +76,8 @@ public interface UiView {
   /**
    * Displays a dialog for adding an event and retrieves user input.
    *
-   * @param date the date for which the event is being added.
-   * @param dayEvents the list of existing events for that date.
+   * @param date          the date for which the event is being added.
+   * @param dayEvents     the list of existing events for that date.
    * @param eventAsString a string representation of the current events.
    * @return a Map containing the values for the new event.
    */
@@ -107,7 +107,8 @@ public interface UiView {
 
   /**
    * Retrieves updated property values for an event.
-   *The property could be name, location, description, startDate,endDate,isPublic.
+   * The property could be name, location, description, startDate,endDate,isPublic.
+   *
    * @return a Map containing the edited event property values.
    */
   public Map<String, Object> getEditPropertyValuesFromGUI();

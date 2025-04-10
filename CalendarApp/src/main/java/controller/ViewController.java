@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JFileChooser;
+import javax.swing.*;
 
 import model.ICalendarV2;
 import utils.CalendarCsvExporter;
@@ -339,7 +339,7 @@ public class ViewController implements ActionListener {
       uiView.showMessage(erroMessage);
       return true;
     }
-    if ((Boolean) data.get("isRecurring") ) {
+    if ((Boolean) data.get("isRecurring")) {
       if (data.get("untilTime") == null && data.get("forTimes") == null) {
         erroMessage = "Either untilTime or forTimes is required for Recurring Events";
         uiView.showMessage(erroMessage);
