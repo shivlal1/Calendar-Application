@@ -32,7 +32,7 @@ public class CalendarApp {
    */
   public static void main(String[] args) throws Exception {
 
-    if(args.length == 0){
+    if (args.length == 0) {
       ICalendarManagerV2 manager = new CalendarManagerV2("default",
               ZoneId.systemDefault().toString());
       UiView uiView = new JFrameView();
@@ -82,8 +82,7 @@ public class CalendarApp {
       }
       try {
         executeCommand(commandArgs, view, controller, calendarManager);
-      }
-      catch (Exception e){
+      } catch (Exception e) {
         view.viewMessage(e.getMessage());
       }
     }

@@ -40,7 +40,7 @@ public class ViewController implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     calendarV2 = calendarManager.getCalendarByName(activeCalendarName);
-    uiView.clearErrorMessage();
+    uiView.clearMessage();
 
     switch (e.getActionCommand()) {
       case "Next Month":
@@ -79,44 +79,52 @@ public class ViewController implements ActionListener {
 
 
   private Map<String, Object> getDataForCreateEvent(Map<String, Object> event) {
-    if(event==null){
+    if (event == null) {
       return null;
     }
-    event.put("autoDecline", true);
-    String startDateAfterT = DateUtils.removeTinDateTime(event.get("startDate").toString());
-    LocalDateTime startDate = DateUtils.stringToLocalDateTime(startDateAfterT);
-    event.put("startDate", startDate);
-    LocalDateTime endDate = null;
-    if (event.get("endDate") != null) {
-      String endDateAfterT = DateUtils.removeTinDateTime(event.get("endDate").toString());
-      endDate = DateUtils.stringToLocalDateTime(endDateAfterT);
-      event.put("isAllDay", false);
-      event.put("endDate", endDate);
-    } else {
-      event.put("isAllDay", true);
-      LocalDate currentDay = startDate.toLocalDate();
-      LocalDateTime localStartDateTime = currentDay.atStartOfDay();
-      LocalDateTime localEndDateTime = currentDay.atTime(23, 59);
-      event.put("startDate", localStartDateTime);
-      event.put("endDate", localEndDateTime);
+    try {
+      event.put("autoDecline", true);
+      String startDateAfterT = DateUtils.removeTinDateTime(event.get("startDate").toString());
+      LocalDateTime startDate = DateUtils.stringToLocalDateTime(startDateAfterT);
+      event.put("startDate", startDate);
+      LocalDateTime endDate = null;
+      if (event.get("endDate") != null) {
+        String endDateAfterT = DateUtils.removeTinDateTime(event.get("endDate").toString());
+        endDate = DateUtils.stringToLocalDateTime(endDateAfterT);
+        event.put("isAllDay", false);
+        event.put("endDate", endDate);
+      } else {
+        event.put("isAllDay", true);
+        LocalDate currentDay = startDate.toLocalDate();
+        LocalDateTime localStartDateTime = currentDay.atStartOfDay();
+        LocalDateTime localEndDateTime = currentDay.atTime(23, 59);
+        event.put("startDate", localStartDateTime);
+        event.put("endDate", localEndDateTime);
+      }
+      if (event.get("untilTime") != null) {
+        String untilTime = formatUntilTimeForRecurringEvent(event.get("untilTime").toString());
+        event.put("untilTime", untilTime);
+      }
+    } catch (Exception e) {
+      uiView.showMessage("Check Date Values : Incorrect Date Format");
     }
     return event;
   }
 
   private void handleDropDown() {
     if (uiView.isAddCalendar()) {
-      uiView.showAddCalendarinUI();
+      uiView.showAddCalendarDialog();
       String calendarDetails[] = uiView.getCalendarDetails();
       System.out.println(calendarDetails[0] + " " + calendarDetails[1]);
       try {
         calendarManager.createCalendar(calendarDetails[0], calendarDetails[1]);
       } catch (Exception e) {
         uiView.removeCalendarFromDropdown(calendarDetails[0]);
-        uiView.showErrorMessage(" Error in creating calendar \n"+
+        uiView.showMessage(" Error in creating calendar \n" +
                 "Check if calendar name already exits or check timezone value");
         return;
       }
-      uiView.setCalendar(calendarDetails[0], calendarDetails[1]);
+      uiView.setCalendarForGUI(calendarDetails[0], calendarDetails[1]);
       activeCalendarName = calendarDetails[0];
     } else {
       activeCalendarName = uiView.getChangedCalName();
@@ -124,7 +132,7 @@ public class ViewController implements ActionListener {
       System.out.println("New Cal Name" + uiView.getChangedCalName());
     }
     calendarV2 = calendarManager.getCalendarByName(activeCalendarName);
-    uiView.setCalendar(activeCalendarName, calendarV2.getCalendarTimeZone().toString());
+    uiView.setCalendarForGUI(activeCalendarName, calendarV2.getCalendarTimeZone().toString());
   }
 
   private void handleAddEvent(ActionEvent e) {
@@ -137,11 +145,11 @@ public class ViewController implements ActionListener {
     Map<String, Object> metaData = new HashMap<>();
     metaData.put("localStartTime", dateTime);
     List<Map<String, Object>> eventDetails = calendarV2.getMatchingEvents(metaData);
-    Map<String, Object> event = uiView.getUserShowEventChoice(date, eventDetails, getPrintEventsAsString(eventDetails));
-    if(event==null || event.size()==0){
+    Map<String, Object> event = uiView.showAddEventDialog(date, eventDetails, getPrintEventsAsString(eventDetails));
+    if (event == null || event.size() == 0) {
       return;
     }
-    if( isCreateEventErrorHandled(event)){
+    if (isCreateEventErrorHandled(event)) {
       return;
     }
     Map<String, Object> dataForCreateEvent = getDataForCreateEvent(event);
@@ -151,12 +159,17 @@ public class ViewController implements ActionListener {
       LocalDateTime endDate = (LocalDateTime) dataForCreateEvent.get("endDate");
       calendarV2.createEvent(subject, startDate, endDate, event);
     } catch (Exception ex) {
-      uiView.showErrorMessage(ex.getMessage());
+      String err = "the event conflicts with another event";
+      if (ex.getMessage().equals(err)) {
+      }
+      uiView.showMessage("Error in creating event " +
+              "Check Date Format and Other Properties and try check");
+      uiView.showMessage(err);
     }
   }
 
   private void handleUpdateEvent() {
-    Map<String, Object> metaDeta = uiView.getNewPropertyAndValue();
+    Map<String, Object> metaDeta = uiView.getEditPropertyValuesFromGUI();
     Map<String, Object> updateMap = new HashMap<>();
     updateMap.put("property", metaDeta.get("property"));
     updateMap.put("eventName", editEventName);
@@ -166,14 +179,18 @@ public class ViewController implements ActionListener {
     try {
       calendarV2.editEvent(updateMap);
     } catch (Exception ex) {
+      uiView.showMessage("Please Enter Valid property name and value before " +
+              "clicking udpate all events");
+      uiView.closeSearchPanel();
       throw new RuntimeException(ex);
     }
     uiView.clearSearchPanel();
+    uiView.closeSearchPanel();
   }
 
   private void handleSearch() {
     refreshEditValues();
-    Map<String, Object> data = uiView.getEventsToBeEditedValues();
+    Map<String, Object> data = uiView.getEditEventValuesFromGUI();
     editEventName = data.get("eventName").toString();
     calendarV2 = calendarManager.getCalendarByName(activeCalendarName);
     List<Map<String, Object>> match = new ArrayList<>();
@@ -193,7 +210,7 @@ public class ViewController implements ActionListener {
       }
       match = getEventsToShowInUI(data);
     }
-    uiView.showMatchingEventsForEdit(getPrintEventsAsString(match));
+    uiView.displayEvents(getPrintEventsAsString(match));
     uiView.clearSearchPanel();
   }
 
@@ -236,13 +253,13 @@ public class ViewController implements ActionListener {
 
   private String getPrintEventsAsString(List<Map<String, Object>> dayEvents) {
     StringBuilder eventListBuilder = new StringBuilder();
-    int count=1;
+    int count = 1;
     if (dayEvents.size() == 0) {
       return "No Matching Events";
     }
     for (Map<String, Object> event : dayEvents) {
       StringBuilder bulletEvent = new StringBuilder();
-      bulletEvent.append(String.valueOf(count)+ " ");
+      bulletEvent.append(String.valueOf(count) + " ");
       bulletEvent.append(" Subject : " + event.get("subject") + ",");
       LocalDateTime startDateTime = (LocalDateTime) event.get("startDate");
       bulletEvent.append("Start date : " + startDateTime.toLocalDate() + ",");
@@ -280,43 +297,64 @@ public class ViewController implements ActionListener {
     }
   }
 
-  private void pushParsedEventsIntoModel(List<Map<String, Object>> parsedEvents){
+  private void pushParsedEventsIntoModel(List<Map<String, Object>> parsedEvents) {
     String message = "Events Export success\n";
-    for( Map<String, Object> eventDetail : parsedEvents ) {
+    for (Map<String, Object> eventDetail : parsedEvents) {
       String subject = (String) eventDetail.get("subject");
       LocalDateTime startDateTime = (LocalDateTime) eventDetail.get("startDate");
       LocalDateTime endDateTime = (LocalDateTime) eventDetail.get("endDate");
       try {
-        calendarV2.createEvent(subject,startDateTime,endDateTime,eventDetail);
+        calendarV2.createEvent(subject, startDateTime, endDateTime, eventDetail);
       } catch (Exception ex) {
-        message+="Conflicting events exists with already existing events in calendar\n";
-        message+="Non Conflicting events are exported successfully\n";
+        message += "Conflicting events exists with already existing events in calendar\n";
+        message += "Non Conflicting events are exported successfully\n";
       }
     }
-    uiView.showErrorMessage(message);
+    uiView.showMessage(message);
   }
 
-  private void handleExportCsv(){
-      List<Map<String, Object>> allEvents = calendarV2.getAllCalendarEvents();
-      CalendarCsvExporter exporter = new CalendarCsvExporter();
+  private void handleExportCsv() {
+    List<Map<String, Object>> allEvents = calendarV2.getAllCalendarEvents();
+    CalendarCsvExporter exporter = new CalendarCsvExporter();
     try {
-      String message = exporter.export(allEvents,exportEventsName);
-      uiView.showErrorMessage("File path"+message);
+      String message = exporter.export(allEvents, exportEventsName);
+      uiView.showMessage("File path" + message);
     } catch (Exception e) {
-      uiView.showErrorMessage("Check file format or check events details in file");
+      uiView.showMessage("Check file format or check events details in file");
       throw new RuntimeException(e);
     }
   }
 
-  private boolean isCreateEventErrorHandled( Map<String,Object> data){
-    String erroMessage="";
-    if( data.get("subject") == null || data.get("startDate")==null){
-        erroMessage="Subject or startDate cannot be empty";
+  private boolean isCreateEventErrorHandled(Map<String, Object> data) {
+    String erroMessage = "";
+    if (data.get("subject") == null || data.get("startDate") == null) {
+      erroMessage = "Subject or startDate cannot be empty";
     }
-    if(!erroMessage.equals("")){
-      uiView.showErrorMessage(erroMessage);
+    if (!erroMessage.equals("")) {
+      uiView.showMessage(erroMessage);
       return true;
     }
+    if ((Boolean) data.get("isRecurring") == true) {
+      if (data.get("untilTime") == null && data.get("forTimes") == null) {
+        erroMessage = "Either untilTime or forTimes is required for Recurring Events";
+        uiView.showMessage(erroMessage);
+        return true;
+      }
+      if (data.get("weekdays") == null) {
+        erroMessage = "weekdays cannot be empty for Recurring Events";
+        uiView.showMessage(erroMessage);
+        return true;
+      }
+    }
     return false;
+  }
+
+  private String formatUntilTimeForRecurringEvent(String untilDateTime) {
+    if (untilDateTime.indexOf('T') != -1) {
+      untilDateTime = DateUtils.removeTinDateTime(untilDateTime);
+    } else {
+      untilDateTime = DateUtils.changeDateToDateTime(untilDateTime);
+    }
+    return untilDateTime;
   }
 }

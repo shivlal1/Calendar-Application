@@ -69,31 +69,29 @@ public class CalendarAppTest {
 
   @Test
   public void invalidCalCommand() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("start with commad+calendar+name");
-
     String createCal = "calendar --name myCalendar --timezone Asia/Kolkata";
     String[] inputs = {createCal, "exit"};
-
     String simulatedInput = String.join("\n", inputs) + "\n";
-
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
+    String output = "Using interactive mode. To quit, use 'exit'\n";
+    output += "start with commad+calendar+name\n";
+    assertEquals(output, getOutput());
   }
 
 
   @Test
   public void invalidCalCommand2() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("start with commad+calendar+name");
 
     String createCal = "create --name myCalendar --timezone Asia/Kolkata";
     String[] inputs = {createCal, "exit"};
-
     String simulatedInput = String.join("\n", inputs) + "\n";
-
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
+
+    String output1 = "Using interactive mode. To quit, use 'exit'\n";
+    String output2 = "start with commad+calendar+name\n";
+    assertEquals(output1 + output2, getOutput());
   }
 
 
@@ -117,22 +115,20 @@ public class CalendarAppTest {
 
   @Test
   public void invalidCalCommand4() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("Missing --timezone flag");
 
     String createCal = "create calendar --name myCalendar  Asia/Kolkata";
     String[] inputs = {createCal, "exit"};
-
     String simulatedInput = String.join("\n", inputs) + "\n";
-
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
+
+    String output1 = "Using interactive mode. To quit, use 'exit'\n";
+    String output2 = "Missing --timezone flag\n";
+    assertEquals(output1 + output2, getOutput());
   }
 
   @Test
   public void invalidCalCommand5() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("Missing timeZone value");
 
     String createCal = "create calendar --name myCalendar --timezone";
     String[] inputs = {createCal, "exit"};
@@ -141,13 +137,15 @@ public class CalendarAppTest {
 
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
+
+    String output1 = "Using interactive mode. To quit, use 'exit'\n";
+    String output2 = "Missing timeZone value\n";
+    assertEquals(output1 + output2, getOutput());
   }
 
 
   @Test
   public void invalidCalCommand6() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("start with commad+calendar+name");
 
     String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
     String edit = "edit --name myCalendar --property name myCalendar2";
@@ -157,26 +155,26 @@ public class CalendarAppTest {
 
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
+
+    String output1 = "Using interactive mode. To quit, use 'exit'\n";
+    String output2 = "start with commad+calendar+name\n";
+    assertEquals(output1 + output2, getOutput());
   }
 
   @Test
   public void invalidCalCommand7() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("No such calendar exists");
-
     String edit = "edit calendar --name myCalendar --property name myCalendar2";
     String[] inputs = {edit, "exit"};
-
     String simulatedInput = String.join("\n", inputs) + "\n";
-
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
+    String output = "Using interactive mode. To quit, use 'exit'\n";
+    output += "No such calendar exists\n";
+    assertEquals(output, getOutput());
   }
 
   @Test
   public void invalidCalCommand8() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("property name/value is not present");
 
     String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
     String edit = "edit calendar --name myCalendar --property myCalendar2";
@@ -186,6 +184,10 @@ public class CalendarAppTest {
 
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
+
+    String output = "Using interactive mode. To quit, use 'exit'\n";
+    output += "property name/value is not present\n";
+    assertEquals(output, getOutput());
   }
 
   /**
@@ -210,9 +212,6 @@ public class CalendarAppTest {
   @Test
   public void basicCalendar2() throws Exception {
 
-    thrown.expect(Exception.class);
-    thrown.expectMessage("the event conflicts with another event");
-
     String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
     String useCal = "use calendar --name myCalendar";
     String editCal = "edit calendar --name myCalendar --property name myCalendar2";
@@ -225,12 +224,18 @@ public class CalendarAppTest {
 
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
+
+    String output = "Using interactive mode. To quit, use 'exit'\n";
+    output += "Name Change Success: myCalendar2\n";
+    output += "the event conflicts with another event\n";
+    output += "Invalid Command Missing To\n";
+    assertEquals(output, getOutput());
   }
 
   @Test
   public void invalidEdit() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("--property missing");
+//    thrown.expect(Exception.class);
+//    thrown.expectMessage("--property missing");
 
     String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
     String useCal = "use calendar --name myCalendar";
@@ -243,13 +248,14 @@ public class CalendarAppTest {
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
 
+    String output = "Using interactive mode. To quit, use 'exit'\n";
+    output += "--property missing\n";
+    assertEquals(output, getOutput());
+
   }
 
   @Test
   public void editNotExistingCal() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("No such calendar exists");
-
     String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
     String useCal = "use calendar --name myCalendar";
     String editCal = "edit calendar --name NotExistingCal --property timezone Australia/Sydney";
@@ -259,13 +265,17 @@ public class CalendarAppTest {
 
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
+
+    String output = "Using interactive mode. To quit, use 'exit'\n";
+    output += "No such calendar exists\n";
+    assertEquals(output, getOutput());
   }
 
 
   @Test
   public void invalidUse() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("calendar Doesn't exists to Use");
+    //thrown.expect(Exception.class);
+    //thrown.expectMessage("calendar Doesn't exists to Use");
 
     String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
     String useCal = "use calendar --name notExistingCal";
@@ -275,6 +285,10 @@ public class CalendarAppTest {
 
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
+    String output = "Using interactive mode. To quit, use 'exit'\n";
+    output += "calendar Doesn't exists to Use\n";
+    assertEquals(output, getOutput());
+
   }
 
 

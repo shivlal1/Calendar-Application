@@ -172,7 +172,7 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   @Override
-  public void setCalendar(String calendarName,String newCalendarTimeZone) {
+  public void setCalendarForGUI(String calendarName, String newCalendarTimeZone) {
     selectedCalendar = calendarName;
     calendarValueLabel.setText(calendarName);
     timezoneValueLabel.setText(newCalendarTimeZone);
@@ -213,7 +213,7 @@ public class JFrameView extends JFrame implements UiView {
     return false;
   }
 
-  public void showAddCalendarinUI() {
+  public void showAddCalendarDialog() {
     JTextField nameField = new JTextField();
     JTextField timezoneField = new JTextField();
     JPanel panel = new JPanel(new GridLayout(0, 1));
@@ -249,7 +249,7 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   @Override
-  public Map<String, Object> getUserShowEventChoice(LocalDate date, List<Map<String, Object>> dayEvents, String eventAsString) {
+  public Map<String, Object> showAddEventDialog(LocalDate date, List<Map<String, Object>> dayEvents, String eventAsString) {
     Map<String, Object> metaDeta = null;
     Object[] options = {"Add New Event", "Cancel"};
     int choice = JOptionPane.showOptionDialog(
@@ -279,14 +279,16 @@ public class JFrameView extends JFrame implements UiView {
     updateCalendar(listener);
   }
 
-  public void showErrorMessage(String errorMessage){
-    clearErrorMessage();
+  public void showMessage(String errorMessage) {
+    clearMessage();
     messageArea.setText(errorMessage);
   }
-  public void clearErrorMessage(){
+
+  public void clearMessage() {
     messageArea.setText("");
   }
-  public HashMap<String, Object> getNewPropertyAndValue() {
+
+  public HashMap<String, Object> getEditPropertyValuesFromGUI() {
     HashMap<String, Object> metaDeta = new HashMap<>();
     String property = properToBeEdited.getText().trim().toLowerCase();
     String newValue = newPropertyValue.getText().trim();
@@ -301,6 +303,13 @@ public class JFrameView extends JFrame implements UiView {
     eventToBeEditedEndDate.setText("");
     properToBeEdited.setText("");
     newPropertyValue.setText("");
+  }
+
+  public void closeSearchPanel() {
+    Window window = SwingUtilities.getWindowAncestor(updateButton);
+    if (window != null) {
+      window.dispose();
+    }
   }
 
   private JPanel getSearchEventsToEditPanel() {
@@ -324,7 +333,7 @@ public class JFrameView extends JFrame implements UiView {
     return inputPanel;
   }
 
-  public Map<String, Object> getEventsToBeEditedValues() {
+  public Map<String, Object> getEditEventValuesFromGUI() {
     Map<String, Object> metaData = new HashMap<>();
     String eventName = eventToBeEditedName.getText().trim();
     String startDate = eventToBeEditedStartDate.getText().trim();
@@ -427,19 +436,19 @@ public class JFrameView extends JFrame implements UiView {
     );
 
     if (result == JOptionPane.OK_OPTION) {
-        String eventName = nameField.getText().trim().equals("") ? null : nameField.getText().trim();
-        String startDate = startDateField.getText().trim().equals("") ? null : startDateField.getText().trim();
-        String endDate = endDateField.getText().trim().equals("") ? null : endDateField.getText().trim();
-        String repeats = repeatsField.getText().trim().equals("") ? null : repeatsField.getText().trim();
-        String forValue = forField.getText().trim().equals("") ? null : forField.getText().trim();
-        String untilValue = untilField.getText().trim().equals("") ? null : untilField.getText().trim();
-        metaData.put("subject", eventName);
-        metaData.put("startDate", startDate);
-        metaData.put("endDate", endDate);
-        metaData.put("untilTime", untilValue);
-        metaData.put("weekdays", repeats);
-        metaData.put("forTimes", forValue);
-        metaData.put("isRecurring", recurringCheck.isSelected());
+      String eventName = nameField.getText().trim().equals("") ? null : nameField.getText().trim();
+      String startDate = startDateField.getText().trim().equals("") ? null : startDateField.getText().trim();
+      String endDate = endDateField.getText().trim().equals("") ? null : endDateField.getText().trim();
+      String repeats = repeatsField.getText().trim().equals("") ? null : repeatsField.getText().trim();
+      String forValue = forField.getText().trim().equals("") ? null : forField.getText().trim();
+      String untilValue = untilField.getText().trim().equals("") ? null : untilField.getText().trim();
+      metaData.put("subject", eventName);
+      metaData.put("startDate", startDate);
+      metaData.put("endDate", endDate);
+      metaData.put("untilTime", untilValue);
+      metaData.put("weekdays", repeats);
+      metaData.put("forTimes", forValue);
+      metaData.put("isRecurring", recurringCheck.isSelected());
     }
     return metaData;
   }
@@ -464,7 +473,7 @@ public class JFrameView extends JFrame implements UiView {
       calendarDropdown.addItem(calendarName);
     }
     calendarDropdown.setSelectedItem(selectedCalendar);
-    editAcrossCalendar = new JButton("Edit across calendar");
+    editAcrossCalendar = new JButton("Edit Events across calendar");
     editAcrossCalendar.setActionCommand("Edit across calendar");
     topPanel.add(prevButton);
     topPanel.add(monthLabel);
@@ -474,11 +483,11 @@ public class JFrameView extends JFrame implements UiView {
     return topPanel;
   }
 
-  public void showMatchingEventsForEdit(String eventString) {
+  public void displayEvents(String eventString) {
     resultArea.setText(eventString);
   }
 
-  public void removeCalendarFromDropdown(String newCalendarName){
+  public void removeCalendarFromDropdown(String newCalendarName) {
     calendarDropdown.removeItem(newCalendarName);
     calendars.remove(newCalendarName);
   }

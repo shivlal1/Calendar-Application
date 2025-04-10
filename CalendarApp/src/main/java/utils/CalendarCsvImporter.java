@@ -29,18 +29,18 @@ public class CalendarCsvImporter {
           LocalDateTime newEndDate = startDate.toLocalDate().atTime(23, 59);
           meta.put("startDate", newStartDate);
           meta.put("endDate", newEndDate);
-          meta.put("isAllDay",true);
+          meta.put("isAllDay", true);
         } else {
           endDate = DateUtils.getDateFromCSVFile(values[3], values[4]);
           meta.put("startDate", startDate);
           meta.put("endDate", endDate);
-          meta.put("isAllDay",false);
+          meta.put("isAllDay", false);
         }
         meta.put("subject", values[0]);
         meta.put("Description", values[6]);
         meta.put("location", values[7]);
         meta.put("isPublic", values[8]);
-        meta.put("isRecurring",false);
+        meta.put("isRecurring", false);
         metaData.add(meta);
       }
     } catch (IOException exception) {
