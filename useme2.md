@@ -1,192 +1,177 @@
-1. Steps to run the GUI :
-   - Go to the CalendarApp. 
-   - Click the Run option in the top right corner.
-   - An interactive calendar gui will pop up in your screen.
+## 1. Launching the Application
 
-2. Main GUI Interface :
-   ![guifront.jpeg](guifront.jpeg)
-   - This is the main screen of the GUI that pops up.
-   - The top panel shows current month and year.
-   - By clicking the '<' and '>' arrows, we can move to previous or next month. 
-   - In the next panel we have :
-        * Dropdown to switch between calendars.
-        * Create Calendar button.
-        * Create event button.
+- Open the `CalendarApp.java` file, which is the main entry point of the application.
+- Click the **Run** button in the top right corner (typically green in color).
+- An interactive GUI window will appear on your screen.
 
-        * Edit Across Calendar to change the properties of event.
-        * Show events.
-   - The calendar shows April month of year 2025.
-   - If an event is created the box of specific date gets coloured.
-   - In the bottom panel we have:
-        * The name and timezone of calendar we are currently in.
-        * Edit calendar to change the name or timezone of calendar.
-        * Export calendar button to export the calendar to a csv file.
-        * Import calendar button to import events to the calendar as a csv file.
+---
 
-3. Creating a Calendar : 
-    - Click on create calendar.
-    - Enter the new calendar name.
-    - Enter the timezone of new calendar.
-    - Click OK.
-    - A message "Calendar created successfully" appears.
-    - If you give wrong timezone you get the message Invalid Zone Id : Error creating calendar.
-    - If you create a calendar with the name that is already taken; you get the message - Error creating Calendar : Calendar already exists with same name.
+## 2. Main GUI Interface
 
-4. Switching between Calendars :
-     - Click the dropdown next to Select Calendar.
-     - Choose the calendar you want to view or work on.
-     - Once you choose a calendar, notice the bottom panel changing to the calendar name with timezone you selected.
+![guifront.jpeg](guifront.jpeg)
 
-5. Creating an event : 
-    - Click on Create Event.
-    - Select event type. Choose what event you want to create - Single or Recurring.
-    - Creating a Single Event :
-      * Choose if it's an event with a specific start and end date time (timed) or all day event (All-day). 
-      * All day event :
-        - Enter the subject of the event.
-        - Enter the date-time in the format yyyy-mm-ddThh:mm
-        - Event created successfully. 
-      * Timed event :
-        - Enter the subject of the event.
-        - Enter the start date-time in the format yyyy-mm-ddThh:mm
-        - Enter the start date-time in the format yyyy-mm-ddThh:mm
-        - Event Created Successfully.
-    - Creating a Recurring Event :
-      * Choose if it's an event with a specific start and end date time (timed) or all day event (All-day).
-      * All day event :
-          - Choose if you want the event to repeat until a specific date (Until date) or Repeat for number of times.
-          - Repeat Until date :
-              * Enter the subject of the event.
-              * Enter the start date in the format yyyy-mm-dd.
-              * Enter the weekdays you want the event to repeat on. 
-              * Enter the end date until which you want the event to repeat in the format yyyy-mm-dd.
-              * Event Created Successfully.
-          - Repeat for N number of times : 
-              * Enter the subject of the event.
-              * Enter the start date in the format yyyy-mm-dd.
-              * Enter the weekdays you want the event to repeat on.
-              * Enter the number of occurrences.
-              * Event Created Successfully.
-      * Timed event :
-          - Choose if you want the event to repeat until a specific date (Until date) or repeat for number of times.
-          - Repeat Until date :
-              * Enter the subject of the event.
-              * Enter the start datetime in the format yyyy-mm-ddThh:mm. ex : 2025-04-01T10:00
-              * Enter the end time in the format yyyy-mm-ddThh:mm.   ex : 2025-04-01T12:00
-              * Enter the weekdays you want the event to repeat on.
-              * Enter the end datetimestring until which you want the event to repeat in the format yyyy-mm-ddThh:mm.
-              * Event Created Successfully.
-          - Repeat for N number of times :
-              * Enter the subject of the event.
-              * Enter the start datetime in the format yyyy-mm-ddThh:mm. 
-              * Enter the end time in the format yyyy-mm-ddThh:mm.
-              * Enter the weekdays you want the event to repeat on.
-              * Enter the number of occurrences.
-              * Event Created Successfully.
-    - If the input is invalid you get the error message - Invalid datetime or property.
-    - if you try to create two events that conflict with each other you get a message - Event conflict occurred, and it is not created.
-   
-6. Editing a calendar :
-    - Click on edit calendar in the bottom panel.
-    - This edits the current calendar being used.
-    - Choose which property to edit : Timezone or Name.
-    - Edit Timezone of a calendar : 
-      - Enter the timezone in IANA format.
-      - Calendar Updated Successfully.
-      - If you give the wrong timezone you get the message that the timezone is invalid.
-   - Edit Name of a calendar :
-       - Enter the new name of calendar.
-       - Calendar Updated Successfully.
+Upon launching the application, the screen above will appear — this is the **main interface** of the Calendar App. The layout is organized into three main sections: the **Top Navigation Bar**, the **Calendar View**, and the **Bottom Panel**.
 
-7. Showing the events :
-    - Enter the start datetime in the format yyyy-mm-ddThh:mm.
-    - Enter the end datetime in the format yyyy-mm-ddThh:mm.
-    - If the events are present, they are printed in the bulletin format.
-    - If no events present you get message No events.
-   * Showing the events on a specific date : 
-    - If you click the date on the calendar, you get the events on the date.
+---
 
-8. You can view the events by clicking on a specific day.
+### Top Navigation Bar
 
-9. Editing events :
-    * Edit property of all events with the same event name :
-      - Click on Edit Across Calendar button.
-      - Enter the name of the event you want to edit.
-      - Select the property you want to edit.
-      - Edit name of event: 
-        - Enter new name.
-        - Events updated successfully across calendar.
-      - Edit start date time of event: 
-        - Enter new start date time in the format yyyy-mm-ddThh:mm, else you get invalid date time property error.
-        - Events updated successfully across calendar.
-      - Edit end date time of event:
-        - Enter new end date time in the format yyyy-mm-ddThh:mm, else you get invalid date time property error.
-        - Events updated successfully across calendar.
-      - Edit description of event:
-          - Enter new description.
-          - Events updated successfully across calendar.
-      - Edit location of event:
-          - Enter new location.
-          - Events updated successfully across calendar.
-      - Edit whether event is public or private:
-        - Enter true or false.
-        - Events updated successfully across calendar.
-    * Edit property of events starting at a specific date/time and have the same event name: 
-      - Click on the day with the event, you want to edit.
-      - Select Edit Events After the Currentday.
-      - Enter Event Name.
-      - Select property you want to edit.
-        - Edit name of event:
-            - Enter new name.
-            - Events updated successfully across calendar.
-        - Edit start date time of event:
-            - Enter new start date time in the format yyyy-mm-ddThh:mm, else you get invalid date time property error.
-            - Events updated successfully across calendar.
-        - Edit end date time of event:
-            - Enter new end date time in the format yyyy-mm-ddThh:mm, else you get invalid date time property error.
-            - Events updated successfully across calendar.
-        - Edit description of event:
-            - Enter new description.
-            - Events updated successfully across calendar.
-        - Edit location of event:
-            - Enter new location.
-            - Events updated successfully across calendar.
-        - Edit whether event is public or private:
-            - Enter true or false.
-            - Events updated successfully across calendar.
-   * Edit property of given specific event :
-    - Click on the day with the event, you want to edit.
-    - Select Edit Specific Event.
-    - Select property you want to edit.
-        - Edit name of event:
-            - Enter new name.
-            - Events updated successfully across calendar.
-        - Edit start date time of event:
-            - Enter new start date time in the format yyyy-mm-ddThh:mm, else you get invalid date time property error.
-            - Events updated successfully across calendar.
-        - Edit end date time of event:
-            - Enter new end date time in the format yyyy-mm-ddThh:mm, else you get invalid date time property error.
-            - Events updated successfully across calendar.
-        - Edit description of event:
-            - Enter new description.
-            - Events updated successfully across calendar.
-        - Edit location of event:
-            - Enter new location.
-            - Events updated successfully across calendar.
-        - Edit whether event is public or private:
-            - Enter true or false.
-            - Events updated successfully across calendar.
-    * If you enter an invalid property, you get error message stating Invalid Datetime or property.
+This section provides access to essential features:
 
-10. Exporting the calendar :
-    - Click on the export calendar button in the bottom.
-    - This exports the current calendar we are using.
-    - Message pops up :  Export Successful. File created as CalendarNameEvents.csv.
-    - The exported calendar is found in the project file.
+- **Month and Year Selector**  
+  Displays the current month and year (e.g., **June 2025**).  
+  Use the **`<`** and **`>`** arrows to navigate between months.
 
-11. Importing a calendar :
-    - Click on the import calendar button in the bottom.
-    - Enter the path to the csv file you want to import.
-    - Import Successful.
-    - Click OK. Now your calendar will have all the imported events from the csv file.
-    - If you give an invalid file path, error message pops up saying error importing calendar.
+- **Calendar Dropdown**  
+  Lets you choose from existing calendars.  
+  A **`+`** icon is also available in the dropdown to create a new calendar.
+
+- **Edit Events Across Calendar**  
+  Opens a tool to search and modify multiple events sharing the same name or properties.
+
+---
+
+### Calendar View
+
+The central portion of the interface displays a **monthly grid layout**:
+
+- Each **cell** represents a day in the current month.
+- Clicking on a cell allows you to view events scheduled for that day.
+- If no events exist, a message saying **"No Matching Events"** will appear.
+- You’ll also have the option to **add a new event** for the selected day.
+- Above the calendar grid, the **Calendar Name** and **Timezone** (e.g., `America/New_York`) are clearly displayed.
+
+---
+
+### Bottom Panel
+
+This section includes tools for importing and exporting calendar data:
+
+- **Import into Current Calendar with CSV**  
+  Upload a `.csv` file to add events to the current calendar.
+
+- **Export Current Cal CSV**  
+  Save all events in the current calendar as a `.csv` file for backup or sharing.
+
+---
+
+## 3. Creating a Calendar
+
+To create a new calendar:
+
+1. **Open the Calendar Dropdown**  
+   Click the calendar name dropdown in the top navigation bar.
+
+2. **Click the '+' Icon**  
+   Select the **`+`** icon to initiate the creation process.
+
+3. **Enter Calendar Details**  
+   In the popup:
+   - Provide a unique calendar name.
+   - Enter a valid timezone (e.g., `America/New_York`).
+
+4. **Confirm Creation**  
+   Click **OK** to create the calendar. It will become the active calendar.
+
+5. **Error Handling**  
+   If the calendar name already exists or the timezone is invalid, an error message will be shown:  
+   **"Error in creating calendar. Check if calendar name already exists or check timezone."**
+
+---
+
+## 4. Switching Between Calendars
+
+To switch to another calendar:
+
+1. **Open the Calendar Dropdown**  
+   Click the dropdown next to the **`>`** month navigation arrow.
+
+2. **Select a Calendar**  
+   Choose from the list of available calendars.
+
+3. **Feedback on Selection**  
+   - The **bottom panel color** may change to reflect the selected calendar.
+   - The **calendar name and timezone** will update accordingly.
+
+---
+
+## 5. Creating an Event
+
+To add a new event:
+
+1. **Click a Day Cell**  
+   Navigate to the desired month and click on the cell representing the target date.  
+   _Example: April 1st, 2025 → click "1" in April 2025._
+
+2. **View Existing Events**  
+   A popup appears displaying any existing events. If none exist, it shows **"No Matching Events"**.
+
+3. **Add New Event**  
+   Click **"Add New Event"** in the popup. A form will open as shown below:
+
+   ![Add Event Dialog](image.png)
+
+4. **Fill in Details**
+   - **Event Name**
+   - **Start and End Date** (format: `yyyy-MM-ddTHH:mm`, e.g., `2025-04-01T10:00`)
+   - **Recurring** checkbox if the event should repeat
+
+5. **Recurring Options** (visible if selected):
+   - **Until Date**: Date the event stops recurring
+   - **Repeats**: Days of the week (`M`, `T`, `W`, etc.)
+   - **Number of Occurrences**: How many times to repeat
+
+6. **Submit**
+   - Click **OK** to save, or **Cancel** to discard the event.
+
+---
+
+## 6. Editing Events Across Calendars
+
+To bulk-edit events:
+
+1. **Click "Edit Events Across Calendar"**  
+   Found in the top panel of the main screen.
+
+2. **Search for Events**  
+   A window opens where you can search for events using a combination of the following filters:
+
+   - **Event Name**
+   - **Start Date**
+   - **End Date**  
+   > Format: `yyyy-MM-ddTHH:mm` (e.g., `2025-04-31T01:00`)
+
+   To edit the events you can search by:
+   - Only providing the **Event Name** to see all events matching that name across calendars.
+   - Providing both **Event Name** and **Start Date** to narrow down the results further. If you search using event name and start date, all future events having that name will be edited too.
+   - Providing all three — **Name**, **Start Date**, and **End Date** — to search for events that match all criteria.
+
+   Click **Search** to display the matching results.
+
+   ![Edit Events Dialog](image.png)
+
+3. **View Results**  
+   Matches appear in the textbox below the search button.
+
+4. **Edit Properties**  
+   - **Property Name**: What to change (e.g., `name`, `location`)
+   - **New Value**: The updated value
+
+5. **Apply Changes**  
+   Click **Update All Matches** to apply updates to all listed events.
+
+---
+
+## 7. Exporting the Calendar
+
+- Click **"Export Current Cal CSV"** in the bottom panel of the main interface.
+- After export, the path to the generated file will appear in red above the import/export buttons.
+
+---
+
+## 8. Importing a Calendar
+
+- Click **"Import into Current Calendar with CSV"** (bottom panel).
+- A file selection dialog will appear. Choose a valid `.csv` file.
+- Click **Open** to import the data into your calendar.
+- If the file path is invalid, an error message will appear: **"Error importing calendar."**
