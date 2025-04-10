@@ -52,7 +52,7 @@ public class CalendarApp {
       if (isInteractiveMode(args)) {
         runInteractiveMode(view, controller, calendarManager, scanner);
       } else if (isHeadlessMode(args)) {
-        runHeadlessMode(view, controller, calendarManager, scanner);
+        runHeadlessMode(view, controller, calendarManager, scanner,args[2]);
       } else {
         throw new Exception("Unsupported mode. Use only 'interactive' or 'headless'");
       }
@@ -99,9 +99,8 @@ public class CalendarApp {
    */
   private static void runHeadlessMode(View view, ICommand controller,
                                       ICalendarManager calendarManager,
-                                      Scanner scanner) throws Exception {
+                                      Scanner scanner,String filePath) throws Exception {
     view.viewMessage("Headless mode");
-    String filePath = scanner.nextLine();
     List<String> lines;
     try {
       lines = Files.readAllLines(Paths.get(filePath));
