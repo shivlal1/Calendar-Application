@@ -18,6 +18,10 @@ import utils.CalendarCsvImporter;
 import utils.DateUtils;
 import view.UiView;
 
+/**
+ * This class represents a controller that handles all user interactions with the Calendar GUI.
+ * Acts as the bridge between the UI (UiView) and the calendar model (ICalendarManagerV2).
+ */
 public class ViewController implements ActionListener {
 
   private ICalendarManagerV2 calendarManager;
@@ -29,6 +33,12 @@ public class ViewController implements ActionListener {
   private String activeCalendarName;
   private static final String exportEventsName = "exportEvents.csv";
 
+  /**
+   * This method constructs a ViewController with the given calendar manager and UI view.
+   *
+   * @param calendarManager calendar manager instance.
+   * @param uiView the UI view interface.
+   */
   public ViewController(ICalendarManagerV2 calendarManager, UiView uiView) {
     this.calendarManager = calendarManager;
     this.uiView = uiView;
@@ -37,6 +47,11 @@ public class ViewController implements ActionListener {
     activeCalendarName = "default";
   }
 
+  /**
+   * This method handles all button click and UI action events triggered by the user.
+   *
+   * @param e the ActionEvent triggered by user interaction.
+   */
   @Override
   public void actionPerformed(ActionEvent e) {
     calendarV2 = calendarManager.getCalendarByName(activeCalendarName);
@@ -80,7 +95,12 @@ public class ViewController implements ActionListener {
     }
   }
 
-
+  /**
+   * This method prepares and formats the event metadata required for creating an event.
+   *
+   * @param event the event metadata from the UI.
+   * @return the updated event map ready for creation.
+   */
   private Map<String, Object> getDataForCreateEvent(Map<String, Object> event) {
     if (event == null) {
       return null;
@@ -114,6 +134,10 @@ public class ViewController implements ActionListener {
     return event;
   }
 
+  /**
+   * This method handles the logic for switching between calendars or creating a new calendar
+   * based on the user's interaction with the dropdown menu.
+   */
   private void handleDropDown() {
     if (uiView.shouldAddCalendar()) {
       uiView.showAddCalendarDialog();
@@ -138,6 +162,12 @@ public class ViewController implements ActionListener {
     uiView.setCalendarForGUI(activeCalendarName, calendarV2.getCalendarTimeZone().toString());
   }
 
+  /**
+   * Displays the add event dialog, processes the input, validates it,
+   * and creates the event in the calendar if valid.
+   *
+   * @param e the ActionEvent triggered by selecting a date cell.
+   */
   private void handleAddEvent(ActionEvent e) {
     String dateValues[] = uiView.getSelectedDate(e);
     int d = Integer.parseInt(dateValues[0]);
@@ -172,6 +202,10 @@ public class ViewController implements ActionListener {
     }
   }
 
+  /**
+   * Applies updates to all matching events based on the provided
+   * property, new value, and time constraints.
+   */
   private void handleUpdateEvent() {
     Map<String, Object> metaDeta = uiView.getEditPropertyValuesFromGUI();
     Map<String, Object> updateMap = new HashMap<>();
@@ -193,6 +227,9 @@ public class ViewController implements ActionListener {
     uiView.closeSearchPanel();
   }
 
+  /**
+   * This method handles event search logic using the UI's input.
+   */
   private void handleSearch() {
     refreshEditValues();
     Map<String, Object> data = uiView.getEditEventValuesFromGUI();
@@ -219,12 +256,21 @@ public class ViewController implements ActionListener {
     uiView.clearSearchPanel();
   }
 
+  /**
+   * This method clears all the values.
+   */
   private void refreshEditValues() {
     editEventEndDate = null;
     editEventName = null;
     editEventStartDate = null;
   }
 
+  /**
+   * This method filters and returns events that match the given name and time constraints.
+   *
+   * @param data search metadata including name and time window.
+   * @return list of matching events.
+   */
   private List<Map<String, Object>> getEventsToShowInUI(
           Map<String, Object> data) {
     List<Map<String, Object>> match = new ArrayList<>();
@@ -245,6 +291,12 @@ public class ViewController implements ActionListener {
     return match;
   }
 
+  /**
+   * This method gets the events matching only the event name.
+   *
+   * @param data metadata containing the event name.
+   * @return list of matching events.
+   */
   private List<Map<String, Object>> getEventsToShowInUIByName(Map<String, Object> data) {
     List<Map<String, Object>> match = new ArrayList<>();
     List<Map<String, Object>> allEvents = calendarV2.getAllCalendarEvents();
@@ -256,6 +308,12 @@ public class ViewController implements ActionListener {
     return match;
   }
 
+  /**
+   * This method formats a list of events into a user-readable string for display.
+   *
+   * @param dayEvents list of events for a day.
+   * @return formatted string of event details.
+   */
   private String getPrintEventsAsString(List<Map<String, Object>> dayEvents) {
     StringBuilder eventListBuilder = new StringBuilder();
     int count = 1;
@@ -291,6 +349,10 @@ public class ViewController implements ActionListener {
     return eventListBuilder.toString();
   }
 
+  /**
+   * This method opens a file chooser to allow the user to import a calendar CSV file
+   * and parses the events into the current calendar.
+   */
   private void handleCscImport() {
     JFileChooser fileChooser = new JFileChooser();
     int returnValue = fileChooser.showOpenDialog(null);
@@ -302,6 +364,11 @@ public class ViewController implements ActionListener {
     }
   }
 
+  /**
+   * This method adds a list of parsed events into the calendar model.
+   *
+   * @param parsedEvents list of event metadata parsed from CSV.
+   */
   private void pushParsedEventsIntoModel(List<Map<String, Object>> parsedEvents) {
     String message = "Events Export success\n";
     for (Map<String, Object> eventDetail : parsedEvents) {
@@ -318,6 +385,9 @@ public class ViewController implements ActionListener {
     uiView.showMessage(message);
   }
 
+  /**
+   * Retrieves all events from the calendar and exports them to a CSV file.
+   */
   private void handleExportCsv() {
     List<Map<String, Object>> allEvents = calendarV2.getAllCalendarEvents();
     CalendarCsvExporter exporter = new CalendarCsvExporter();
@@ -330,6 +400,13 @@ public class ViewController implements ActionListener {
     }
   }
 
+  /**
+   * This method validates the event data before creation and shows error messages if issues
+   * are found.
+   *
+   * @param data event metadata.
+   * @return true if there was an error, false if validation passed.
+   */
   private boolean isCreateEventErrorHandled(Map<String, Object> data) {
     String erroMessage = "";
     if (data.get("subject") == null || data.get("startDate") == null) {
@@ -354,6 +431,12 @@ public class ViewController implements ActionListener {
     return false;
   }
 
+  /**
+   * Formats the "until" date for recurring events to a proper datetime string.
+   *
+   * @param untilDateTime raw input from UI.
+   * @return formatted datetime string.
+   */
   private String formatUntilTimeForRecurringEvent(String untilDateTime) {
     if (untilDateTime.indexOf('T') != -1) {
       untilDateTime = DateUtils.removeTinDateTime(untilDateTime);

@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 
 import java.awt.Color;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -20,18 +21,27 @@ import javax.swing.SwingUtilities;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JTextArea;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+
 import javax.swing.BorderFactory;
+
 import java.awt.Font;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
+
 import java.awt.GridLayout;
+
 import javax.swing.JOptionPane;
+
 import java.awt.Window;
+
 import javax.swing.JDialog;
 import javax.swing.SwingConstants;
+
 import java.awt.Dimension;
 
 /**
@@ -75,7 +85,7 @@ public class JFrameView extends JFrame implements UiView {
   private JLabel timezoneValueLabel;
 
   /**
-   * Constructs the JFrameView, sets up the main frame layout, size, realtive position.
+   * This method constructs the JFrameView, sets up the main frame layout, size, realtive position.
    */
   public JFrameView() {
     rand = new Random();
@@ -146,7 +156,7 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   /**
-   * Creating the import/export panel with relevant buttons and it's action command.
+   * This method creates the import/export panel with relevant buttons and it's action command.
    *
    * @return a panel with import and export button.
    */
@@ -178,9 +188,10 @@ public class JFrameView extends JFrame implements UiView {
 
 
   /**
-   * Extracts and returns the selected date from a button click event.
+   * Returns the selected date as an array extracted from a clicked calendar cell.
    *
-   * @return an array with first day, year and month values in string.
+   * @param e the ActionEvent from the calendar button.
+   * @return an array as strings.
    */
   public String[] getSelectedDate(ActionEvent e) {
     String day = ((JButton) e.getSource()).getText();
@@ -191,7 +202,7 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   /**
-   * Binds action listeners to all interactive UI components.
+   * This method binds the action listeners to all interactive UI components.
    */
   @Override
   public void setActionListener(ActionListener actionListener) {
@@ -222,7 +233,7 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   /**
-   * Makes the application frame visible.
+   * This method makes the main application frame visible.
    */
   @Override
   public void display() {
@@ -230,7 +241,9 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   /**
-   * Binds action listener for calendar dropdown changes.
+   * Triggers calendar change logic based on dropdown selection.
+   *
+   * @param actionListener the listener to apply after switching.
    */
   @Override
   public void changeCalendarInDropDown(ActionListener actionListener) {
@@ -238,7 +251,10 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   /**
-   * Updates the current selected calendar and its timezone display.
+   * Updates calendar UI with the selected calendar name and timezone.
+   *
+   * @param calendarName        the name of the new calendar
+   * @param newCalendarTimeZone its associated timezone
    */
   @Override
   public void setCalendarForGUI(String calendarName, String newCalendarTimeZone) {
@@ -247,7 +263,6 @@ public class JFrameView extends JFrame implements UiView {
     timezoneValueLabel.setText(newCalendarTimeZone);
     calendarPanel.setBackground(calendars.get(selectedCalendar));
   }
-
 
   /**
    * Returns the latest calendar details entered via dialog.
@@ -261,7 +276,9 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   /**
-   * Updates the calendar panel with buttons representing days in the current month.
+   * This method updates the calendar panel with buttons representing days in the current month.
+   *
+   * @param actionListener the listener to attach to each day button.
    */
   private void updateCalendar(ActionListener actionListener) {
     calendarPanel.removeAll();
@@ -279,7 +296,10 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   /**
-   * Changes the current view month by a given offset and refreshes UI.
+   * This method changes the current view month by a given offset and refreshes UI.
+   *
+   * @param offset   number of months to shift by (positive or negative).
+   * @param listener listener to rebind after update.
    */
   private void changeMonth(int offset, ActionListener listener) {
     currentMonth = currentMonth.plusMonths(offset);
@@ -287,7 +307,8 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   /**
-   * Checks if the '+' calendar option is selected, indicating the user wants to add a new calendar.
+   * This method checks if the '+' calendar option is selected, indicating the user wants to
+   * add a new calendar.
    *
    * @return boolean value if + is selected or false.
    */
@@ -297,7 +318,7 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   /**
-   * Displays a dialog to add a new calendar and updates the dropdown if added.
+   * This method shows a dialog to add a new calendar and updates the dropdown if added.
    */
   public void showAddCalendarDialog() {
     JTextField nameField = new JTextField();
@@ -333,9 +354,12 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   /**
-   * Displays the event dialog for a specific day, optionally showing existing events.
+   * Displays the list of events on a selected day and prompts the user to add a new one.
    *
-   * @return map with key value pairs about the event details.
+   * @param date          the date selected from the calendar.
+   * @param dayEvents     list of existing events.
+   * @param eventAsString formatted event list string.
+   * @return a metadata map representing the new event if created.
    */
   @Override
   public Map<String, Object> showAddEventDialog(LocalDate date,
@@ -362,7 +386,7 @@ public class JFrameView extends JFrame implements UiView {
 
 
   /**
-   * Retrieves the calendar name currently selected in the dropdown.
+   * This method retrieves the calendar name currently selected in the dropdown.
    *
    * @return string value of the calendar.
    */
@@ -372,14 +396,18 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   /**
-   * Triggers the logic to update calendar when dropdown is changed.
+   * This method triggers the logic to update calendar when dropdown is changed.
+   *
+   * @param listener listener to reattach after update
    */
   private void changeCalendar(ActionListener listener) {
     updateCalendar(listener);
   }
 
   /**
-   * Displays a message in the message area.
+   * This method displays a message in the message area.
+   *
+   * @param errorMessage the message to display.
    */
   public void showMessage(String errorMessage) {
     clearMessage();
@@ -387,14 +415,14 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   /**
-   * Clears any message from the message area.
+   * This method clears any message from the message area.
    */
   public void clearMessage() {
     messageArea.setText("");
   }
 
   /**
-   * Gets edited property and its new value from the GUI.
+   * This method gets the edited property and its new value from the GUI.
    *
    * @return hashmap with key value pairs containing the property and new value.
    */
@@ -658,6 +686,8 @@ public class JFrameView extends JFrame implements UiView {
 
   /**
    * Displays events as text in the result area of the GUI.
+   *
+   * @param eventString the string to display.
    */
   @Override
   public void displayEvents(String eventString) {
@@ -666,6 +696,8 @@ public class JFrameView extends JFrame implements UiView {
 
   /**
    * Removes a calendar entry from the dropdown and internal map.
+   *
+   * @param newCalendarName the calendar name to remove.
    */
   @Override
   public void removeCalendarFromDropdown(String newCalendarName) {
