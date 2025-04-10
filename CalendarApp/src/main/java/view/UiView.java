@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface UiView {
-  public void setListener(ActionListener actionListener);
+  public void setActionListener(ActionListener actionListener);
 
   public void goToNextMonth(ActionListener actionListener);
 
@@ -17,7 +17,7 @@ public interface UiView {
 
   public void changeCalendarInDropDown(ActionListener actionListener);
 
-  public boolean isAddCalendar();
+  public boolean shouldAddCalendar();
 
   public void setCalendarForGUI(String calendar, String timeZone);
 

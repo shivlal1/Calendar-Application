@@ -33,7 +33,7 @@ public class ViewController implements ActionListener {
     this.calendarManager = calendarManager;
     this.uiView = uiView;
     uiView.display();
-    uiView.setListener(this);
+    uiView.setActionListener(this);
     activeCalendarName = "default";
   }
 
@@ -112,7 +112,7 @@ public class ViewController implements ActionListener {
   }
 
   private void handleDropDown() {
-    if (uiView.isAddCalendar()) {
+    if (uiView.shouldAddCalendar()) {
       uiView.showAddCalendarDialog();
       String calendarDetails[] = uiView.getCalendarDetails();
       System.out.println(calendarDetails[0] + " " + calendarDetails[1]);

@@ -140,7 +140,7 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   @Override
-  public void setListener(ActionListener actionListener) {
+  public void setActionListener(ActionListener actionListener) {
     nextButton.addActionListener(actionListener);
     prevButton.addActionListener(actionListener);
     calendarDropdown.addActionListener(actionListener);
@@ -205,7 +205,7 @@ public class JFrameView extends JFrame implements UiView {
     updateCalendar(listener);
   }
 
-  public boolean isAddCalendar() {
+  public boolean shouldAddCalendar() {
     String selected = (String) calendarDropdown.getSelectedItem();
     if (selected.equals("+")) {
       return true;
