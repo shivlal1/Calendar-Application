@@ -13,6 +13,11 @@ import java.util.Random;
 
 import javax.swing.*;
 
+/**
+ * JFrameView implements the UiView interface to provide a Swing-based GUI for application.
+ * It supports multiple calendars, navigating between months, and editing properties.
+ * It also supports viewing events on particular day.
+ */
 public class JFrameView extends JFrame implements UiView {
   private JFrame frame;
   private JPanel calendarPanel;
@@ -23,14 +28,11 @@ public class JFrameView extends JFrame implements UiView {
   private YearMonth currentMonth;
   private String selectedCalendar;
   private JButton searchButton;
-  private JLabel nameLabel;
-  private JPanel topPanel;
   private JButton prevButton;
   private JButton nextButton;
   private JButton editAcrossCalendar;
   private String newCalendarName;
   private String newCalendarTimeZone;
-  private JButton dayButton;
   private JTextField eventToBeEditedName;
   private JTextField eventToBeEditedStartDate;
   private JTextField eventToBeEditedEndDate;
@@ -52,6 +54,9 @@ public class JFrameView extends JFrame implements UiView {
   private JLabel calendarValueLabel;
   private JLabel timezoneValueLabel;
 
+  /**
+   * Constructs the JFrameView, sets up the main frame layout, size, realtive position.
+   */
   public JFrameView() {
     rand = new Random();
     frame = new JFrame("Calendar App");
@@ -68,7 +73,12 @@ public class JFrameView extends JFrame implements UiView {
     frame.add(calendarPanel, BorderLayout.CENTER);
     frame.add(getBottomPanel(), BorderLayout.SOUTH);
   }
-
+  /**
+   * Returns the north panel of the frame which contains top controls and calendar meta info.
+   * The calendar meta info is used to display the calendar name and timezone.
+   *
+   * @return panel with GUI top panel and Calendar details panel.
+   */
   private JPanel getNorthPanel() {
     JPanel wrapper = new JPanel();
     wrapper.setLayout(new BorderLayout());
@@ -77,6 +87,11 @@ public class JFrameView extends JFrame implements UiView {
     return wrapper;
   }
 
+  /**
+   * Creates the panel displaying calendar name and timezone.
+   *
+   * @return a panel bold font and white background.
+   */
   private JPanel getCalendarMetaPanel() {
     JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.setBackground(Color.WHITE);
@@ -97,43 +112,67 @@ public class JFrameView extends JFrame implements UiView {
     return panel;
   }
 
+  /**
+   * Constructs the bottom panel that contains the message panel and import/export options.
+   *
+   * @return panel which contains import and export buttons.
+   */
   private JPanel getBottomPanel() {
     JPanel bottomPanel = new JPanel();
     bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
-    bottomPanel.add(getErrorPanel());
+    bottomPanel.add(messagePanel());
     bottomPanel.add(getImportExportPanel());
     return bottomPanel;
   }
 
+  /**
+   * Creating the import/export panel with relevant buttons and it's action command.
+   *
+   * @return a panel with import and export button.
+   */
   private JPanel getImportExportPanel() {
     JPanel panel = new JPanel();
     importButton = new JButton("Import into current calendar with csv");
     importButton.setActionCommand("Import CSV");
     panel.add(importButton);
-    exportButton = new JButton(" Export currenr cal csv");
+    exportButton = new JButton(" Export current cal csv");
     exportButton.setActionCommand("Export CSV");
     panel.add(exportButton);
     return panel;
   }
 
-  private JScrollPane getErrorPanel() {
+  /**
+   * Constructs and returns the panel used for displaying messages in the GUI.
+   *
+   * @return a panel with red background.
+   */
+  private JScrollPane messagePanel() {
     messageArea = new JTextArea(3, 20);
     messageArea.setEditable(false);
     messageArea.setLineWrap(true);
     messageArea.setWrapStyleWord(true);
-    messageArea.setForeground(Color.RED); // Set color for error messages
+    messageArea.setForeground(Color.RED);
     JScrollPane scroll = new JScrollPane(messageArea);
     return scroll;
   }
 
+
+  /**
+   * Extracts and returns the selected date from a button click event.
+   *
+   * @return an array with first day, year and month values in string.
+   */
   public String[] getSelectedDate(ActionEvent e) {
     String day = ((JButton) e.getSource()).getText();
     String currentMonthInString = currentMonth.toString();
-    String spliIntoYearAndMonth[] = currentMonthInString.split("-");
-    String finalDate[] = {day, spliIntoYearAndMonth[1], spliIntoYearAndMonth[0]};
+    String[] spliIntoYearAndMonth = currentMonthInString.split("-");
+    String[] finalDate = {day, spliIntoYearAndMonth[1], spliIntoYearAndMonth[0]};
     return finalDate;
   }
 
+  /**
+   * Binds action listeners to all interactive UI components.
+   */
   @Override
   public void setActionListener(ActionListener actionListener) {
     nextButton.addActionListener(actionListener);
@@ -147,25 +186,39 @@ public class JFrameView extends JFrame implements UiView {
     exportButton.addActionListener(actionListener);
   }
 
+  /**
+   * Navigates to the next month and updates the view.
+   */
   @Override
   public void goToNextMonth(ActionListener actionEvent) {
     changeMonth(1, actionEvent);
   }
 
+  /**
+   * Navigates to the previous month and updates the view.
+   */
   public void goToPreviousMonth(ActionListener actionEvent) {
     changeMonth(-1, actionEvent);
   }
 
+  /**
+   * Makes the application frame visible.
+   */
   @Override
   public void display() {
     frame.setVisible(true);
   }
-
+  /**
+   * Binds action listener for calendar dropdown changes.
+   */
   @Override
   public void changeCalendarInDropDown(ActionListener actionListener) {
     changeCalendar(actionListener);
   }
 
+  /**
+   * Updates the current selected calendar and its timezone display.
+   */
   @Override
   public void setCalendarForGUI(String calendarName, String newCalendarTimeZone) {
     selectedCalendar = calendarName;
@@ -174,19 +227,29 @@ public class JFrameView extends JFrame implements UiView {
     calendarPanel.setBackground(calendars.get(selectedCalendar));
   }
 
+
+  /**
+   * Returns the latest calendar details entered via dialog.
+   *
+   * @return string array with clendar name and timezone.
+   */
   @Override
   public String[] getCalendarDetails() {
     String[] details = {newCalendarName, newCalendarTimeZone};
     return details;
   }
 
+
+  /**
+   * Updates the calendar panel with buttons representing days in the current month.
+   */
   private void updateCalendar(ActionListener actionListener) {
     calendarPanel.removeAll();
     calendarPanel.setLayout(new GridLayout(0, 7));
     monthLabel.setText(currentMonth.getMonth() + " " + currentMonth.getYear());
     calendarPanel.setBackground(calendars.get(selectedCalendar));
     for (int day = 1; day <= currentMonth.lengthOfMonth(); day++) {
-      dayButton = new JButton(String.valueOf(day));
+      JButton dayButton = new JButton(String.valueOf(day));
       dayButton.setActionCommand("Add Event");
       dayButton.addActionListener(actionListener);
       calendarPanel.add(dayButton);
@@ -195,16 +258,27 @@ public class JFrameView extends JFrame implements UiView {
     frame.repaint();
   }
 
+  /**
+   * Changes the current view month by a given offset and refreshes UI.
+   */
   private void changeMonth(int offset, ActionListener listener) {
     currentMonth = currentMonth.plusMonths(offset);
     updateCalendar(listener);
   }
 
+  /**
+   * Checks if the '+' calendar option is selected, indicating the user wants to add a new calendar.
+   *
+   * @return boolean value if + is selected or false.
+   */
   public boolean shouldAddCalendar() {
     String selected = (String) calendarDropdown.getSelectedItem();
    return selected.equals("+");
   }
 
+  /**
+   * Displays a dialog to add a new calendar and updates the dropdown if added.
+   */
   public void showAddCalendarDialog() {
     JTextField nameField = new JTextField();
     JTextField timezoneField = new JTextField();
@@ -226,8 +300,6 @@ public class JFrameView extends JFrame implements UiView {
         Color calColor = new Color(r, g, b);
         calendars.put(newCalendarName, calColor);
         calendarDropdown.addItem(newCalendarName);
-        //calendarValueLabel.setText(newCalendarName);
-        //timezoneValueLabel.setText(newCalendarTimeZone);
         selectedCalendar = newCalendarName;
         calendarDropdown.setSelectedItem(newCalendarName);
       } else {
@@ -240,6 +312,11 @@ public class JFrameView extends JFrame implements UiView {
     }
   }
 
+  /**
+   * Displays the event dialog for a specific day, optionally showing existing events.
+   *
+   * @return map with key value pairs about the event details.
+   */
   @Override
   public Map<String, Object> showAddEventDialog(LocalDate date,
                                                 List<Map<String, Object>> dayEvents,
@@ -264,25 +341,44 @@ public class JFrameView extends JFrame implements UiView {
   }
 
 
+  /**
+   * Retrieves the calendar name currently selected in the dropdown.
+   *
+   * @return string value of the calendar.
+   */
   public String getChangedCalName() {
     selectedCalendar = (String) calendarDropdown.getSelectedItem();
     return selectedCalendar;
   }
 
+  /**
+   * Triggers the logic to update calendar when dropdown is changed.
+   */
   private void changeCalendar(ActionListener listener) {
     updateCalendar(listener);
   }
 
+  /**
+   * Displays a message in the message area.
+   */
   public void showMessage(String errorMessage) {
     clearMessage();
     messageArea.setText(errorMessage);
   }
 
+  /**
+   * Clears any message from the message area.
+   */
   public void clearMessage() {
     messageArea.setText("");
   }
 
-  public HashMap<String, Object> getEditPropertyValuesFromGUI() {
+  /**
+   * Gets edited property and its new value from the GUI.
+   *
+   * @return hashmap with key value pairs containing the property and new value.
+   */
+  public Map<String, Object> getEditPropertyValuesFromGUI() {
     HashMap<String, Object> metaDeta = new HashMap<>();
     String property = properToBeEdited.getText().trim();
     String newValue = newPropertyValue.getText().trim();
@@ -290,7 +386,10 @@ public class JFrameView extends JFrame implements UiView {
     metaDeta.put("newValue", newValue);
     return metaDeta;
   }
-
+  /**
+   * Clears search/edit text fields in the search dialog box.
+   */
+  @Override
   public void clearSearchPanel() {
     eventToBeEditedName.setText("");
     eventToBeEditedStartDate.setText("");
@@ -298,18 +397,25 @@ public class JFrameView extends JFrame implements UiView {
     properToBeEdited.setText("");
     newPropertyValue.setText("");
   }
-
+  /**
+   * Closes the search/edit dialog.
+   */
+  @Override
   public void closeSearchPanel() {
     Window window = SwingUtilities.getWindowAncestor(updateButton);
     if (window != null) {
       window.dispose();
     }
   }
-
+  /**
+   * Constructs the panel for entering search parameters to find events.
+   *
+   * @return a JPanel with name, start & end date with search button.
+   */
   private JPanel getSearchEventsToEditPanel() {
     JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
     inputPanel.setBorder(BorderFactory.createTitledBorder(""));
-    nameLabel = new JLabel("Name:");
+    JLabel nameLabel = new JLabel("Name:");
     eventToBeEditedName = new JTextField(12);
     JLabel startDate = new JLabel("Start Date:");
     eventToBeEditedStartDate = new JTextField(12);
@@ -326,6 +432,12 @@ public class JFrameView extends JFrame implements UiView {
     return inputPanel;
   }
 
+  /**
+   * Gets event name, start, and end date from the edit panel.
+   *
+   * @return key value pairs which contains properties to search for edit events.
+   */
+  @Override
   public Map<String, Object> getEditEventValuesFromGUI() {
     Map<String, Object> metaData = new HashMap<>();
     String eventName = eventToBeEditedName.getText().trim();
@@ -346,6 +458,11 @@ public class JFrameView extends JFrame implements UiView {
     return metaData;
   }
 
+
+  /**
+   * Opens a dialog that allows the user to search for and edit events.
+   */
+  @Override
   public void searchEventsToEdit() {
     JDialog dialog = new JDialog(frame, "Search and edit events", true);
     dialog.setSize(600, 500);
@@ -373,6 +490,11 @@ public class JFrameView extends JFrame implements UiView {
     dialog.setVisible(true);
   }
 
+  /**
+   * Returns a panel containing recurring event options.
+   *
+   * @return JPanel with recurring values input fields.
+   */
   private JPanel getRecurringPanel() {
     untilField = new JTextField(12);
     repeatsField = new JTextField(12);
@@ -389,6 +511,12 @@ public class JFrameView extends JFrame implements UiView {
     return recurringPanel;
   }
 
+
+  /**
+   * Returns the main event input panel with name, start, and end fields.
+   *
+   * @return  JPanel with basic event details input field.
+   */
   private JPanel getMainPanel() {
     JPanel panel = new JPanel(new GridLayout(0, 2, 10, 10));
     panel.setBorder(BorderFactory.createTitledBorder("Event Details"));
@@ -403,12 +531,22 @@ public class JFrameView extends JFrame implements UiView {
     return panel;
   }
 
+  /**
+   * Returns a label with formatting guidance for date input fields.
+   *
+   * @return JLabel which info text data.
+   */
   private JLabel getDateInfo() {
     JLabel infoLabel = new JLabel("Date format Eg: 2025-04-31T01:00");
     infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
     return infoLabel;
   }
 
+  /**
+   * Opens a form to collect event data from the user, including recurrence.
+   *
+   * @return Map with values to form the event.
+   */
   private Map<String, Object> showEventForm(LocalDate date, List<Map<String, Object>> dayEvents) {
     Map<String, Object> metaData = new HashMap<>();
     nameField = new JTextField(12);
@@ -459,12 +597,18 @@ public class JFrameView extends JFrame implements UiView {
     return metaData;
   }
 
+
+  /**
+   * Creates and returns the top panel with navigation buttons and calendar selector.
+   *
+   * @return JPanel which contains <,> and cal drop down.
+   */
   private JPanel getTopPanel() {
     calendars = new HashMap<>();
     calendars.put("default", Color.BLUE);
     selectedCalendar = "default";
     newCalendarTimeZone = ZoneId.systemDefault().toString();
-    topPanel = new JPanel();
+    JPanel topPanel = new JPanel();
     prevButton = new JButton("<");
     nextButton = new JButton(">");
     nextButton.setActionCommand("Next Month");
@@ -488,11 +632,18 @@ public class JFrameView extends JFrame implements UiView {
     topPanel.add(editAcrossCalendar);
     return topPanel;
   }
-
+  /**
+   * Displays events as text in the result area of the GUI.
+   */
+  @Override
   public void displayEvents(String eventString) {
     resultArea.setText(eventString);
   }
 
+  /**
+   * Removes a calendar entry from the dropdown and internal map.
+   */
+  @Override
   public void removeCalendarFromDropdown(String newCalendarName) {
     calendarDropdown.removeItem(newCalendarName);
     calendars.remove(newCalendarName);
