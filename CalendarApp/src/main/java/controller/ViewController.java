@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JFileChooser;
 
 import model.ICalendarV2;
 import utils.CalendarCsvExporter;
@@ -37,7 +37,7 @@ public class ViewController implements ActionListener {
    * This method constructs a ViewController with the given calendar manager and UI view.
    *
    * @param calendarManager calendar manager instance.
-   * @param uiView the UI view interface.
+   * @param uiView          the UI view interface.
    */
   public ViewController(ICalendarManagerV2 calendarManager, UiView uiView) {
     this.calendarManager = calendarManager;
@@ -169,7 +169,7 @@ public class ViewController implements ActionListener {
    * @param e the ActionEvent triggered by selecting a date cell.
    */
   private void handleAddEvent(ActionEvent e) {
-    String dateValues[] = uiView.getSelectedDate(e);
+    String[] dateValues = uiView.getSelectedDate(e);
     int d = Integer.parseInt(dateValues[0]);
     int m = Integer.parseInt(dateValues[1]);
     int y = Integer.parseInt(dateValues[2]);
@@ -195,10 +195,11 @@ public class ViewController implements ActionListener {
     } catch (Exception ex) {
       String err = "the event conflicts with another event";
       if (ex.getMessage().equals(err)) {
+        uiView.showMessage(err);
+      } else {
+        uiView.showMessage("Error in creating event " +
+                "Check Date Format and Other Properties and try check");
       }
-      uiView.showMessage("Error in creating event " +
-              "Check Date Format and Other Properties and try check");
-      uiView.showMessage(err);
     }
   }
 
@@ -218,7 +219,8 @@ public class ViewController implements ActionListener {
       calendarV2.editEvent(updateMap);
       uiView.showMessage("Edit Event Success");
     } catch (Exception ex) {
-      uiView.showMessage("Please Enter Valid property name and value before " +
+      uiView.showMessage("Enter Valid property(name, location , startDate" +
+              ",endDate, description, isPublic) and value before " +
               "clicking udpate all events");
       uiView.closeSearchPanel();
       throw new RuntimeException(ex);
