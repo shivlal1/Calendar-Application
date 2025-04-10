@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.swing.*;
 
@@ -37,16 +38,18 @@ public class JFrameView extends JFrame implements UiView {
   private JTextField properToBeEdited;
   private JTextField newPropertyValue;
   private JButton updateButton;
-  JTextField untilField;
-  JTextField repeatsField;
-  JTextField forField;
-  JTextField nameField;
-  JTextField startDateField;
-  JTextField endDateField;
-
-  JCheckBox recurringCheck;
+  private JTextField untilField;
+  private JTextField repeatsField;
+  private JTextField forField;
+  private JTextField nameField;
+  private JTextField startDateField;
+  private JTextField endDateField;
+  private JTextArea resultArea;
+  private JCheckBox recurringCheck;
+  private Random rand;
 
   public JFrameView() {
+     rand = new Random();
     frame = new JFrame("Calendar App");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(600, 600);
@@ -55,30 +58,17 @@ public class JFrameView extends JFrame implements UiView {
     events = new HashMap<>();
     frame.add(getTopPanel(), BorderLayout.NORTH);
     calendarPanel = new JPanel();
-
     updateButton = new JButton("Update All Matches");
     updateButton.setActionCommand("update value");
-
     frame.add(calendarPanel, BorderLayout.CENTER);
   }
 
-
   public String[] getSelectedDate(ActionEvent e) {
-
     String day = ((JButton) e.getSource()).getText();
-
-
-    System.out.println("day: " + currentMonth);
     String currentMonthInString = currentMonth.toString();
-    System.out.println("currentMonthInString: " + currentMonthInString);
-
-    String spli[] = currentMonthInString.split("-");
-    System.out.println("spli: " + spli[0]);
-    System.out.println("spli: " + spli[1]);
-
-    String ans[] = {day, spli[1], spli[0]};
-
-    return ans;
+    String spliIntoYearAndMonth[] = currentMonthInString.split("-");
+    String finalDate[] = {day, spliIntoYearAndMonth[1], spliIntoYearAndMonth[0]};
+    return finalDate;
   }
 
   @Override
@@ -89,6 +79,7 @@ public class JFrameView extends JFrame implements UiView {
     updateCalendar(actionListener);
     editAcrossCalendar.addActionListener(actionListener);
     updateButton.addActionListener(actionListener);
+    searchButton.addActionListener(actionListener);
   }
 
   @Override
@@ -111,14 +102,15 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   @Override
-  public void setCalendar(String calendarName, String timeZone) {
-
+  public void setCalendar(String calendarName) {
+    selectedCalendar = calendarName;
+    calendarPanel.setBackground(calendars.get(selectedCalendar));
   }
 
   @Override
   public String[] getCalendarDetails() {
-    String[] ans = {newCalendarName, newCalendarTimeZone};
-    return ans;
+    String[] details = {newCalendarName, newCalendarTimeZone};
+    return details;
   }
 
   private void updateCalendar(ActionListener actionListener) {
@@ -126,17 +118,12 @@ public class JFrameView extends JFrame implements UiView {
     calendarPanel.setLayout(new GridLayout(0, 7));
     monthLabel.setText(currentMonth.getMonth() + " " + currentMonth.getYear());
     calendarPanel.setBackground(calendars.get(selectedCalendar));
-
     for (int day = 1; day <= currentMonth.lengthOfMonth(); day++) {
-      LocalDate date = currentMonth.atDay(day);
       dayButton = new JButton(String.valueOf(day));
       dayButton.setActionCommand("Add Event");
-
       dayButton.addActionListener(actionListener);
-
       calendarPanel.add(dayButton);
     }
-
     frame.revalidate();
     frame.repaint();
   }
@@ -158,9 +145,9 @@ public class JFrameView extends JFrame implements UiView {
     JTextField nameField = new JTextField();
     JTextField timezoneField = new JTextField();
     JPanel panel = new JPanel(new GridLayout(0, 1));
-    panel.add(new JLabel("Enter new calendar name:"));
+    panel.add(new JLabel("Calendar Name:"));
     panel.add(nameField);
-    panel.add(new JLabel("Enter timezone (e.g., America/New_York):"));
+    panel.add(new JLabel("TimeZone (e.g. America/New_York):"));
     panel.add(timezoneField);
     int result = JOptionPane.showConfirmDialog(frame, panel, "New Calendar",
             JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -169,9 +156,11 @@ public class JFrameView extends JFrame implements UiView {
       newCalendarName = nameField.getText().trim();
       newCalendarTimeZone = timezoneField.getText().trim();
       if (!newCalendarName.isEmpty() && !calendars.containsKey(newCalendarName)) {
-        calendars.put(newCalendarName, Color.MAGENTA); // You can also prompt for color if you want
-        // Optionally store timezone somewhere — currently just printing it
-        System.out.println("New calendar: " + newCalendarName + " | Timezone: " + newCalendarTimeZone);
+        int r = rand.nextInt(256);
+        int g = rand.nextInt(256);
+        int b = rand.nextInt(256);
+        Color calColor =  new Color(r, g, b);
+        calendars.put(newCalendarName, calColor);
         calendarDropdown.addItem(newCalendarName);
         selectedCalendar = newCalendarName;
         calendarDropdown.setSelectedItem(newCalendarName);
@@ -181,55 +170,17 @@ public class JFrameView extends JFrame implements UiView {
     } else {
       calendarDropdown.setSelectedItem(selectedCalendar);
     }
-
   }
 
+
+
   @Override
-  public Map<String, Object> getUserShowEventChoice(LocalDate date, List<Map<String, Object>> dayEvents) {
-
+  public Map<String, Object> getUserShowEventChoice(LocalDate date, List<Map<String, Object>> dayEvents,String eventAsString) {
     Map<String, Object> metaDeta = null;
-    List<String> newDayEvents = new ArrayList<>();
-
-    StringBuilder eventListBuilder = new StringBuilder();
-    if (dayEvents.isEmpty()) {
-      eventListBuilder.append("No events scheduled");
-    } else {
-
-      for (Map<String, Object> event : dayEvents) {
-        StringBuilder bulletEvent = new StringBuilder();
-        bulletEvent.append(" Subject : " + event.get("subject") + ",");
-
-        LocalDateTime startDateTime = (LocalDateTime) event.get("startDate");
-        bulletEvent.append("Start date : " + startDateTime.toLocalDate() + ",");
-        bulletEvent.append("Start time : " + startDateTime.toLocalTime() + ",");
-
-        if (event.get("endDate") != null) {
-          LocalDateTime endDateTime = (LocalDateTime) event.get("endDate");
-          bulletEvent.append("End date : " + endDateTime.toLocalDate() + ",");
-          bulletEvent.append("End time : " + endDateTime.toLocalTime() + ",");
-        }
-        if (event.get("location") != null) {
-          bulletEvent.append("location : " + event.get("location") + ",");
-        }
-        if (event.get("description") != null) {
-          bulletEvent.append("description : " + event.get("description") + ",");
-        }
-
-        if (event.get("isPublic") != null) {
-          bulletEvent.append("isPublic : " + (Boolean) event.get("isPublic") + ",");
-        }
-        bulletEvent.deleteCharAt(bulletEvent.length() - 1);
-
-        eventListBuilder.append(bulletEvent + "\n");
-        newDayEvents.add(bulletEvent.toString());
-      }
-
-    }
-
     Object[] options = {"Add New Event", "Cancel"};
     int choice = JOptionPane.showOptionDialog(
             frame,
-            eventListBuilder.toString(),
+            eventAsString,
             "Events on " + date,
             JOptionPane.YES_NO_CANCEL_OPTION,
             JOptionPane.QUESTION_MESSAGE,
@@ -238,50 +189,47 @@ public class JFrameView extends JFrame implements UiView {
             options[0]
     );
 
-
     if (choice == 0) {
-      metaDeta = showEventForm(date, dayEvents, -1);
+      metaDeta = showEventForm(date, dayEvents);
     }
-
     return metaDeta;
   }
 
 
-  private void changeCalendar(ActionListener listener) {
+  public String getChangedCalName(){
     selectedCalendar = (String) calendarDropdown.getSelectedItem();
+    return selectedCalendar;
+  }
+  private void changeCalendar(ActionListener listener) {
+  //  selectedCalendar = (String) calendarDropdown.getSelectedItem();
     updateCalendar(listener);
   }
 
   public HashMap<String, Object> getNewPropertyAndValue() {
-
     HashMap<String, Object> metaDeta = new HashMap<>();
-
     String property = properToBeEdited.getText().trim().toLowerCase();
     String newValue = newPropertyValue.getText().trim();
-
     metaDeta.put("property", property);
     metaDeta.put("newValue", newValue);
-
     return metaDeta;
   }
 
+  public void clearSearchPanel() {
+    eventToBeEditedName.setText("");
+    eventToBeEditedStartDate.setText("");
+    eventToBeEditedEndDate.setText("");
+    properToBeEdited.setText("");
+    newPropertyValue.setText("");
+  }
+
   private JPanel getSearchEventsToEditPanel() {
-    // Top panel for search input on the same line
     JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
-
-    //JLabel label = new JLabel("Enter event name to search:");
-
     nameLabel = new JLabel("Name:");
     eventToBeEditedName = new JTextField(12);
-
     JLabel startDate = new JLabel("Start Date:");
     eventToBeEditedStartDate = new JTextField(12);
-
     JLabel endDate = new JLabel("End Date:");
     eventToBeEditedEndDate = new JTextField(12);
-
-    searchButton = new JButton("Search");
-
     inputPanel.add(nameLabel);
     inputPanel.add(eventToBeEditedName);
     inputPanel.add(startDate);
@@ -289,15 +237,26 @@ public class JFrameView extends JFrame implements UiView {
     inputPanel.add(endDate);
     inputPanel.add(eventToBeEditedEndDate);
     inputPanel.add(searchButton);
-
     return inputPanel;
   }
 
   public Map<String, Object> getEventsToBeEditedValues() {
     Map<String, Object> metaData = new HashMap<>();
-    metaData.put("eventName", eventToBeEditedName.getText().trim());
-    metaData.put("StartTime", eventToBeEditedStartDate.getText().trim());
-    metaData.put("endTime", eventToBeEditedEndDate.getText().trim());
+    String eventName = eventToBeEditedName.getText().trim();
+    String startDate = eventToBeEditedStartDate.getText().trim();
+    String endTime = eventToBeEditedEndDate.getText().trim();
+    if (eventName.equals("")) {
+      eventName = null;
+    }
+    if (startDate.equals("")) {
+      startDate = null;
+    }
+    if (endTime.equals("")) {
+      endTime = null;
+    }
+    metaData.put("eventName", eventName);
+    metaData.put("StartTime", startDate);
+    metaData.put("endTime", endTime);
     return metaData;
   }
 
@@ -305,34 +264,24 @@ public class JFrameView extends JFrame implements UiView {
     JDialog dialog = new JDialog(frame, "Search Events", true);
     dialog.setSize(600, 500);
     dialog.setLayout(new BorderLayout());
-
     dialog.add(getSearchEventsToEditPanel(), BorderLayout.NORTH);
-
-    JTextArea resultArea = new JTextArea();
+    resultArea = new JTextArea();
     resultArea.setEditable(false);
     resultArea.setLineWrap(true);
     resultArea.setWrapStyleWord(true);
     JScrollPane scrollPane = new JScrollPane(resultArea);
     dialog.add(scrollPane, BorderLayout.CENTER);
-
     JPanel updatePanel = new JPanel(new GridLayout(2, 2, 5, 5));
     properToBeEdited = new JTextField(); // name / description / location
     newPropertyValue = new JTextField();
-
-
     updatePanel.add(new JLabel("Property Name"));
     updatePanel.add(properToBeEdited);
     updatePanel.add(new JLabel("New value:"));
     updatePanel.add(newPropertyValue);
-
     JPanel bottomPanel = new JPanel(new BorderLayout());
     bottomPanel.add(updatePanel, BorderLayout.CENTER);
     bottomPanel.add(updateButton, BorderLayout.SOUTH);
     dialog.add(bottomPanel, BorderLayout.SOUTH);
-
-    Map<LocalDate, List<Integer>> matchedIndices = new HashMap<>();
-
-
     dialog.setLocationRelativeTo(frame);
     dialog.setVisible(true);
   }
@@ -365,7 +314,7 @@ public class JFrameView extends JFrame implements UiView {
     return panel;
   }
 
-  private Map<String, Object> showEventForm(LocalDate date, List<Map<String, Object>> dayEvents, int editIndex) {
+  private Map<String, Object> showEventForm(LocalDate date, List<Map<String, Object>> dayEvents) {
     Map<String, Object> metaData = new HashMap<>();
     nameField = new JTextField(12);
     startDateField = new JTextField(12);
@@ -376,7 +325,6 @@ public class JFrameView extends JFrame implements UiView {
     recurringCheck = new JCheckBox("Recurring Event");
     JPanel recurringPanel = getRecurringPanel();
     recurringCheck.addItemListener(e -> recurringPanel.setVisible(recurringCheck.isSelected()));
-
     JPanel panel = getMainPanel();
     JPanel container = new JPanel(new BorderLayout());
     container.add(panel, BorderLayout.NORTH);
@@ -392,14 +340,12 @@ public class JFrameView extends JFrame implements UiView {
     );
 
     if (result == JOptionPane.OK_OPTION) {
-
       if (!nameField.getText().trim().isEmpty() && !startDateField.getText().trim().isEmpty()) {
         String eventName = nameField.getText().trim().equals("") ? null : nameField.getText().trim();
         String startDate = startDateField.getText().trim().equals("") ? null : startDateField.getText().trim();
         String endDate = endDateField.getText().trim().equals("") ? null : endDateField.getText().trim();
         String repeats = repeatsField.getText().trim().equals("") ? null : repeatsField.getText().trim();
         String forValue = forField.getText().trim().equals("") ? null : forField.getText().trim();
-
         metaData.put("subject", eventName);
         metaData.put("startDate", startDate);
         metaData.put("endDate", endDate);
@@ -415,37 +361,35 @@ public class JFrameView extends JFrame implements UiView {
 
   private JPanel getTopPanel() {
     calendars = new HashMap<>();
-    calendars.put("Default", Color.BLUE);
-    selectedCalendar = "Default";
-
+    calendars.put("default", Color.BLUE);
+    selectedCalendar = "default";
     topPanel = new JPanel();
     prevButton = new JButton("<");
     nextButton = new JButton(">");
     nextButton.setActionCommand("Next Month");
     prevButton.setActionCommand("Previous Month");
-
+    searchButton = new JButton("Search");
+    searchButton.setActionCommand("Search");
     monthLabel = new JLabel();
-
     calendarDropdown = new JComboBox<>();
     calendarDropdown.setActionCommand("Drop down");
-
     calendarDropdown.addItem("+");
     for (String calendarName : calendars.keySet()) {
       calendarDropdown.addItem(calendarName);
     }
     calendarDropdown.setSelectedItem(selectedCalendar);
-
     editAcrossCalendar = new JButton("Edit across calendar");
     editAcrossCalendar.setActionCommand("Edit across calendar");
-
     topPanel.add(prevButton);
     topPanel.add(monthLabel);
     topPanel.add(nextButton);
     topPanel.add(calendarDropdown);
     topPanel.add(editAcrossCalendar);
-
     return topPanel;
   }
 
+  public void showMatchingEventsForEdit(String eventString) {
+    resultArea.setText(eventString);
+  }
 
 }

@@ -19,13 +19,13 @@ public interface UiView {
 
   public boolean isAddCalendar();
 
-  public void setCalendar(String calendar, String timeZone);
+  public void setCalendar(String calendar);
 
   public String[] getCalendarDetails();
 
   public void showAddCalendarinUI();
 
-  public Map<String, Object> getUserShowEventChoice(LocalDate date, List<Map<String, Object>> dayEvents);
+  public Map<String, Object> getUserShowEventChoice(LocalDate date, List<Map<String, Object>> dayEvents, String eventAsString);
 
   public String[] getSelectedDate(ActionEvent e);
 
@@ -34,4 +34,10 @@ public interface UiView {
   public Map<String, Object> getEventsToBeEditedValues();
 
   public Map<String, Object> getNewPropertyAndValue();
+
+  public void clearSearchPanel();
+
+  public void showMatchingEventsForEdit(String eventAsString);
+
+  public String getChangedCalName();
 }

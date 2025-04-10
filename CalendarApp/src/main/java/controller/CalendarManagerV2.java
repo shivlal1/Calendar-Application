@@ -17,8 +17,4 @@ public class CalendarManagerV2 extends CalendarManager implements ICalendarManag
     calendarMap.put(calendarName, new CalendarV2(ZoneId.of(timeZone)));
   }
 
-  @Override
-  public ICalendarV2 getDefaultCalendar() {
-    return calendarMap.get("default");
-  }
 }
