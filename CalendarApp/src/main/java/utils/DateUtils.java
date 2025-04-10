@@ -2,6 +2,7 @@ package utils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,6 +19,10 @@ public class DateUtils {
   private static final DateTimeFormatter csvDateFormat =
           DateTimeFormatter.ofPattern("MM/dd/yyyy");
   private static final DateTimeFormatter csvTimeFormat =
+          DateTimeFormatter.ofPattern("hh:mm a");
+  private static DateTimeFormatter importDateFormatter =
+          DateTimeFormatter.ofPattern("MM/dd/yyyy");
+  private static DateTimeFormatter importTimeFormatter =
           DateTimeFormatter.ofPattern("hh:mm a");
 
   /**
@@ -149,5 +154,12 @@ public class DateUtils {
                                              ZoneId targetZoneId) {
     ZonedDateTime sourceZonedDateTime = date.atZone(sourceZoneId);
     return sourceZonedDateTime.withZoneSameInstant(targetZoneId).toLocalDateTime();
+  }
+
+  public static LocalDateTime getDateFromCSVFile(String dateStr, String timeStr) {
+    LocalDate date = LocalDate.parse(dateStr, importDateFormatter);
+    LocalTime time = LocalTime.parse(timeStr, importTimeFormatter);
+    LocalDateTime dateTime = LocalDateTime.of(date, time);
+    return dateTime;
   }
 }

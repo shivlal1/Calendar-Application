@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,29 +49,73 @@ public class JFrameView extends JFrame implements UiView {
   private JTextArea messageArea;
   private JButton importButton;
   private JButton exportButton;
+  private JLabel calendarValueLabel;
+  private JLabel timezoneValueLabel;
+
   public JFrameView() {
     rand = new Random();
     frame = new JFrame("Calendar App");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(600, 600);
+    frame.setLocationRelativeTo(null);
     frame.setLayout(new BorderLayout());
     currentMonth = YearMonth.now();
     events = new HashMap<>();
-    frame.add(getTopPanel(), BorderLayout.NORTH);
+    frame.add(getNorthPanel(), BorderLayout.NORTH);
     calendarPanel = new JPanel();
     updateButton = new JButton("Update All Matches");
     updateButton.setActionCommand("update value");
     frame.add(calendarPanel, BorderLayout.CENTER);
-    frame.add(getErrorPanel(), BorderLayout.SOUTH);
-    frame.add(getImportExportPanel(), BorderLayout.SOUTH);
+    frame.add(getBottomPanel(), BorderLayout.SOUTH);
+  }
+
+  private JPanel getNorthPanel() {
+    JPanel wrapper = new JPanel();
+    wrapper.setLayout(new BorderLayout());
+    wrapper.add(getTopPanel(), BorderLayout.NORTH);
+    wrapper.add(getCalendarMetaPanel(), BorderLayout.SOUTH);
+    return wrapper;
+  }
+
+
+  private JPanel getCalendarMetaPanel() {
+    JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.setBackground(Color.WHITE);
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+    JLabel calendarLabel = new JLabel("Calendar:");
+    calendarLabel.setFont(calendarLabel.getFont().deriveFont(Font.BOLD));
+    calendarLabel.setForeground(new Color(0, 102, 204));
+
+    calendarValueLabel = new JLabel(selectedCalendar);
+
+    JLabel timezoneLabel = new JLabel("Timezone:");
+    timezoneLabel.setFont(timezoneLabel.getFont().deriveFont(Font.BOLD));
+    timezoneLabel.setForeground(new Color(0, 102, 204));
+
+    timezoneValueLabel = new JLabel(newCalendarTimeZone != null ? newCalendarTimeZone : "");
+
+    panel.add(calendarLabel);
+    panel.add(calendarValueLabel);
+    panel.add(Box.createHorizontalStrut(30));
+    panel.add(timezoneLabel);
+    panel.add(timezoneValueLabel);
+    return panel;
+  }
+
+  private JPanel getBottomPanel() {
+    JPanel bottomPanel = new JPanel();
+    bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+    bottomPanel.add(getErrorPanel());
+    bottomPanel.add(getImportExportPanel());
+    return bottomPanel;
   }
 
   private JPanel getImportExportPanel() {
     JPanel panel = new JPanel();
-    importButton = new JButton("Click to Import CSV");
+    importButton = new JButton("Import into current calendar with csv");
     importButton.setActionCommand("Import CSV");
     panel.add(importButton);
-    exportButton = new JButton("Click to Export CSV");
+    exportButton = new JButton(" Export currenr cal csv");
     exportButton.setActionCommand("Export CSV");
     panel.add(exportButton);
     return panel;
@@ -104,6 +149,7 @@ public class JFrameView extends JFrame implements UiView {
     updateButton.addActionListener(actionListener);
     searchButton.addActionListener(actionListener);
     importButton.addActionListener(actionListener);
+    exportButton.addActionListener(actionListener);
   }
 
   @Override
@@ -126,8 +172,10 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   @Override
-  public void setCalendar(String calendarName) {
+  public void setCalendar(String calendarName,String newCalendarTimeZone) {
     selectedCalendar = calendarName;
+    calendarValueLabel.setText(calendarName);
+    timezoneValueLabel.setText(newCalendarTimeZone);
     calendarPanel.setBackground(calendars.get(selectedCalendar));
   }
 
@@ -186,12 +234,16 @@ public class JFrameView extends JFrame implements UiView {
         Color calColor = new Color(r, g, b);
         calendars.put(newCalendarName, calColor);
         calendarDropdown.addItem(newCalendarName);
+        //calendarValueLabel.setText(newCalendarName);
+        //timezoneValueLabel.setText(newCalendarTimeZone);
         selectedCalendar = newCalendarName;
         calendarDropdown.setSelectedItem(newCalendarName);
       } else {
         calendarDropdown.setSelectedItem(selectedCalendar);
       }
     } else {
+      calendarValueLabel.setText(newCalendarName);
+      timezoneValueLabel.setText(newCalendarTimeZone);
       calendarDropdown.setSelectedItem(selectedCalendar);
     }
   }
@@ -247,6 +299,7 @@ public class JFrameView extends JFrame implements UiView {
 
   private JPanel getSearchEventsToEditPanel() {
     JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+    inputPanel.setBorder(BorderFactory.createTitledBorder(""));
     nameLabel = new JLabel("Name:");
     eventToBeEditedName = new JTextField(12);
     JLabel startDate = new JLabel("Start Date:");
@@ -306,6 +359,7 @@ public class JFrameView extends JFrame implements UiView {
     bottomPanel.add(updateButton, BorderLayout.SOUTH);
     dialog.add(bottomPanel, BorderLayout.SOUTH);
     dialog.setLocationRelativeTo(frame);
+    dialog.getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
     dialog.setVisible(true);
   }
 
@@ -314,12 +368,14 @@ public class JFrameView extends JFrame implements UiView {
     repeatsField = new JTextField(12);
     forField = new JTextField(12);
 
-    Dimension fieldSize = new Dimension(200, 25);
-    untilField.setPreferredSize(fieldSize);
-    repeatsField.setPreferredSize(fieldSize);
-    forField.setPreferredSize(fieldSize);
+//    Dimension fieldSize = new Dimension(200, 25);
+//    untilField.setPreferredSize(fieldSize);
+//    repeatsField.setPreferredSize(fieldSize);
+//    forField.setPreferredSize(fieldSize);
 
     JPanel recurringPanel = new JPanel(new GridLayout(0, 2, 5, 5));
+    recurringPanel.setBorder(BorderFactory.createTitledBorder("Recurring Options")); // ⬅️ Titled border
+
     recurringPanel.add(new JLabel("Until (YYYY-MM-DD):"));
     recurringPanel.add(untilField);
     recurringPanel.add(new JLabel("Repeats (Daily/Weekly/Monthly):"));
@@ -328,12 +384,11 @@ public class JFrameView extends JFrame implements UiView {
     recurringPanel.add(forField);
     recurringPanel.setVisible(false);
     return recurringPanel;
-
-
   }
 
   private JPanel getMainPanel() {
-    JPanel panel = new JPanel(new GridLayout(0, 2, 5, 5));
+    JPanel panel = new JPanel(new GridLayout(0, 2, 10, 10));
+    panel.setBorder(BorderFactory.createTitledBorder("Event Details"));
     panel.add(new JLabel("Event Name:"));
     panel.add(nameField);
     panel.add(new JLabel("Start Date:"));
@@ -396,6 +451,7 @@ public class JFrameView extends JFrame implements UiView {
     calendars = new HashMap<>();
     calendars.put("default", Color.BLUE);
     selectedCalendar = "default";
+    newCalendarTimeZone = ZoneId.systemDefault().toString();
     topPanel = new JPanel();
     prevButton = new JButton("<");
     nextButton = new JButton(">");
@@ -425,4 +481,8 @@ public class JFrameView extends JFrame implements UiView {
     resultArea.setText(eventString);
   }
 
+  public void removeCalendarFromDropdown(String newCalendarName){
+    calendarDropdown.removeItem(newCalendarName);
+    calendars.remove(newCalendarName);
+  }
 }

@@ -1,5 +1,6 @@
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Scanner;
 
@@ -45,8 +46,8 @@ public class CalendarApp {
       } else if (isHeadlessMode(args)) {
         runHeadlessMode(view, controller, calendarManager, scanner);
       } else {
-
-        ICalendarManagerV2 manager = new CalendarManagerV2("default", "America/New_York");
+        ICalendarManagerV2 manager = new CalendarManagerV2("default",
+                ZoneId.systemDefault().toString());
         UiView uiView = new JFrameView();
         ViewController viewController = new ViewController(manager, uiView);
 

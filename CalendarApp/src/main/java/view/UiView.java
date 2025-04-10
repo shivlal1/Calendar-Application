@@ -19,7 +19,7 @@ public interface UiView {
 
   public boolean isAddCalendar();
 
-  public void setCalendar(String calendar);
+  public void setCalendar(String calendar,String  timeZone);
 
   public String[] getCalendarDetails();
 
@@ -40,4 +40,6 @@ public interface UiView {
   public void showMatchingEventsForEdit(String eventAsString);
 
   public String getChangedCalName();
+
+  public void removeCalendarFromDropdown(String calendarName);
 }
