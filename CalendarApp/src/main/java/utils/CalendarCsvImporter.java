@@ -10,7 +10,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This is a utility class to import calendar events from a CSV file.
+ * Parses CSV data into a list of event metadata maps.
+ */
 public class CalendarCsvImporter {
+
+  /**
+   * This method imports calendar events from a CSV file and parses each line into a map
+   * of event properties.
+   *
+   * @param selectedFile the CSV file to be read and imported.
+   * @return a list of event metadata maps, one for each row/event in the CSV.
+   */
   public List<Map<String, Object>> importCSV(File selectedFile) {
     List<Map<String, Object>> metaData = new ArrayList<>();
     try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
@@ -49,6 +61,4 @@ public class CalendarCsvImporter {
 
     return metaData;
   }
-
-
 }

@@ -156,6 +156,14 @@ public class DateUtils {
     return sourceZonedDateTime.withZoneSameInstant(targetZoneId).toLocalDateTime();
   }
 
+  /**
+   * This method parses the date and time strings from a CSV file into a LocalDateTime object.
+   *
+   * @param dateStr the date string in the format expected by importDateFormatter
+   *                (e.g., "yyyy-MM-dd")
+   * @param timeStr the time string in the format expected by importTimeFormatter (e.g., "HH:mm").
+   * @return a LocalDateTime object combining the parsed date and time.
+   */
   public static LocalDateTime getDateFromCSVFile(String dateStr, String timeStr) {
     LocalDate date = LocalDate.parse(dateStr, importDateFormatter);
     LocalTime time = LocalTime.parse(timeStr, importTimeFormatter);
