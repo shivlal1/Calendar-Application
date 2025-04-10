@@ -100,7 +100,7 @@ To switch to another calendar:
 To add a new event:
 
 1. **Click a Day Cell**  
-   Navigate to the desired month and click on the cell representing the target date.  
+   Navigate to the desired month and click on the target date's cell.  
    _Example: April 1st, 2025 → click "1" in April 2025._
 
 2. **View Existing Events**  
@@ -148,7 +148,7 @@ To bulk-edit events:
 
    Click **Search** to display the matching results.
 
-   ![Edit Events Dialog](image.png)
+   ![Edit Events Dialog](edit_and_search.png)
 
 3. **View Results**  
    Matches appear in the textbox below the search button.
