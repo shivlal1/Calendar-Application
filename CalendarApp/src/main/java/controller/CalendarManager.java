@@ -112,6 +112,9 @@ public class CalendarManager implements ICalendarManager {
     String calendarTimeZone = calendarDetails[1];
 
     if (DateUtils.isValidZoneId(calendarTimeZone)) {
+      if(calendarMap.containsKey(calendarName)){
+          throw new Exception("calendar already exists");
+      }
       calendarMap.put(calendarName, new CalendarV2(ZoneId.of(calendarTimeZone)));
     } else {
       throw new Exception("Missing timeZone value");

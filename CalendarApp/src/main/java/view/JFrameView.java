@@ -280,6 +280,7 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   public void showErrorMessage(String errorMessage){
+    clearErrorMessage();
     messageArea.setText(errorMessage);
   }
   public void clearErrorMessage(){
@@ -437,7 +438,6 @@ public class JFrameView extends JFrame implements UiView {
         String repeats = repeatsField.getText().trim().equals("") ? null : repeatsField.getText().trim();
         String forValue = forField.getText().trim().equals("") ? null : forField.getText().trim();
         String untilValue = untilField.getText().trim().equals("") ? null : untilField.getText().trim();
-
         metaData.put("subject", eventName);
         metaData.put("startDate", startDate);
         metaData.put("endDate", endDate);
@@ -446,7 +446,6 @@ public class JFrameView extends JFrame implements UiView {
         metaData.put("forTimes", forValue);
         metaData.put("isRecurring", recurringCheck.isSelected());
     }
-
     return metaData;
   }
 

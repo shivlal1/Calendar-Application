@@ -26,9 +26,10 @@ public class SingleEvent extends Event {
    */
   SingleEvent(String subject, LocalDateTime startDate, LocalDateTime endDate,
               Map<String, Object> allMetaDetails) {
-
     super(subject, startDate, endDate);
     this.allMetaDetails = allMetaDetails;
+//    this.location = allMetaDetails.containsKey("location") ?
+//            allMetaDetails.get("location").toString() : null;
   }
 
   /**

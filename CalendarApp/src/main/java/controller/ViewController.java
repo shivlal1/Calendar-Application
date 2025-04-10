@@ -113,7 +113,8 @@ public class ViewController implements ActionListener {
         calendarManager.createCalendar(calendarDetails[0], calendarDetails[1]);
       } catch (Exception e) {
         uiView.removeCalendarFromDropdown(calendarDetails[0]);
-        String error = e.getMessage();
+        uiView.showErrorMessage(" Error in creating calendar \n"+
+                "Check if calendar name already exits or check timezone value");
         return;
       }
       uiView.setCalendar(calendarDetails[0], calendarDetails[1]);
@@ -139,14 +140,14 @@ public class ViewController implements ActionListener {
     metaData.put("localStartTime", dateTime);
     List<Map<String, Object>> eventDetails = calendarV2.getMatchingEvents(metaData);
     Map<String, Object> event = uiView.getUserShowEventChoice(date, eventDetails, getPrintEventsAsString(eventDetails));
-    if(event==null || eventDetails.size()==0){
+    if(event==null || event.size()==0){
+      return;
+    }
+
+    if( isCreateEventErrorHandled(event)){
       return;
     }
     Map<String, Object> dataForCreateEvent = getDataForCreateEvent(event);
-
-    if( isCreateEventErrorHandled(dataForCreateEvent)){
-      return;
-    }
 
     try {
       String subject = dataForCreateEvent.get("subject").toString();
@@ -154,7 +155,7 @@ public class ViewController implements ActionListener {
       LocalDateTime endDate = (LocalDateTime) dataForCreateEvent.get("endDate");
       calendarV2.createEvent(subject, startDate, endDate, event);
     } catch (Exception ex) {
-      throw new RuntimeException(ex);
+      uiView.showErrorMessage(ex.getMessage());
     }
   }
 
@@ -239,15 +240,18 @@ public class ViewController implements ActionListener {
 
   private String getPrintEventsAsString(List<Map<String, Object>> dayEvents) {
     StringBuilder eventListBuilder = new StringBuilder();
+    int count=1;
     if (dayEvents.size() == 0) {
       return "No Matching Events";
     }
     for (Map<String, Object> event : dayEvents) {
       StringBuilder bulletEvent = new StringBuilder();
+      bulletEvent.append(String.valueOf(count)+ " ");
       bulletEvent.append(" Subject : " + event.get("subject") + ",");
       LocalDateTime startDateTime = (LocalDateTime) event.get("startDate");
       bulletEvent.append("Start date : " + startDateTime.toLocalDate() + ",");
       bulletEvent.append("Start time : " + startDateTime.toLocalTime() + ",");
+      bulletEvent.append("\n");
       if (event.get("endDate") != null) {
         LocalDateTime endDateTime = (LocalDateTime) event.get("endDate");
         bulletEvent.append("End date : " + endDateTime.toLocalDate() + ",");
@@ -280,6 +284,7 @@ public class ViewController implements ActionListener {
   }
 
   private void pushParsedEventsIntoModel(List<Map<String, Object>> parsedEvents){
+    String message = "Events Export success\n";
     for( Map<String, Object> eventDetail : parsedEvents ) {
       String subject = (String) eventDetail.get("subject");
       LocalDateTime startDateTime = (LocalDateTime) eventDetail.get("startDate");
@@ -287,17 +292,21 @@ public class ViewController implements ActionListener {
       try {
         calendarV2.createEvent(subject,startDateTime,endDateTime,eventDetail);
       } catch (Exception ex) {
-        throw new RuntimeException(ex);
+        message+="Conflicting events exists with already existing events in calendar\n";
+        message+="Non Conflicting events are exported successfully\n";
       }
     }
+    uiView.showErrorMessage(message);
   }
 
   private void handleExportCsv(){
       List<Map<String, Object>> allEvents = calendarV2.getAllCalendarEvents();
       CalendarCsvExporter exporter = new CalendarCsvExporter();
     try {
-      exporter.export(allEvents,exportEventsName);
+      String message = exporter.export(allEvents,exportEventsName);
+      uiView.showErrorMessage("File path"+message);
     } catch (Exception e) {
+      uiView.showErrorMessage("Check file format or check events details in file");
       throw new RuntimeException(e);
     }
   }
@@ -305,7 +314,7 @@ public class ViewController implements ActionListener {
   private boolean isCreateEventErrorHandled( Map<String,Object> data){
     String erroMessage="";
     if( data.get("subject") == null || data.get("startDate")==null){
-        erroMessage="Subject or startDate cannot be null";
+        erroMessage="Subject or startDate cannot be empty";
     }
     if(!erroMessage.equals("")){
       uiView.showErrorMessage(erroMessage);
