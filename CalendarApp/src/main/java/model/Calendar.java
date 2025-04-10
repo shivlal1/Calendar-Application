@@ -298,7 +298,7 @@ public class Calendar implements ICalendar {
 
       if (startDate.equals(localOnDate)
               || localOnDate.isAfter(startDate) &&
-              ( localOnDate.isBefore(endDate) || localOnDate.equals(endDate))) {
+              (localOnDate.isBefore(endDate) || localOnDate.equals(endDate))) {
         events.add(getEventInMap(event));
       }
     }

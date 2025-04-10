@@ -234,24 +234,16 @@ public class CalendarAppTest {
 
   @Test
   public void invalidEdit() throws Exception {
-//    thrown.expect(Exception.class);
-//    thrown.expectMessage("--property missing");
-
     String createCal = "create calendar --name myCalendar --timezone Asia/Kolkata";
     String useCal = "use calendar --name myCalendar";
     String editCal = "edit calendar --name myCalendar name myCalendar2";
-
     String[] inputs = {createCal, useCal, editCal, "exit"};
-
     String simulatedInput = String.join("\n", inputs) + "\n";
-
     simulateUserInput(simulatedInput);
     CalendarApp.main(new String[]{"--mode", "interactive"});
-
     String output = "Using interactive mode. To quit, use 'exit'\n";
     output += "--property missing\n";
     assertEquals(output, getOutput());
-
   }
 
   @Test

@@ -25,7 +25,9 @@ public interface UiView {
 
   public void showAddCalendarDialog();
 
-  public Map<String, Object> showAddEventDialog(LocalDate date, List<Map<String, Object>> dayEvents, String eventAsString);
+  public Map<String, Object> showAddEventDialog(LocalDate date,
+                                                List<Map<String, Object>> dayEvents,
+                                                String eventAsString);
 
   public String[] getSelectedDate(ActionEvent e);
 

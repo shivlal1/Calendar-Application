@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JFileChooser;
 
 import model.ICalendarV2;
 import utils.CalendarCsvExporter;
@@ -74,6 +74,9 @@ public class ViewController implements ActionListener {
       case "Exit Button":
         System.exit(0);
         break;
+      default:
+        System.out.println("Invalid action");
+        break;
     }
   }
 
@@ -114,7 +117,7 @@ public class ViewController implements ActionListener {
   private void handleDropDown() {
     if (uiView.shouldAddCalendar()) {
       uiView.showAddCalendarDialog();
-      String calendarDetails[] = uiView.getCalendarDetails();
+      String[] calendarDetails = uiView.getCalendarDetails();
       System.out.println(calendarDetails[0] + " " + calendarDetails[1]);
       try {
         calendarManager.createCalendar(calendarDetails[0], calendarDetails[1]);
@@ -136,16 +139,17 @@ public class ViewController implements ActionListener {
   }
 
   private void handleAddEvent(ActionEvent e) {
-    String ans[] = uiView.getSelectedDate(e);
-    int d = Integer.parseInt(ans[0]);
-    int m = Integer.parseInt(ans[1]);
-    int y = Integer.parseInt(ans[2]);
+    String dateValues[] = uiView.getSelectedDate(e);
+    int d = Integer.parseInt(dateValues[0]);
+    int m = Integer.parseInt(dateValues[1]);
+    int y = Integer.parseInt(dateValues[2]);
     LocalDate date = LocalDate.of(y, m, d);
     LocalDateTime dateTime = LocalDateTime.of(y, m, d, 0, 0);
     Map<String, Object> metaData = new HashMap<>();
     metaData.put("localStartTime", dateTime);
     List<Map<String, Object>> eventDetails = calendarV2.getMatchingEvents(metaData);
-    Map<String, Object> event = uiView.showAddEventDialog(date, eventDetails, getPrintEventsAsString(eventDetails));
+    String eventsToPrint = getPrintEventsAsString(eventDetails);
+    Map<String, Object> event = uiView.showAddEventDialog(date, eventDetails, eventsToPrint);
     if (event == null || event.size() == 0) {
       return;
     }
@@ -335,7 +339,7 @@ public class ViewController implements ActionListener {
       uiView.showMessage(erroMessage);
       return true;
     }
-    if ((Boolean) data.get("isRecurring") == true) {
+    if ((Boolean) data.get("isRecurring") ) {
       if (data.get("untilTime") == null && data.get("forTimes") == null) {
         erroMessage = "Either untilTime or forTimes is required for Recurring Events";
         uiView.showMessage(erroMessage);
