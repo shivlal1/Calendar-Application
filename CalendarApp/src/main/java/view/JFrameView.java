@@ -4,9 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,9 +45,11 @@ public class JFrameView extends JFrame implements UiView {
   private JTextArea resultArea;
   private JCheckBox recurringCheck;
   private Random rand;
-
+  private JTextArea messageArea;
+  private JButton importButton;
+  private JButton exportButton;
   public JFrameView() {
-     rand = new Random();
+    rand = new Random();
     frame = new JFrame("Calendar App");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(600, 600);
@@ -61,6 +61,29 @@ public class JFrameView extends JFrame implements UiView {
     updateButton = new JButton("Update All Matches");
     updateButton.setActionCommand("update value");
     frame.add(calendarPanel, BorderLayout.CENTER);
+    frame.add(getErrorPanel(), BorderLayout.SOUTH);
+    frame.add(getImportExportPanel(), BorderLayout.SOUTH);
+  }
+
+  private JPanel getImportExportPanel() {
+    JPanel panel = new JPanel();
+    importButton = new JButton("Click to Import CSV");
+    importButton.setActionCommand("Import CSV");
+    panel.add(importButton);
+    exportButton = new JButton("Click to Export CSV");
+    exportButton.setActionCommand("Export CSV");
+    panel.add(exportButton);
+    return panel;
+  }
+
+  private JScrollPane getErrorPanel() {
+    messageArea = new JTextArea(3, 20);
+    messageArea.setEditable(false);
+    messageArea.setLineWrap(true);
+    messageArea.setWrapStyleWord(true);
+    messageArea.setForeground(Color.RED); // Set color for error messages
+    JScrollPane scroll = new JScrollPane(messageArea);
+    return scroll;
   }
 
   public String[] getSelectedDate(ActionEvent e) {
@@ -80,6 +103,7 @@ public class JFrameView extends JFrame implements UiView {
     editAcrossCalendar.addActionListener(actionListener);
     updateButton.addActionListener(actionListener);
     searchButton.addActionListener(actionListener);
+    importButton.addActionListener(actionListener);
   }
 
   @Override
@@ -159,7 +183,7 @@ public class JFrameView extends JFrame implements UiView {
         int r = rand.nextInt(256);
         int g = rand.nextInt(256);
         int b = rand.nextInt(256);
-        Color calColor =  new Color(r, g, b);
+        Color calColor = new Color(r, g, b);
         calendars.put(newCalendarName, calColor);
         calendarDropdown.addItem(newCalendarName);
         selectedCalendar = newCalendarName;
@@ -172,10 +196,8 @@ public class JFrameView extends JFrame implements UiView {
     }
   }
 
-
-
   @Override
-  public Map<String, Object> getUserShowEventChoice(LocalDate date, List<Map<String, Object>> dayEvents,String eventAsString) {
+  public Map<String, Object> getUserShowEventChoice(LocalDate date, List<Map<String, Object>> dayEvents, String eventAsString) {
     Map<String, Object> metaDeta = null;
     Object[] options = {"Add New Event", "Cancel"};
     int choice = JOptionPane.showOptionDialog(
@@ -196,12 +218,13 @@ public class JFrameView extends JFrame implements UiView {
   }
 
 
-  public String getChangedCalName(){
+  public String getChangedCalName() {
     selectedCalendar = (String) calendarDropdown.getSelectedItem();
     return selectedCalendar;
   }
+
   private void changeCalendar(ActionListener listener) {
-  //  selectedCalendar = (String) calendarDropdown.getSelectedItem();
+    //  selectedCalendar = (String) calendarDropdown.getSelectedItem();
     updateCalendar(listener);
   }
 
@@ -290,7 +313,13 @@ public class JFrameView extends JFrame implements UiView {
     untilField = new JTextField(12);
     repeatsField = new JTextField(12);
     forField = new JTextField(12);
-    JPanel recurringPanel = new JPanel(new GridLayout(0, 2, 1, 1));
+
+    Dimension fieldSize = new Dimension(200, 25);
+    untilField.setPreferredSize(fieldSize);
+    repeatsField.setPreferredSize(fieldSize);
+    forField.setPreferredSize(fieldSize);
+
+    JPanel recurringPanel = new JPanel(new GridLayout(0, 2, 5, 5));
     recurringPanel.add(new JLabel("Until (YYYY-MM-DD):"));
     recurringPanel.add(untilField);
     recurringPanel.add(new JLabel("Repeats (Daily/Weekly/Monthly):"));
@@ -299,6 +328,8 @@ public class JFrameView extends JFrame implements UiView {
     recurringPanel.add(forField);
     recurringPanel.setVisible(false);
     return recurringPanel;
+
+
   }
 
   private JPanel getMainPanel() {
@@ -346,10 +377,12 @@ public class JFrameView extends JFrame implements UiView {
         String endDate = endDateField.getText().trim().equals("") ? null : endDateField.getText().trim();
         String repeats = repeatsField.getText().trim().equals("") ? null : repeatsField.getText().trim();
         String forValue = forField.getText().trim().equals("") ? null : forField.getText().trim();
+        String untilValue = untilField.getText().trim().equals("") ? null : untilField.getText().trim();
+
         metaData.put("subject", eventName);
         metaData.put("startDate", startDate);
         metaData.put("endDate", endDate);
-        metaData.put("untilTime", untilField.getText().trim());
+        metaData.put("untilTime", untilValue);
         metaData.put("weekdays", repeats);
         metaData.put("forTimes", forValue);
         metaData.put("isRecurring", recurringCheck.isSelected());

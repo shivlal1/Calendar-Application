@@ -3,7 +3,6 @@ package controller;
 import java.time.ZoneId;
 
 import model.CalendarV2;
-import model.ICalendarV2;
 
 public class CalendarManagerV2 extends CalendarManager implements ICalendarManagerV2 {
 

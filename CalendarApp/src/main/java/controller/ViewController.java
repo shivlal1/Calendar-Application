@@ -2,12 +2,18 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.*;
 
 import model.ICalendarV2;
 import utils.DateUtils;
@@ -28,7 +34,7 @@ public class ViewController implements ActionListener {
     this.uiView = uiView;
     uiView.display();
     uiView.setListener(this);
-    activeCalendarName="default";
+    activeCalendarName = "default";
   }
 
   @Override
@@ -57,6 +63,47 @@ public class ViewController implements ActionListener {
         break;
       case "Search":
         handleSearch();
+        break;
+      case "Import CSV":
+        JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(null);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+          File selectedFile = fileChooser.getSelectedFile();
+
+          try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
+            String line;
+            br.readLine(); // Skip header
+
+            while ((line = br.readLine()) != null) {
+              // Split using regex to handle quoted commas
+              String[] values = line.split("\\s*,\\s*(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+
+              // Clean up quotes and spaces
+              for (int i = 0; i < values.length; i++) {
+                values[i] = values[i].replaceAll("^\"|\"$", "").trim();
+              }
+
+              // Print each value
+              System.out.println("Subject: " + values[0]);
+              System.out.println("Start Date: " + values[1]);
+              System.out.println("Start Time: " + values[2]);
+              System.out.println("End Date: " + values[3]);
+              System.out.println("End Time: " + values[4]);
+              System.out.println("All Day Event: " + values[5]);
+              System.out.println("Description: " + values[6]);
+              System.out.println("Location: " + values[7]);
+              System.out.println("Private: " + values[8]);
+              System.out.println("----------------------------------");
+            }
+
+          } catch (IOException exception) {
+            exception.printStackTrace();
+          }
+
+        }
+        break;
+
+      case "Export CSV" :
         break;
       case "Exit Button":
         System.exit(0);
@@ -95,12 +142,11 @@ public class ViewController implements ActionListener {
       System.out.println(calendarDetails[0] + " " + calendarDetails[1]);
       calendarManager.createCalendar(calendarDetails[0], calendarDetails[1]);
       uiView.setCalendar(calendarDetails[0]);
-      activeCalendarName=calendarDetails[0];
-    }
-    else {
+      activeCalendarName = calendarDetails[0];
+    } else {
       activeCalendarName = uiView.getChangedCalName();
       uiView.changeCalendarInDropDown(this);
-      System.out.println("New Cal Name"+uiView.getChangedCalName());
+      System.out.println("New Cal Name" + uiView.getChangedCalName());
     }
     calendarV2 = calendarManager.getCalendarByName(activeCalendarName);
   }
@@ -116,7 +162,7 @@ public class ViewController implements ActionListener {
     metaData.put("localStartTime", dateTime);
     //calendarV2 = calendarManager.getCalendarByName(activeCalendarName);
     List<Map<String, Object>> eventDetails = calendarV2.getMatchingEvents(metaData);
-    Map<String, Object> event = uiView.getUserShowEventChoice(date, eventDetails , getPrintEventsAsString(eventDetails));
+    Map<String, Object> event = uiView.getUserShowEventChoice(date, eventDetails, getPrintEventsAsString(eventDetails));
     Map<String, Object> dataForCreateEvent = getDataForCreateEvent(event);
     try {
       String subject = dataForCreateEvent.get("subject").toString();
@@ -151,7 +197,7 @@ public class ViewController implements ActionListener {
     calendarV2 = calendarManager.getCalendarByName(activeCalendarName);
     List<Map<String, Object>> match = new ArrayList<>();
     if (data.get("StartTime") == null && data.get("EndTime") == null) {
-      match= getEventsToShowInUIByName(data);
+      match = getEventsToShowInUIByName(data);
     } else {
       String newDate = data.get("StartTime").toString();
       newDate = DateUtils.removeTinDateTime(newDate);
@@ -166,7 +212,7 @@ public class ViewController implements ActionListener {
       }
       match = getEventsToShowInUI(data);
     }
-    uiView.showMatchingEventsForEdit( getPrintEventsAsString(match));
+    uiView.showMatchingEventsForEdit(getPrintEventsAsString(match));
     uiView.clearSearchPanel();
   }
 
@@ -209,7 +255,7 @@ public class ViewController implements ActionListener {
 
   private String getPrintEventsAsString(List<Map<String, Object>> dayEvents) {
     StringBuilder eventListBuilder = new StringBuilder();
-    if(dayEvents.size() == 0) {
+    if (dayEvents.size() == 0) {
       return "No Matching Events";
     }
     for (Map<String, Object> event : dayEvents) {
