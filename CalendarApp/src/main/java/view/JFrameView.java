@@ -202,10 +202,7 @@ public class JFrameView extends JFrame implements UiView {
 
   public boolean shouldAddCalendar() {
     String selected = (String) calendarDropdown.getSelectedItem();
-    if (selected.equals("+")) {
-      return true;
-    }
-    return false;
+   return selected.equals("+");
   }
 
   public void showAddCalendarDialog() {
@@ -244,7 +241,9 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   @Override
-  public Map<String, Object> showAddEventDialog(LocalDate date, List<Map<String, Object>> dayEvents, String eventAsString) {
+  public Map<String, Object> showAddEventDialog(LocalDate date,
+                                                List<Map<String, Object>> dayEvents,
+                                                String eventAsString) {
     Map<String, Object> metaDeta = null;
     Object[] options = {"Add New Event", "Cancel"};
     int choice = JOptionPane.showOptionDialog(
@@ -437,12 +436,18 @@ public class JFrameView extends JFrame implements UiView {
     );
 
     if (result == JOptionPane.OK_OPTION) {
-      String eventName = nameField.getText().trim().equals("") ? null : nameField.getText().trim();
-      String startDate = startDateField.getText().trim().equals("") ? null : startDateField.getText().trim();
-      String endDate = endDateField.getText().trim().equals("") ? null : endDateField.getText().trim();
-      String repeats = repeatsField.getText().trim().equals("") ? null : repeatsField.getText().trim();
-      String forValue = forField.getText().trim().equals("") ? null : forField.getText().trim();
-      String untilValue = untilField.getText().trim().equals("") ? null : untilField.getText().trim();
+      String eventName = nameField.getText().trim().equals("") ? null :
+              nameField.getText().trim();
+      String startDate = startDateField.getText().trim().equals("") ? null :
+              startDateField.getText().trim();
+      String endDate = endDateField.getText().trim().equals("") ? null :
+              endDateField.getText().trim();
+      String repeats = repeatsField.getText().trim().equals("") ? null :
+              repeatsField.getText().trim();
+      String forValue = forField.getText().trim().equals("") ? null :
+              forField.getText().trim();
+      String untilValue = untilField.getText().trim().equals("") ? null :
+              untilField.getText().trim();
       metaData.put("subject", eventName);
       metaData.put("startDate", startDate);
       metaData.put("endDate", endDate);
