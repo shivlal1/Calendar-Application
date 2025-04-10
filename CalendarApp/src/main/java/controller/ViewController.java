@@ -27,6 +27,7 @@ public class ViewController implements ActionListener {
   private LocalDateTime editEventStartDate;
   private LocalDateTime editEventEndDate;
   private String activeCalendarName;
+  private static final String exportEventsName = "exportEvents.csv";
 
   public ViewController(ICalendarManagerV2 calendarManager, UiView uiView) {
     this.calendarManager = calendarManager;
@@ -39,6 +40,7 @@ public class ViewController implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     calendarV2 = calendarManager.getCalendarByName(activeCalendarName);
+    uiView.clearErrorMessage();
 
     switch (e.getActionCommand()) {
       case "Next Month":
@@ -77,6 +79,9 @@ public class ViewController implements ActionListener {
 
 
   private Map<String, Object> getDataForCreateEvent(Map<String, Object> event) {
+    if(event==null){
+      return null;
+    }
     event.put("autoDecline", true);
     String startDateAfterT = DateUtils.removeTinDateTime(event.get("startDate").toString());
     LocalDateTime startDate = DateUtils.stringToLocalDateTime(startDateAfterT);
@@ -134,7 +139,15 @@ public class ViewController implements ActionListener {
     metaData.put("localStartTime", dateTime);
     List<Map<String, Object>> eventDetails = calendarV2.getMatchingEvents(metaData);
     Map<String, Object> event = uiView.getUserShowEventChoice(date, eventDetails, getPrintEventsAsString(eventDetails));
+    if(event==null || eventDetails.size()==0){
+      return;
+    }
     Map<String, Object> dataForCreateEvent = getDataForCreateEvent(event);
+
+    if( isCreateEventErrorHandled(dataForCreateEvent)){
+      return;
+    }
+
     try {
       String subject = dataForCreateEvent.get("subject").toString();
       LocalDateTime startDate = (LocalDateTime) dataForCreateEvent.get("startDate");
@@ -283,9 +296,21 @@ public class ViewController implements ActionListener {
       List<Map<String, Object>> allEvents = calendarV2.getAllCalendarEvents();
       CalendarCsvExporter exporter = new CalendarCsvExporter();
     try {
-      exporter.export(allEvents,"eventsFromGuiCalendar.csv");
+      exporter.export(allEvents,exportEventsName);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private boolean isCreateEventErrorHandled( Map<String,Object> data){
+    String erroMessage="";
+    if( data.get("subject") == null || data.get("startDate")==null){
+        erroMessage="Subject or startDate cannot be null";
+    }
+    if(!erroMessage.equals("")){
+      uiView.showErrorMessage(erroMessage);
+      return true;
+    }
+    return false;
   }
 }

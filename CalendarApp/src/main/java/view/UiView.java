@@ -42,4 +42,7 @@ public interface UiView {
   public String getChangedCalName();
 
   public void removeCalendarFromDropdown(String calendarName);
+
+  public void showErrorMessage(String message);
+  public void clearErrorMessage();
 }

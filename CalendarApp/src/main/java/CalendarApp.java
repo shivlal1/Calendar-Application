@@ -31,6 +31,14 @@ public class CalendarApp {
    * @throws Exception If arguments are invalid or unsupported mode is specified.
    */
   public static void main(String[] args) throws Exception {
+
+    if(args.length == 0){
+      ICalendarManagerV2 manager = new CalendarManagerV2("default",
+              ZoneId.systemDefault().toString());
+      UiView uiView = new JFrameView();
+      ViewController viewController = new ViewController(manager, uiView);
+      return;
+    }
     if (args.length < 2) {
       throw new Exception("Use: --mode interactive OR --mode headless <commandFile>");
     }
@@ -46,11 +54,6 @@ public class CalendarApp {
       } else if (isHeadlessMode(args)) {
         runHeadlessMode(view, controller, calendarManager, scanner);
       } else {
-        ICalendarManagerV2 manager = new CalendarManagerV2("default",
-                ZoneId.systemDefault().toString());
-        UiView uiView = new JFrameView();
-        ViewController viewController = new ViewController(manager, uiView);
-
         throw new Exception("Unsupported mode. Use only 'interactive' or 'headless'");
       }
     } else {
@@ -77,7 +80,12 @@ public class CalendarApp {
       if (commandArgs.equals("exit")) {
         break;
       }
-      executeCommand(commandArgs, view, controller, calendarManager);
+      try {
+        executeCommand(commandArgs, view, controller, calendarManager);
+      }
+      catch (Exception e){
+        view.viewMessage(e.getMessage());
+      }
     }
   }
 

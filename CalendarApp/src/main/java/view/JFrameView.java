@@ -276,10 +276,15 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   private void changeCalendar(ActionListener listener) {
-    //  selectedCalendar = (String) calendarDropdown.getSelectedItem();
     updateCalendar(listener);
   }
 
+  public void showErrorMessage(String errorMessage){
+    messageArea.setText(errorMessage);
+  }
+  public void clearErrorMessage(){
+    messageArea.setText("");
+  }
   public HashMap<String, Object> getNewPropertyAndValue() {
     HashMap<String, Object> metaDeta = new HashMap<>();
     String property = properToBeEdited.getText().trim().toLowerCase();
@@ -426,7 +431,6 @@ public class JFrameView extends JFrame implements UiView {
     );
 
     if (result == JOptionPane.OK_OPTION) {
-      if (!nameField.getText().trim().isEmpty() && !startDateField.getText().trim().isEmpty()) {
         String eventName = nameField.getText().trim().equals("") ? null : nameField.getText().trim();
         String startDate = startDateField.getText().trim().equals("") ? null : startDateField.getText().trim();
         String endDate = endDateField.getText().trim().equals("") ? null : endDateField.getText().trim();
@@ -441,7 +445,6 @@ public class JFrameView extends JFrame implements UiView {
         metaData.put("weekdays", repeats);
         metaData.put("forTimes", forValue);
         metaData.put("isRecurring", recurringCheck.isSelected());
-      }
     }
 
     return metaData;
