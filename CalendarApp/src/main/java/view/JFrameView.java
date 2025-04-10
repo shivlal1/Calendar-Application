@@ -19,14 +19,18 @@ public class JFrameView extends JFrame implements UiView {
   private JLabel monthLabel;
   private JComboBox<String> calendarDropdown;
   private Map<String, Color> calendars;
+  private Map<LocalDate, List<String>> events;
   private YearMonth currentMonth;
   private String selectedCalendar;
   private JButton searchButton;
+  private JLabel nameLabel;
+  private JPanel topPanel;
   private JButton prevButton;
   private JButton nextButton;
   private JButton editAcrossCalendar;
   private String newCalendarName;
   private String newCalendarTimeZone;
+  private JButton dayButton;
   private JTextField eventToBeEditedName;
   private JTextField eventToBeEditedStartDate;
   private JTextField eventToBeEditedEndDate;
@@ -56,6 +60,7 @@ public class JFrameView extends JFrame implements UiView {
     frame.setLocationRelativeTo(null);
     frame.setLayout(new BorderLayout());
     currentMonth = YearMonth.now();
+    events = new HashMap<>();
     frame.add(getNorthPanel(), BorderLayout.NORTH);
     calendarPanel = new JPanel();
     updateButton = new JButton("Update All Matches");
@@ -124,8 +129,8 @@ public class JFrameView extends JFrame implements UiView {
   public String[] getSelectedDate(ActionEvent e) {
     String day = ((JButton) e.getSource()).getText();
     String currentMonthInString = currentMonth.toString();
-    String[] spliIntoYearAndMonth = currentMonthInString.split("-");
-    String[] finalDate = {day, spliIntoYearAndMonth[1], spliIntoYearAndMonth[0]};
+    String spliIntoYearAndMonth[] = currentMonthInString.split("-");
+    String finalDate[] = {day, spliIntoYearAndMonth[1], spliIntoYearAndMonth[0]};
     return finalDate;
   }
 
@@ -181,7 +186,7 @@ public class JFrameView extends JFrame implements UiView {
     monthLabel.setText(currentMonth.getMonth() + " " + currentMonth.getYear());
     calendarPanel.setBackground(calendars.get(selectedCalendar));
     for (int day = 1; day <= currentMonth.lengthOfMonth(); day++) {
-      JButton dayButton = new JButton(String.valueOf(day));
+      dayButton = new JButton(String.valueOf(day));
       dayButton.setActionCommand("Add Event");
       dayButton.addActionListener(actionListener);
       calendarPanel.add(dayButton);
@@ -197,7 +202,10 @@ public class JFrameView extends JFrame implements UiView {
 
   public boolean shouldAddCalendar() {
     String selected = (String) calendarDropdown.getSelectedItem();
-    return selected.equals("+");
+    if (selected.equals("+")) {
+      return true;
+    }
+    return false;
   }
 
   public void showAddCalendarDialog() {
@@ -221,6 +229,8 @@ public class JFrameView extends JFrame implements UiView {
         Color calColor = new Color(r, g, b);
         calendars.put(newCalendarName, calColor);
         calendarDropdown.addItem(newCalendarName);
+        //calendarValueLabel.setText(newCalendarName);
+        //timezoneValueLabel.setText(newCalendarTimeZone);
         selectedCalendar = newCalendarName;
         calendarDropdown.setSelectedItem(newCalendarName);
       } else {
@@ -234,9 +244,7 @@ public class JFrameView extends JFrame implements UiView {
   }
 
   @Override
-  public Map<String, Object> showAddEventDialog(LocalDate date,
-                                                List<Map<String, Object>> dayEvents,
-                                                String eventAsString) {
+  public Map<String, Object> showAddEventDialog(LocalDate date, List<Map<String, Object>> dayEvents, String eventAsString) {
     Map<String, Object> metaDeta = null;
     Object[] options = {"Add New Event", "Cancel"};
     int choice = JOptionPane.showOptionDialog(
@@ -251,7 +259,7 @@ public class JFrameView extends JFrame implements UiView {
     );
 
     if (choice == 0) {
-      metaDeta = showEventForm();
+      metaDeta = showEventForm(date, dayEvents);
     }
     return metaDeta;
   }
@@ -302,7 +310,7 @@ public class JFrameView extends JFrame implements UiView {
   private JPanel getSearchEventsToEditPanel() {
     JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
     inputPanel.setBorder(BorderFactory.createTitledBorder(""));
-     JLabel nameLabel= new JLabel("Name:");
+    nameLabel = new JLabel("Name:");
     eventToBeEditedName = new JTextField(12);
     JLabel startDate = new JLabel("Start Date:");
     eventToBeEditedStartDate = new JTextField(12);
@@ -402,7 +410,7 @@ public class JFrameView extends JFrame implements UiView {
     return infoLabel;
   }
 
-  private Map<String, Object> showEventForm() {
+  private Map<String, Object> showEventForm(LocalDate date, List<Map<String, Object>> dayEvents) {
     Map<String, Object> metaData = new HashMap<>();
     nameField = new JTextField(12);
     startDateField = new JTextField(12);
@@ -419,6 +427,7 @@ public class JFrameView extends JFrame implements UiView {
     container.add(recurringPanel, BorderLayout.CENTER);
     container.setPreferredSize(new Dimension(400, 320)); // compact!
     container.add(getDateInfo(), BorderLayout.SOUTH);
+
     int result = JOptionPane.showConfirmDialog(
             frame,
             container,
@@ -426,19 +435,14 @@ public class JFrameView extends JFrame implements UiView {
             JOptionPane.OK_CANCEL_OPTION,
             JOptionPane.PLAIN_MESSAGE
     );
+
     if (result == JOptionPane.OK_OPTION) {
-      String eventName = nameField.getText().trim().equals("") ? null :
-              nameField.getText().trim();
-      String startDate = startDateField.getText().trim().equals("") ? null :
-              startDateField.getText().trim();
-      String endDate = endDateField.getText().trim().equals("") ? null :
-              endDateField.getText().trim();
-      String repeats = repeatsField.getText().trim().equals("") ? null :
-              repeatsField.getText().trim();
-      String forValue = forField.getText().trim().equals("") ? null :
-              forField.getText().trim();
-      String untilValue = untilField.getText().trim().equals("") ? null :
-              untilField.getText().trim();
+      String eventName = nameField.getText().trim().equals("") ? null : nameField.getText().trim();
+      String startDate = startDateField.getText().trim().equals("") ? null : startDateField.getText().trim();
+      String endDate = endDateField.getText().trim().equals("") ? null : endDateField.getText().trim();
+      String repeats = repeatsField.getText().trim().equals("") ? null : repeatsField.getText().trim();
+      String forValue = forField.getText().trim().equals("") ? null : forField.getText().trim();
+      String untilValue = untilField.getText().trim().equals("") ? null : untilField.getText().trim();
       metaData.put("subject", eventName);
       metaData.put("startDate", startDate);
       metaData.put("endDate", endDate);
@@ -455,7 +459,7 @@ public class JFrameView extends JFrame implements UiView {
     calendars.put("default", Color.BLUE);
     selectedCalendar = "default";
     newCalendarTimeZone = ZoneId.systemDefault().toString();
-    JPanel topPanel = new JPanel();
+    topPanel = new JPanel();
     prevButton = new JButton("<");
     nextButton = new JButton(">");
     nextButton.setActionCommand("Next Month");
