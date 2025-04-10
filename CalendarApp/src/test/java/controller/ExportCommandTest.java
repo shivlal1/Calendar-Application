@@ -29,17 +29,6 @@ public class ExportCommandTest {
     exportCommand = new ExportCommand();
   }
 
-  @Test(expected = Exception.class)
-  public void testProperFileName() throws Exception {
-    command = "cal filename.csv";
-    exportCommand.execute(command, cal);
-  }
-
-  @Test(expected = Exception.class)
-  public void testProperFileName2() throws Exception {
-    command = "cal thisisaverylongfilenamethatistobeadded.csv";
-    exportCommand.execute(command, cal);
-  }
 
   @Test(expected = Exception.class)
   public void testMissingExportCal() throws Exception {

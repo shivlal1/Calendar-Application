@@ -85,17 +85,6 @@ public class CalendarCsvExporterTest {
 
   }
 
-  @Test
-  public void emptyEvents() throws Exception {
-    thrown.expect(Exception.class);
-    thrown.expectMessage("Empty Events list");
-
-    List<Map<String, Object>> events = new ArrayList<>();
-
-    CalendarCsvExporter export = new CalendarCsvExporter();
-    String absolutePath = export.export(events, "hello.csv");
-  }
-
   /**
    * Function to caputure console value of absolute path.
    *

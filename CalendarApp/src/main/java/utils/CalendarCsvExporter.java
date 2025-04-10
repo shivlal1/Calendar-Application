@@ -25,10 +25,6 @@ public class CalendarCsvExporter {
    */
   public String export(List<Map<String, Object>> eventList, String fileName) throws Exception {
 
-    if (eventList.size() == 0) {
-      throw new Exception("Empty Events list");
-    }
-
     String absolutePath = Paths.get(fileName).toAbsolutePath().toString();
 
     try (FileWriter writer = new FileWriter(absolutePath)) {

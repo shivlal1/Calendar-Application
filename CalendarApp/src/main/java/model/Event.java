@@ -74,13 +74,9 @@ public abstract class Event {
     LocalDateTime existingStartTime = this.startDate;
     LocalDateTime existingEndTime = this.endDate;
 
-//    boolean isNoOverlap = ((existingEndTime.compareTo(newStartTime) <= 0
-//            || existingStartTime.compareTo(newEndTime) >= 0));
+    boolean isNoOverlap = ((existingEndTime.compareTo(newStartTime) <= 0
+            || existingStartTime.compareTo(newEndTime) >= 0));
 
-    boolean isNoOverlap = (existingStartTime.compareTo(newStartTime) > 0 &&
-            existingStartTime.compareTo(newEndTime) >= 0) ||
-            (existingEndTime.compareTo(newEndTime) < 0 &&
-                    existingEndTime.compareTo(newStartTime) <= 0);
     return !isNoOverlap;
   }
 
