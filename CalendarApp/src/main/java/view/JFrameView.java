@@ -315,8 +315,6 @@ public class JFrameView extends JFrame implements UiView {
   private JPanel getSearchEventsToEditPanel() {
     JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
     inputPanel.setBorder(BorderFactory.createTitledBorder(""));
-
-
     nameLabel = new JLabel("Name:");
     eventToBeEditedName = new JTextField(12);
     JLabel startDate = new JLabel("Start Date:");
