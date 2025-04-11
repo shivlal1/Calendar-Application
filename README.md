@@ -231,7 +231,7 @@ Events exported via CSV are compatible with Google Calendar import.
 
 | Team Member     | Contributions                                                                 |
 |------------------|------------------------------------------------------------------------------|
-| **Ronit**        | Controller logic, CopyCommand, CalendarManager, and command parsing.         |
-| **Siva**         | Model implementation, CalendarV2, recurring events, timezone support.       |
-| **Ronit & Siva** | Jointly wrote unit tests and verified complete system functionality.         |
+| **Ronit**        | Controller logic, CopyCommand, CalendarManager, command parsing and the ViewController.       |
+| **Siva**         | Model implementation, CalendarV2, recurring events, timezone support and the UI part for the implementation of other functionalities.      |
+| **Ronit & Siva** | Jointly wrote unit tests, verified complete system functionality and worked together on the integration of the import and export function.         |
 
