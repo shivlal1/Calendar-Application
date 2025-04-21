@@ -78,6 +78,27 @@ java -jar cs5010-group-project.jar --mode headless </Users/atultiwary/Documents/
 
 All commands are provided in the respective .txt files.
 
+## Features Supported
+
+We were able to implement the requested features in both GUI and CLI-based interfaces.
+
+---
+
+## Code Critique
+
+Code critique is available in the `CodeCritiqueREADME`.
+
+---
+
+## Changes Made to Implement New Features for Assignment 7
+
+1. We followed SOLID principles and the MVC architecture wherever applicable.
+2. Created a new class `AnalyticsService` to compute analytics metrics.
+3. Created a separate class `ViewAnalyticsDialog` to display analytics.
+4. Some changes were made in existing classes (like `CalendarPrinter`) for CLI, since there was no CLI interface and only one concrete class, making it impossible to extend cleanly.
+
+---
+
 ## Using Backticks for name, description `NewPropertyValue`
 
 ## Problem
