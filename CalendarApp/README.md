@@ -1,164 +1,53 @@
-# Calendar Application
+# Virtual Calendar Application
 
 ## Introduction
+This project is a virtual calendar application designed to mimic the functionality of popular calendar apps such as Google Calendar or Apple iCalendar. The application supports multiple calendars, timezone management, recurring events, conflict handling, and exporting events in Google Calendar–compatible format.
 
-This project implements a comprehensive virtual calendar application inspired by Google Calendar and
-Apple's iCalendar. It simplifies event management, allowing users to seamlessly create, modify,
-query, and export calendar events through intuitive command-line interactions.
+The project follows the **MVC architecture** and is built using **SOLID principles** to ensure scalability and maintainability.
+
+---
 
 ## Features
 
-- **Single Calendar Support** (EST timezone)
-- **Event Conflict Management** (Automatic conflict detection and optional auto-decline)
-- **Recurring Events** (Customizable repetitions)
-- **Event Editing**
-- **Event Querying** (View events or check busy status)
-- Printing events on a given date
-- Checking if the user is busy on a particular date
-- **CSV Export** (Compatible with Google Calendar)
-- **Interactive and Headless Modes**
+### Multiple Calendars
+- Create and maintain several calendars, each with a unique name.
+- Change calendar properties such as name and timezone.
+- Switch between calendars using `use calendar`.
 
-## Usage
+### Timezone Support
+- Each calendar is associated with a specific timezone (IANA format, e.g., `America/New_York`).
+- Events inherit the timezone of their calendar.
+- Timezone changes automatically affect interpretation of events.
 
-### Interactive Mode
+### Event Management
+- Create single events with subject, start/end time, description, location, and privacy flag.
+- Create all-day events (if no end time specified).
+- Support for multi-day events.
+- Support recurring events that repeat weekly for a fixed count or until a specific end date.
+- Editing of events, including:
+  - Single instances
+  - All future instances
+  - Entire series
 
-Start interactive command entry:
+### Conflict Handling
+- Events cannot overlap within the same calendar.
+- Any command that would create or edit a conflicting event is rejected.
 
-```bash
-java controller.CalendarApp --mode interactive
-```
+### Copying Events
+- Copy a single event to another calendar at a specified date/time.
+- Copy all events on a given day to another calendar.
+- Copy all events in a date range to another calendar.
+- Events copied across calendars are converted to the target calendar’s timezone.
 
-### Headless Mode
+### Querying
+- List all events scheduled on a specific date.
+- List all events within a given date range.
+- Check if the user is busy at a specific date and time.
 
-Execute commands from a file: ( please enter the absolute file path after program runs)
+### Export
+- Export a calendar as a **CSV file**.
+- Format is compatible with Google Calendar import.
 
-```bash
-java controller.CalendarApp --mode headless
-```
-
-## Supported Commands
-
-| Command                                                                                               | Description                                                                                    |
-|-------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|
-| `create event --autoDecline <eventName> from <dateTime> to <dateTime>`                                | Create an event with optional conflict auto-decline.                                           |
-| `create event <eventName> from <dateTime> to <dateTime> repeats <weekdays> until <dateTime>`          | Creates a recurring event until specified date.                                                | 
-| `create event <eventName> on <date>`                                                                  | Creates an all-day event.                                                                      |
-| `create event --autoDecline <eventName> from <dateTime> to <dateTime> repeats <weekdays> for N times` | Creates a recurring event on the specified weekdays for N times                                |
-| `create event <eventName> on <date> repeats <weekdays> for <N> times`                                 | Creates an event on the specified date repeating on the given days for N times.                |
-| `create event <eventName> on <date> repeats <weekdays> until <date>`                                  | Creates an event on the specified date which repeats on the specified days until a given date. |
-| `edit event <property> <eventName> from <dateTime> to <dateTime> with <newPropertyValue>`             | Edits properties of an event with the given new property value.                                |
-| `edit events <property> <eventName> from <dateStringTtimeString> with <NewPropertyValue>`             | Edits the property of the event that starts from the given date and time.                      |
-| `edit events <property> <eventName> <NewPropertyValue>`                                               | Edits the property of all events with the given name to the new property value.                |
-| `print events on <date>`                                                                              | Lists events on a specific day.                                                                |
-| `print events from <date> to <date>`                                                                  | Lists events within a specified range of dates.                                                |
-| `export calendar <filename.csv>`                                                                      | Exports calendar to CSV and prints file location.                                              |
-| `show status on <dateTime>`                                                                           | Shows busy status at a specified date and time if an event is already scheduled.               |
-| `exit`                                                                                                | Exits the application.                                                                         |
-
-## Sample Command Variations
-
-### Create Events
-
-```bash
-create event --autoDecline TeamMeeting from 2024-04-01T09:00 to 2024-04-01T10:00
-create event YogaSession from 2024-03-15T18:00 to 2024-03-15T19:00 repeats TR until 2024-05-30
-create event CompanyHoliday on 2024-07-04
-```
-
-### Edit Events
-
-```bash
-edit event location TeamMeeting from 2024-04-01T09:00 to 2024-04-01T10:00 with ConferenceRoomA
-edit events title YogaSession from 2024-03-15T18:00 with EveningYoga
-edit events location CompanyHoliday Remote
-```
-
-### Print Events
-
-```bash
-print events on 2024-04-01
-print events from 2024-03-01 to 2024-03-31
-```
-
-### Show Status
-
-```bash
-show status on 2024-04-01T09:30
-```
-
-### Export Calendar
-
-```bash
-export calendar april_calendar.csv
-```
-
-## Weekday Abbreviations
-
-| Abbreviation | Day       |
-|--------------|-----------|
-| **M**        | Monday    |
-| **T**        | Tuesday   |
-| **W**        | Wednesday |
-| **R**        | Thursday  |
-| **F**        | Friday    |
-| **S**        | Saturday  |
-| **U**        | Sunday    |
-
-## Project Structure
-
-This project is organized clearly to enhance readability, maintainability, and ease of
-collaboration. The directory structure and contents are as follows:
-
-### `src/`
-
-This directory contains the main source code organized using the MVC (Model-View-Controller)
-architectural pattern, along with utility classes:
-
-- **`controller`**: Contains command-related classes responsible for handling user commands such as
-  Create, Edit, Show, Print, and Export.
-- **`model`**: Includes the logic behind the creation and editing of events. It also contains the
-  logic of exporting and checking if the user is busy at a given time slot or not.
-- **`view`**: Handles all the user interface logic, including outputting to the console.
-- **`utils`**: Provides common helper functions like date conversions and regex utilities.
-- **`controller.CalendarApp.java`**: The main entry point of the application, which is responsible
-  for
-  initializing and running the application logic.
-
-### `test/`
-
-This directory hosts all unit tests to ensure the correctness and reliability of the application:
-
-- **`CreateCommandTest.java`**: Tests functionalities related to creating new events.
-- **`ShowCommandTest.java`**: Tests functionalities for displaying event details and status.
-- **`EditCommandTest.java`**: Covers tests for editing event details.
-- **`PrintCommandTest.java`**: Verifies functionalities for printing events or schedules.
-- **`ExportCommandTest.java`**: Ensures correctness of event export functionalities.
-
-### `res/`
-
-This directory holds various resources useful for documentation, reference, or illustrative
-purposes, including:
-
-- Screenshots demonstrating application functionality.
-- Command files used for testing or demonstration.
-- Diagrams illustrating project architecture and design.
-- `README.md`: Project documentation
-
-## Testing and Quality Assurance
-
-The application follows MVC architecture and SOLID principles, ensuring modularity and
-maintainability. Comprehensive JUnit tests verify application robustness and correctness.
-
-## CSV Integration with Google Calendar
-
-The events being created by our program can be exported into a csv file and the exported CSV files
-can be uploaded to Google Calendar for visual event management.
-
-## Contributions
-
-| Team Member      | Contributions                                                                                                                           |
-|------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| **Ronit**        | Implemented the **Controller** component, including command parsing, delegation, and execution logic.                                   |
-| **Siva**         | Developed the **Model** component, including calendar event representation, data storage, and the flow of the execution of the program. |
-| **Ronit & Siva** | Collaboratively wrote and reviewed **unit test cases** to ensure application correctness and reliability.                               |
-
+### Command-Based Interface
+- Users interact through text-based commands.
+- Supports both **interactive mode** and **headless (batch execution) mode**.
